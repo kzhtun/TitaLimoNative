@@ -37,10 +37,17 @@
 
     </style>
 
+    <style name="cell_label_bold" parent="AppTheme">
+        <item name="fontPath">fonts/Lato-Bold.ttf</item>
+        <item name="android:textColor">@color/cell_label</item>
+        <item name="android:textSize">12sp</item>
+
+    </style>
+
     <style name="cell_label_dark" parent="AppTheme">
         <item name="fontPath">fonts/Lato-Reqular.ttf</item>
         <item name="android:textColor">@color/cell_label_dark</item>
-        <item name="android:textSize">10sp</item>
+        <item name="android:textSize">8sp</item>
 
     </style>
 
@@ -61,6 +68,13 @@
     <style name="cell_text" parent="AppTheme">
         <item name="fontPath">fonts/Lato-Reqular.ttf</item>
         <item name="android:textColor">@color/cell_text</item>
+        <item name="android:textSize">13sp</item>
+
+    </style>
+
+    <style name="button_text" parent="AppTheme">
+        <item name="fontPath">fonts/Lato-Reqular.ttf</item>
+        <item name="android:textColor">@color/white</item>
         <item name="android:textSize">15sp</item>
 
     </style>

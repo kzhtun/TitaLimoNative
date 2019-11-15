@@ -1,7 +1,10 @@
 <resources>
-    <string name="app_name">Coach System</string>
-    <string name="AppName">Coach System</string>
-    <string name="message_version_outdated">There is a new version for Coach System. Please update on Google Playstore. Coach System will is now closing.</string>
+    <string name="app_name">Tita Limo</string>
+    <string name="AppName">Tita Limo</string>
+    <string name="message_version_outdated">
+        There is a new version for Titalimo.
+        Please update on Google Playstore.
+        Titalimo system is now closing.</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

@@ -5,10 +5,10 @@ android {
     compileSdkVersion 28
     buildToolsVersion "29.0.0"
     defaultConfig {
-        applicationId "com.info121.mycoach"
+        applicationId "com.info121.nativelimo"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 1
+        versionCode 27
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -23,7 +23,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-
+    implementation 'com.github.gcacace:signature-pad:1.2.1'
 
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'

@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginRight="4dp"
         style="@style/tab_header"
+        android:textColor="@color/white"
         android:text="Header" />
 
     <TextView

@@ -3,18 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="@color/background"
     android:fitsSystemWindows="true"
-    android:background="@color/colorPrimaryDark">
+    android:orientation="vertical"
+
+    >
 
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
 
     <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager"
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/view_pager">
+        android:layout_height="fill_parent">
 
     </android.support.v4.view.ViewPager>
 

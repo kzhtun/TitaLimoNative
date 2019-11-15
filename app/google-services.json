@@ -1,39 +1,37 @@
 {
   "project_info": {
-    "project_number": "55499837995",
-    "firebase_url": "https://mycoach-2950e.firebaseio.com",
-    "project_id": "mycoach-2950e",
-    "storage_bucket": "mycoach-2950e.appspot.com"
+    "project_number": "649863208156",
+    "firebase_url": "https://limonative.firebaseio.com",
+    "project_id": "limonative",
+    "storage_bucket": "limonative.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:55499837995:android:3a8c6834dc88826f",
+        "mobilesdk_app_id": "1:649863208156:android:fcebe7a75d265010e66819",
         "android_client_info": {
-          "package_name": "com.info121.mycoach"
+          "package_name": "com.info121.nativelimo"
         }
       },
       "oauth_client": [
         {
-          "client_id": "55499837995-blrgtdh6s2cf6d266dj34ldioj8eih6o.apps.googleusercontent.com",
+          "client_id": "649863208156-nna7dd5ifgtilavaqlkh1bh5o2vqt9i5.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBiFGv5HbqwwNUJmHqImb5_cl3gxiQsRtQ"
+          "current_key": "AIzaSyAVpuwA96j4-009P_wTmJKwgGup9FWoqLA"
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
+          "other_platform_oauth_client": [
+            {
+              "client_id": "649863208156-nna7dd5ifgtilavaqlkh1bh5o2vqt9i5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

@@ -66,7 +66,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-
                     android:text="JOB TYPE" />
 
             </LinearLayout>
@@ -82,6 +81,7 @@
                     style="@style/cell_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
                     android:text="JOB STATUS" />
 
                 <TextView
@@ -89,6 +89,7 @@
                     style="@style/cell_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
                     android:layout_weight="1"
                     android:text="ASSIGNED"
                     android:textColor="@color/green" />
@@ -148,6 +149,7 @@
                     style="@style/cell_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
                     android:text="TIME" />
 
                 <TextView
@@ -155,6 +157,7 @@
                     style="@style/cell_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
                     android:layout_weight="1"
                     android:text="00:00 AM" />
 
@@ -396,6 +399,7 @@
             android:layout_gravity="center"
             android:background="@drawable/rounded_button"
             android:visibility="gone"
+            android:textColor="@color/white"
             android:text="ITINERARY"
             />
 
@@ -415,6 +419,7 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:background="@drawable/rounded_button_green"
+            android:textColor="@color/white"
             android:text="ACCEPT" />
 
         <View
@@ -428,6 +433,7 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:background="@drawable/rounded_button_red"
+            android:textColor="@color/white"
             android:text="REJECT" />
     </LinearLayout>
 
@@ -445,6 +451,7 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:background="@drawable/rounded_button_orange"
+            android:textColor="@color/white"
             android:text="UPDATE STATUS"
           />
 

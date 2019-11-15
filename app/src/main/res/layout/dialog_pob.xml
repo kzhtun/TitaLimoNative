@@ -16,7 +16,8 @@
             android:layout_marginBottom="16dp"
             android:orientation="vertical">
 
-            <TextView android:id="@+id/title"
+            <TextView
+                android:id="@+id/title"
                 style="@style/dialog_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -30,33 +31,80 @@
             android:layout_marginTop="16dp"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/photo_label"
-                style="@style/cell_label"
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="PASSENGER PHOTO"
-                android:textSize="12sp" />
+                android:layout_height="25dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/photo_label"
+                    style="@style/cell_label"
+                    android:layout_width="130dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/top_rounded_layout"
+                    android:gravity="center"
+                    android:text="PASSENGER PHOTO"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/signature_label"
+                    style="@style/cell_label"
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="3dp"
+                    android:background="@drawable/top_rounded_layout"
+                    android:gravity="center"
+                    android:text="SIGNATURE"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginTop="6dp">
+                android:layout_height="200dp">
 
-                <ImageView android:id="@+id/passenger_photo"
+                <ImageView
+                    android:id="@+id/passenger_photo"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
-                    android:scaleType="fitCenter"
-                    android:background="@drawable/rounded_edittext" />
+                    android:background="@drawable/bottom_rounded_layout"
+                    android:scaleType="fitCenter" />
 
                 <ImageView
                     android:id="@+id/add_photo"
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:layout_gravity="bottom|right"
                     android:layout_margin="16dp"
                     android:src="@mipmap/ic_add_passenger" />
+
+                <com.github.gcacace.signaturepad.views.SignaturePad
+                    android:id="@+id/signature_pad"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bottom_rounded_layout" />
+
+                <TextView
+                    android:id="@+id/done"
+                    style="@style/cell_label_bold"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="bottom|right"
+                    android:gravity="center"
+                    android:text="DONE"
+                    android:textColor="@color/green" />
+
+
+                <TextView
+                    android:id="@+id/clear"
+                    style="@style/cell_label_bold"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="bottom|left"
+                    android:gravity="center"
+                    android:text="CLEAR"
+                    android:textColor="@color/orange" />
 
             </FrameLayout>
 
@@ -82,10 +130,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
                 android:layout_marginTop="6dp"
-                android:padding="16dp"
+                android:background="@drawable/rounded_edittext"
+                android:textColor="@color/edit_text_color"
                 android:gravity="top|left"
                 android:inputType="textMultiLine"
-                android:background="@drawable/rounded_edittext" />
+                android:padding="16dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -102,7 +151,8 @@
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:background="@drawable/rounded_button"
-                android:text="SAVE" />
+                android:text="SAVE"
+                android:textColor="@color/white" />
 
         </LinearLayout>
 

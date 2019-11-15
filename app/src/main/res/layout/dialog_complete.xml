@@ -141,6 +141,7 @@
                 android:layout_marginTop="6dp"
                 android:padding="16dp"
                 android:background="@drawable/rounded_edittext"
+                android:textColor="@color/edit_text_color"
                 android:gravity="top|left"
                 android:inputType="textMultiLine" />
         </LinearLayout>
@@ -159,6 +160,7 @@
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:background="@drawable/rounded_button"
+                android:textColor="@color/white"
                 android:text="COMPLETE" />
 
         </LinearLayout>

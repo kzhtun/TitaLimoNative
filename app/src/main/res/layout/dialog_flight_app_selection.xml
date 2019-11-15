@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="18dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
+        android:text="Please select the application." />
+
+
+    <LinearLayout
+        android:id="@+id/app_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="16dp"
+            android:layout_height="match_parent"></View>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btn_ichangi"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@mipmap/ichangi" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingTop="10dp"
+                android:text="iChangi" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="32dp"
+            android:layout_height="match_parent"></View>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btn_flight_rader"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@mipmap/flight_rader" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingTop="5dp"
+                android:text="FlightRadar24" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="32dp"
+            android:layout_height="match_parent"></View>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btn_flight_aware"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@mipmap/flight_aware" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingTop="5dp"
+                android:text="FlightAware" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="16dp"
+            android:layout_height="match_parent"></View>
+
+    </LinearLayout>
+
+</LinearLayout>

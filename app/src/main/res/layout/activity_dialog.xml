@@ -46,6 +46,7 @@
                     style="@style/cell_text_bold"
                     android:letterSpacing="0.2"
                     android:layout_weight="1"
+                    android:textColor="@color/white"
                     android:text="019299234"/>
 
                 <ImageView android:id="@+id/call1"
@@ -69,6 +70,7 @@
                     android:layout_height="wrap_content"
                     style="@style/cell_text_bold"
                     android:letterSpacing="0.2"
+                    android:textColor="@color/white"
                     android:layout_weight="1"
                     android:text="019299234"/>
 
@@ -93,7 +95,7 @@
                 android:id="@+id/btn_confirm"
                 android:layout_width="match_parent"
                 android:layout_height="42dp"
-
+                android:textColor="@color/white"
                 android:layout_weight="1"
                 android:background="@drawable/rounded_button_green"
                 android:textSize="12sp"
@@ -110,6 +112,7 @@
                 android:layout_height="42dp"
                 android:layout_weight="1"
                 android:background="@drawable/rounded_button_orange"
+                android:textColor="@color/white"
                 android:textSize="12sp"
                 android:textAllCaps="true"
                 android:text="Remind Later" />
