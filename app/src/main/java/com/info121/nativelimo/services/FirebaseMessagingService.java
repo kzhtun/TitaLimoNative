@@ -8,8 +8,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioAttributes;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.view.View;
 
 import com.google.firebase.messaging.RemoteMessage;
 import com.info121.nativelimo.R;
@@ -40,7 +42,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
         Uri soundUri = App.getNotificationSoundUri();
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NEW_CH)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.mipmap.my_limo_launcher)
                 .setContentTitle(title)
                 .setContentText(body)
                 .setAutoCancel(true)
@@ -83,6 +85,10 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
+
+
+
+
         if (remoteMessage.getData() != null) {
             if(remoteMessage.getData().get("action")==null){
                 showDialog(remoteMessage.getData().get("jobNo"),
@@ -118,7 +124,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
         Uri soundUri = App.getProminentSoundUri();
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NEW_CH)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.mipmap.my_limo_launcher)
                 .setContentTitle("My Coach")
                 .setContentText("A job has been alerted for your confirmation.")
                 .setAutoCancel(true)
@@ -186,6 +192,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     public void onSendError(String s, Exception e) {
         super.onSendError(s, e);
     }
+
 
 
 }

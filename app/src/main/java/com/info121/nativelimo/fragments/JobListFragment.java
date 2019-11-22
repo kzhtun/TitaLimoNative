@@ -25,7 +25,10 @@ import com.info121.nativelimo.models.JobRes;
 
 import org.greenrobot.eventbus.Subscribe;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -46,6 +49,9 @@ public class JobListFragment extends AbstractFragment {
 
     List<Job> mJobList = new ArrayList<>();
 
+    @BindView(R.id.list_date)
+    TextView mListDate;
+
     @BindView(R.id.no_data)
     TextView mNoData;
 
@@ -60,6 +66,8 @@ public class JobListFragment extends AbstractFragment {
     Context mContext = getActivity();
 
     String mCurrentTab = "";
+
+    String todayDate, tomorrowDate;
 
 
     public static JobListFragment newInstance(String param1) {
@@ -116,13 +124,17 @@ public class JobListFragment extends AbstractFragment {
     }
 
     private void getRelatedTabData() {
+
+
         switch (mCurrentTab) {
             case "TODAY": {
                 getTodayJobs();
+
             }
             break;
             case "TOMORROW": {
                 getTomorrowJobs();
+
             }
             break;
         }
@@ -148,12 +160,26 @@ public class JobListFragment extends AbstractFragment {
             }
         });
 
+
+        Calendar c = Calendar.getInstance();
+        System.out.println("Current time => " + c);
+
+        SimpleDateFormat df = new SimpleDateFormat("dd  MMM  yyyy");
+        todayDate = df.format(c.getTime());
+
+        c.add(Calendar.DATE, 1);
+        tomorrowDate = df.format(c.getTime());
+
+
+
         // Inflate the layout for this fragment
         return view;
     }
 
 
     private void getTodayJobs() {
+
+
         Call<JobRes> call = RestClient.COACH().getApiService().GetTodayJobs();
 
         call.enqueue(new Callback<JobRes>() {
@@ -161,6 +187,8 @@ public class JobListFragment extends AbstractFragment {
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
                 mSwipeLayout.setRefreshing(false);
                 mJobList = (List<Job>) response.body().getJobs();
+
+                mListDate.setText(todayDate);
 
                 if (mJobList != null)
                     if (mJobList.size() > 0)
@@ -186,6 +214,7 @@ public class JobListFragment extends AbstractFragment {
     }
 
     private void getTomorrowJobs() {
+
         Call<JobRes> call = RestClient.COACH().getApiService().GetTomorrowJobs();
 
         call.enqueue(new Callback<JobRes>() {
@@ -193,6 +222,8 @@ public class JobListFragment extends AbstractFragment {
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
                 mSwipeLayout.setRefreshing(false);
                 mJobList = (List<Job>) response.body().getJobs();
+
+                mListDate.setText(tomorrowDate);
 
                 if (mJobList != null)
                     if (mJobList.size() > 0)

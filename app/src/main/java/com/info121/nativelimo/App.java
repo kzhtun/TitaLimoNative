@@ -5,11 +5,13 @@ import android.content.Context;
 import android.location.Location;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.View;
 
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -30,10 +32,17 @@ public class App extends Application {
     public static String DEVICE_TYPE = "ANDROID";
     String TAG = "Application";
 
+    // DEV
+//    public static String CONST_REST_API_URL = "http://alexisinfo121.noip.me:83/RestAPITitanium/MyLimoService.svc/";
+//    public static String CONST_PDF_URL = "http://alexisinfo121.noip.me:83/iops/uploads/";
+//    public static String CONST_PHOTO_URL = "http://alexisinfo121.noip.me/IOPS/images/mycoachpics/";
 
-    public static String CONST_REST_API_URL = "http://alexisinfo121.noip.me:83/RestAPITitanium/MyLimoService.svc/";
-    public static String CONST_PDF_URL = "http://alexisinfo121.noip.me:83/iops/uploads/";
-    public static String CONST_PHOTO_URL = "http://alexisinfo121.noip.me/IOPS/images/mycoachpics/";
+
+    // Playstore
+    public static String CONST_REST_API_URL = "http://103.7.10.47/RestApiTitanium/MyLimoService.svc/";
+    public static String CONST_PDF_URL = "http://103.7.10.47/iops/uploads/";
+    public static String CONST_PHOTO_URL = "http://103.7.10.47/iops/images/limopics";
+
 
     public static String CONST_USER_NAME = "USER_NAME";
     public static String CONST_ALREADY_LOGIN = "ALREADY_LOGIN";
@@ -74,7 +83,7 @@ public class App extends Application {
 
     public static List<Job> jobList = new ArrayList<>();
 
-    // mcts server "124.6.61.70"
+
     // NEW SERVER
     public static final String FTP_URL = "103.7.10.47";
     public static final String FTP_USER = "info121";
@@ -119,6 +128,9 @@ public class App extends Application {
                         Log.e("TOKEN : " , FCM_TOKEN);
                     }
                 });
+
+
+
 
 
 //        File f = new File(Environment.getExternalStorageDirectory(), PHOTO_FOLDER);

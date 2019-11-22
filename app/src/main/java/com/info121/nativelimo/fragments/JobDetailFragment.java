@@ -85,6 +85,7 @@ public class JobDetailFragment extends AbstractFragment {
     private static final int REQUEST_NO_SHOW_CAMERA = 2002;
 
     Dialog dialog;
+    String mCurrentTab;
 
     @BindView(R.id.job_no)
     TextView mJobNo;
@@ -135,6 +136,16 @@ public class JobDetailFragment extends AbstractFragment {
     @BindView(R.id.itinerary)
     Button mItinerary;
 
+    @BindView(R.id.label_eta)
+    TextView mLabelETA;
+
+
+    @BindView(R.id.phone)
+    ImageView mPhone;
+
+    @BindView(R.id.sms)
+    ImageView mSMS;
+
 
     TextView photoLabel, signatureLabel, clear, done;
     ImageView addPhoto, passengerPhoto;
@@ -148,10 +159,11 @@ public class JobDetailFragment extends AbstractFragment {
     }
 
 
-    public static JobDetailFragment newInstance(Job job) {
+    public static JobDetailFragment newInstance(Job job, String currentTab) {
         JobDetailFragment fragment = new JobDetailFragment();
         Bundle args = new Bundle();
 
+       fragment.mCurrentTab = currentTab;
         fragment.job = job;
         fragment.setArguments(args);
 
@@ -842,6 +854,22 @@ public class JobDetailFragment extends AbstractFragment {
     }
 
     private void displayJobDetail() {
+
+        Log.e("Detail Fragment", mCurrentTab);
+
+        if(mCurrentTab.equalsIgnoreCase("HISTORY")){
+            mPhone.setVisibility(View.INVISIBLE);
+            mSMS.setVisibility(View.INVISIBLE);
+            mUpdateStatus.setVisibility(GONE);
+        }
+
+
+        mLabelETA.setText(
+                (job.getJobType().equalsIgnoreCase("ARRIVAL"))?
+                        "ETA" : "ETD"
+        );
+
+
         mJobNo.setText(job.getJobNo());
         mJobType.setText(job.getJobType());
         mJobStatus.setText(job.getJobStatus());

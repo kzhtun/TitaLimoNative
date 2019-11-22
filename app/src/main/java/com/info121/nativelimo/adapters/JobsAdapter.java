@@ -75,20 +75,35 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.ViewHolder> {
         final String jobNo = mJobList.get(i).getJobNo();
         final int index = i;
 
-        if (!mCurrentTab.equalsIgnoreCase("HISTORY"))
-            viewHolder.parent.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
 
-                    App.jobList = mJobList;
+        viewHolder.parent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                App.jobList = mJobList;
 
-                    Intent intent = new Intent(mContext, JobDetailActivity.class);
-                    intent.putExtra("jobNo", jobNo);
-                    intent.putExtra("index", index);
-                    mContext.startActivity(intent);
+                Intent intent = new Intent(mContext, JobDetailActivity.class);
+                intent.putExtra("jobNo", jobNo);
+                intent.putExtra("index", index);
+                intent.putExtra("currentTab", mCurrentTab);
+                mContext.startActivity(intent);
 
-                }
-            });
+            }
+        });
+
+//        if (!mCurrentTab.equalsIgnoreCase("HISTORY"))
+//            viewHolder.parent.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//
+//                    App.jobList = mJobList;
+//
+//                    Intent intent = new Intent(mContext, JobDetailActivity.class);
+//                    intent.putExtra("jobNo", jobNo);
+//                    intent.putExtra("index", index);
+//                    mContext.startActivity(intent);
+//
+//                }
+//            });
 
     }
 
