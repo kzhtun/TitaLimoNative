@@ -66,6 +66,9 @@ public class Job {
 	@SerializedName("File1")
 	private String file1;
 
+	@SerializedName("FileNo")
+	private String fileNo;
+
 	@SerializedName("Location")
 	private String location;
 
@@ -245,6 +248,22 @@ public class Job {
 		return location;
 	}
 
+	public String geteTA() {
+		return eTA;
+	}
+
+	public void seteTA(String eTA) {
+		this.eTA = eTA;
+	}
+
+	public String getFileNo() {
+		return fileNo;
+	}
+
+	public void setFileNo(String fileNo) {
+		this.fileNo = fileNo;
+	}
+
 	@Override
 	public String toString(){
 		return
@@ -270,6 +289,7 @@ public class Job {
 						",noShowRemarks = '" + noShowRemarks + '\'' +
 						",bookNo = '" + bookNo + '\'' +
 						",file1 = '" + file1 + '\'' +
+						",fileNo = '" + fileNo + '\'' +
 						",location = '" + location + '\'' +
 						"}";
 	}

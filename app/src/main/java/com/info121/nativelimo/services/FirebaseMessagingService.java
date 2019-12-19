@@ -86,9 +86,6 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
 
-
-
-
         if (remoteMessage.getData() != null) {
             if(remoteMessage.getData().get("action")==null){
                 showDialog(remoteMessage.getData().get("jobNo"),

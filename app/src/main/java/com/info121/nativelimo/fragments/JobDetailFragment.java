@@ -33,6 +33,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -62,6 +63,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -84,6 +87,8 @@ public class JobDetailFragment extends AbstractFragment {
     private static final int REQUEST_SHOW_CAMERA = 2001;
     private static final int REQUEST_NO_SHOW_CAMERA = 2002;
 
+    List<String> phoneList = new ArrayList<String>();
+
     Dialog dialog;
     String mCurrentTab;
 
@@ -104,10 +109,6 @@ public class JobDetailFragment extends AbstractFragment {
 
     @BindView(R.id.passenger)
     TextView mPassenger;
-
-    @BindView(R.id.mobile)
-    TextView mMobile;
-
 
     @BindView(R.id.flight_no)
     TextView mFlightNo;
@@ -139,12 +140,33 @@ public class JobDetailFragment extends AbstractFragment {
     @BindView(R.id.label_eta)
     TextView mLabelETA;
 
+    @BindView(R.id.label_flight_no)
+    TextView mLabelFlightNo;
 
-    @BindView(R.id.phone)
-    ImageView mPhone;
 
-    @BindView(R.id.sms)
-    ImageView mSMS;
+    @BindView(R.id.phone_layout1)
+    LinearLayout mPhoneLayout1;
+
+    @BindView(R.id.phone_layout2)
+    LinearLayout mPhoneLayout2;
+
+    @BindView(R.id.mobile1)
+    TextView mMobile1;
+
+    @BindView(R.id.mobile2)
+    TextView mMobile2;
+
+
+    @BindView(R.id.layout_flight)
+    LinearLayout mLayoutFlight;
+
+    @BindView(R.id.hs_view)
+    HorizontalScrollView mHSView;
+
+    @BindView(R.id.hs_root_layout)
+    LinearLayout mHSLayout;
+
+    View rootView;
 
 
     TextView photoLabel, signatureLabel, clear, done;
@@ -163,7 +185,7 @@ public class JobDetailFragment extends AbstractFragment {
         JobDetailFragment fragment = new JobDetailFragment();
         Bundle args = new Bundle();
 
-       fragment.mCurrentTab = currentTab;
+        fragment.mCurrentTab = currentTab;
         fragment.job = job;
         fragment.setArguments(args);
 
@@ -179,9 +201,9 @@ public class JobDetailFragment extends AbstractFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_job_detail, container, false);
+        rootView = inflater.inflate(R.layout.fragment_job_detail, container, false);
 
-        ButterKnife.bind(this, view);
+        ButterKnife.bind(this, rootView);
 
         if (job.getJobStatus().equalsIgnoreCase("JOB ASSIGNED")) {
             mAssignLayout.setVisibility(View.VISIBLE);
@@ -192,7 +214,7 @@ public class JobDetailFragment extends AbstractFragment {
         }
 
 
-        return view;
+        return rootView;
     }
 
     @OnClick(R.id.flight_no)
@@ -716,32 +738,47 @@ public class JobDetailFragment extends AbstractFragment {
     }
 
 
-    @OnClick(R.id.phone)
-    public void phoneOnClick() {
+    @OnClick(R.id.call1)
+    public void phone1OnClick() {
+        String phoneNo = phoneList.get(0);
+        Uri number = Uri.parse("tel:" + phoneNo);
+        Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
+        startActivity(callIntent);
 
-        if (job.getCustomerTel().length() > 0) {
-            String phoneNo = job.getCustomerTel();
-            Uri number = Uri.parse("tel:" + phoneNo);
-            Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
-            startActivity(callIntent);
-
-            Toast.makeText(getContext(), "Phone Call .... to  " + phoneNo, Toast.LENGTH_SHORT).show();
-        } else
-            Toast.makeText(getContext(), "There is no phone number", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Phone Call .... to  " + phoneNo, Toast.LENGTH_SHORT).show();
     }
 
-    @OnClick(R.id.sms)
-    public void smsOnClick() {
-        if (job.getCustomerTel().length() > 0) {
-            String phoneNo = job.getCustomerTel();
-            String msg = "";
-            Uri number = Uri.parse("sms:" + phoneNo);
-            Intent smsIntent = new Intent(Intent.ACTION_VIEW, number);
-            startActivity(smsIntent);
+    @OnClick(R.id.sms1)
+    public void sms1OnClick() {
+        String phoneNo = phoneList.get(0);
+        String msg = "";
+        Uri number = Uri.parse("sms:" + phoneNo);
+        Intent smsIntent = new Intent(Intent.ACTION_VIEW, number);
+        startActivity(smsIntent);
 
-            Toast.makeText(getContext(), "Send SMS .... to  " + phoneNo, Toast.LENGTH_SHORT).show();
-        } else
-            Toast.makeText(getContext(), "There is no phone number", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Send SMS .... to  " + phoneNo, Toast.LENGTH_SHORT).show();
+    }
+
+
+    @OnClick(R.id.call2)
+    public void phone2OnClick() {
+        String phoneNo = phoneList.get(1);
+        Uri number = Uri.parse("tel:" + phoneNo);
+        Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
+        startActivity(callIntent);
+
+        Toast.makeText(getContext(), "Phone Call .... to  " + phoneNo, Toast.LENGTH_SHORT).show();
+    }
+
+    @OnClick(R.id.sms2)
+    public void sms2OnClick() {
+        String phoneNo = phoneList.get(1);
+        String msg = "";
+        Uri number = Uri.parse("sms:" + phoneNo);
+        Intent smsIntent = new Intent(Intent.ACTION_VIEW, number);
+        startActivity(smsIntent);
+
+        Toast.makeText(getContext(), "Send SMS .... to  " + phoneNo, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -845,6 +882,20 @@ public class JobDetailFragment extends AbstractFragment {
         super.onViewCreated(view, savedInstanceState);
 
         displayJobDetail();
+
+
+
+    }
+
+
+    private void scrollActionButtons(final int buttonIndex){
+        rootView.post(new Runnable() {
+            @Override
+            public void run() {
+                Log.v("", "Left position of 12th child = " + mHSLayout.getChildAt(buttonIndex).getLeft());
+                mHSView.smoothScrollTo(mHSLayout.getChildAt(buttonIndex).getLeft(), 0);
+            }
+        });
     }
 
 
@@ -857,17 +908,85 @@ public class JobDetailFragment extends AbstractFragment {
 
         Log.e("Detail Fragment", mCurrentTab);
 
-        if(mCurrentTab.equalsIgnoreCase("HISTORY")){
-            mPhone.setVisibility(View.INVISIBLE);
-            mSMS.setVisibility(View.INVISIBLE);
+
+        if (job.getCustomerTel().trim().length() > 0) {
+            String p[] = job.getCustomerTel().trim().split("/");
+            for (String s : p) {
+                phoneList.add(s.trim());
+            }
+        }
+
+        if (phoneList.size() == 0) {
+            mPhoneLayout1.setVisibility(View.GONE);
+            mPhoneLayout2.setVisibility(View.GONE);
+        }
+
+        if (phoneList.size() == 1) {
+            mPhoneLayout1.setVisibility(View.VISIBLE);
+            mPhoneLayout2.setVisibility(View.GONE);
+
+            mMobile1.setText(phoneList.get(0));
+        }
+
+        if (phoneList.size() == 2) {
+            mPhoneLayout1.setVisibility(View.VISIBLE);
+            mPhoneLayout2.setVisibility(View.VISIBLE);
+
+            mMobile1.setText(phoneList.get(0));
+            mMobile2.setText(phoneList.get(1));
+        }
+
+
+        if (mCurrentTab.equalsIgnoreCase("HISTORY")) {
+
+            mPhoneLayout1.setVisibility(GONE);
+            mPhoneLayout2.setVisibility(GONE);
+
             mUpdateStatus.setVisibility(GONE);
         }
 
 
+        // UAE
+        if (job.getJobType().equalsIgnoreCase("UAE")) {
+            mLabelFlightNo.setText("FILE NO");
+            mFlightNo.setText(job.getFileNo());
+
+            mLabelETA.setVisibility(GONE);
+            mETA.setVisibility(GONE);
+        } else {
+            mLabelFlightNo.setText("FLIGHT NO");
+            mFlightNo.setText(job.getFlight());
+
+            mLabelETA.setVisibility(View.VISIBLE);
+            mETA.setVisibility(View.VISIBLE);
+        }
+
+
+        // DISPOSAL & FLIGHT NO NULL?
+        // UAE
+        if (job.getJobType().equalsIgnoreCase("DISPOSAL") && job.getFlight().length() == 0) {
+            mLayoutFlight.setVisibility(GONE);
+
+            mLabelFlightNo.setVisibility(GONE);
+            mFlightNo.setVisibility(GONE);
+
+            mLabelETA.setVisibility(GONE);
+            mETA.setVisibility(GONE);
+        }
+
+
+        // ARRIVAL
         mLabelETA.setText(
-                (job.getJobType().equalsIgnoreCase("ARRIVAL"))?
+                (job.getJobType().
+                        equalsIgnoreCase("ARRIVAL")) ?
                         "ETA" : "ETD"
         );
+
+
+        // Set Mobile Numbers
+
+
+        //  mMobile.setText(job.getCustomerTel());
 
 
         mJobNo.setText(job.getJobNo());
@@ -876,14 +995,16 @@ public class JobDetailFragment extends AbstractFragment {
         mDate.setText(job.getUsageDate());
         mTime.setText(job.getPickUpTime());
         mPassenger.setText(job.getCustomer());
-        mMobile.setText(job.getCustomerTel());
-        mFlightNo.setText(job.getFlight());
+
+
         mETA.setText(job.getETA());
         mPickup.setText(job.getPickUp());
         mDropOff.setText(job.getDestination());
         mRemarks.setText(job.getRemarks());
 
-        mItinerary.setVisibility((job.getFile1().isEmpty()) ? GONE : View.VISIBLE);
+        mItinerary.setVisibility((job.getFile1().
+
+                isEmpty()) ? GONE : View.VISIBLE);
     }
 
     @OnClick(R.id.itinerary)

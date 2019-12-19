@@ -6,9 +6,9 @@ android {
     buildToolsVersion "29.0.0"
     defaultConfig {
         applicationId "com.info121.nativelimo"
-        minSdkVersion 19
+        minSdkVersion 18
         targetSdkVersion 28
-        versionCode 4
+        versionCode 5
         versionName "1.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
