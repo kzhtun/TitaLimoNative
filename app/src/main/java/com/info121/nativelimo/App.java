@@ -33,15 +33,15 @@ public class App extends Application {
     String TAG = "Application";
 
     // DEV
-//    public static String CONST_REST_API_URL = "http://alexisinfo121.noip.me:83/RestAPITitanium/MyLimoService.svc/";
-//    public static String CONST_PDF_URL = "http://alexisinfo121.noip.me:83/iops/uploads/";
-//    public static String CONST_PHOTO_URL = "http://alexisinfo121.noip.me/IOPS/images/mycoachpics/";
+    public static String CONST_REST_API_URL = "http://alexisinfo121.noip.me:83/RestAPITitanium/MyLimoService.svc/";
+    public static String CONST_PDF_URL = "http://alexisinfo121.noip.me:83/iops/uploads/";
+    public static String CONST_PHOTO_URL = "http://alexisinfo121.noip.me/IOPS/images/mycoachpics/";
 
 
     // Playstore
-    public static String CONST_REST_API_URL = "http://103.7.10.47/RestApiTitanium/MyLimoService.svc/";
-    public static String CONST_PDF_URL = "http://103.7.10.47/iops/uploads/";
-    public static String CONST_PHOTO_URL = "http://103.7.10.47/iops/images/limopics";
+//    public static String CONST_REST_API_URL = "http://103.7.10.47/RestApiTitanium/MyLimoService.svc/";
+//    public static String CONST_PDF_URL = "http://103.7.10.47/iops/uploads/";
+//    public static String CONST_PHOTO_URL = "http://103.7.10.47/iops/images/limopics";
 
 
     public static String CONST_USER_NAME = "USER_NAME";
@@ -59,7 +59,7 @@ public class App extends Application {
     public static String deviceID = "00000";
     public static String authToken = "00000";
 
-    public static long timerDelay = 60000;
+    public static long timerDelay = 6000;
     public static Location location;
     public static String fullAddress = "";
     public static int gpsStatus = 0;

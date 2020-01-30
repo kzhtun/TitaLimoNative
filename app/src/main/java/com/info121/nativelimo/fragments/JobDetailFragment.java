@@ -64,6 +64,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
@@ -128,12 +129,6 @@ public class JobDetailFragment extends AbstractFragment {
     @BindView(R.id.assign_layout)
     LinearLayout mAssignLayout;
 
-    @BindView(R.id.update_layout)
-    LinearLayout mUpdateLayout;
-
-    @BindView(R.id.update_status)
-    Button mUpdateStatus;
-
     @BindView(R.id.itinerary)
     Button mItinerary;
 
@@ -156,6 +151,23 @@ public class JobDetailFragment extends AbstractFragment {
     @BindView(R.id.mobile2)
     TextView mMobile2;
 
+    @BindView(R.id.no_adult)
+    TextView mNoOfAdult;
+
+    @BindView(R.id.no_child)
+    TextView mNoOfChild;
+
+    @BindView(R.id.no_infant)
+    TextView mNoOfInfant;
+
+    @BindView(R.id.layout_pax)
+    LinearLayout mLayoutPax;
+
+    @BindView(R.id.divider_pax)
+    View mDividerPax;
+
+    @BindView(R.id.vehicle_type)
+    TextView mVehicleType;
 
     @BindView(R.id.layout_flight)
     LinearLayout mLayoutFlight;
@@ -166,8 +178,31 @@ public class JobDetailFragment extends AbstractFragment {
     @BindView(R.id.hs_root_layout)
     LinearLayout mHSLayout;
 
-    View rootView;
+    @BindView(R.id.confirm)
+    Button mActionConfirm;
 
+    @BindView(R.id.otw)
+    Button mActionOTW;
+
+    @BindView(R.id.os)
+    Button mActionOS;
+
+    @BindView(R.id.pob)
+    Button mActionPOB;
+
+    @BindView(R.id.pns)
+    Button mActionPNS;
+
+    @BindView(R.id.pns1)
+    Button mActionPNS1;
+
+    @BindView(R.id.complete)
+    Button mActionComplete;
+
+
+    int bWidth, bHeight, bPadding;
+
+    View rootView;
 
     TextView photoLabel, signatureLabel, clear, done;
     ImageView addPhoto, passengerPhoto;
@@ -189,12 +224,15 @@ public class JobDetailFragment extends AbstractFragment {
         fragment.job = job;
         fragment.setArguments(args);
 
+
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
     }
 
     @Override
@@ -207,14 +245,25 @@ public class JobDetailFragment extends AbstractFragment {
 
         if (job.getJobStatus().equalsIgnoreCase("JOB ASSIGNED")) {
             mAssignLayout.setVisibility(View.VISIBLE);
-            mUpdateLayout.setVisibility(GONE);
+            mHSView.setVisibility(GONE);
         } else {
             mAssignLayout.setVisibility(GONE);
-            mUpdateLayout.setVisibility(View.VISIBLE);
+            mHSView.setVisibility(View.VISIBLE);
         }
 
+        setActionButtonsListener();
+        changeCurrentStatusButton();
 
         return rootView;
+    }
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        displayJobDetail();
+        changeCurrentStatusButton();
     }
 
     @OnClick(R.id.flight_no)
@@ -232,111 +281,155 @@ public class JobDetailFragment extends AbstractFragment {
         showNavAppSelectionDialog(App.location.getLatitude(), App.location.getLongitude(), job.getDestination());
     }
 
-    @OnClick(R.id.update_status)
-    public void updateStatusOnClick() {
 
-        App.fullAddress = (App.fullAddress.isEmpty()) ? " " : App.fullAddress;
+    private void setButtonWidth() {
 
-        dialog = new Dialog(getContext());
+//        Rect displayRectangle = new Rect();
+//        Window window = getActivity().getWindow();
+//        window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
+//
+//        bPadding = Util.convertDpToPx(16) * 3 ;
+//        bWidth = (displayRectangle.width() - bPadding) / 2;
+//        bHeight = Util.convertDpToPx(42);
+//
+//        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(bWidth, bHeight);
+//        params.setMargins(16, 0, 16, 0 );
+//
+//
+//        mActionConfirm.setLayoutParams(params);
+//        mActionOTW.setLayoutParams(params);
+//        mActionOS.setLayoutParams(params);
+//        mActionPOB.setLayoutParams(params);
+//        mActionPNS.setLayoutParams(params);
+//        mActionComplete.setLayoutParams(params);
+//        mActionPNS1.setLayoutParams(params);
 
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        dialog.setContentView(R.layout.dialog_update_job);
-        dialog.setTitle("");
+    }
 
-        LinearLayout confirm = dialog.findViewById(R.id.confirm);
-        LinearLayout otw = dialog.findViewById(R.id.otw);
-        LinearLayout onSite = dialog.findViewById(R.id.on_site);
-        LinearLayout pob = dialog.findViewById(R.id.pob);
-        LinearLayout pns = dialog.findViewById(R.id.pns);
-        LinearLayout cmpl = dialog.findViewById(R.id.cmpl);
+    private void changeCurrentStatusButton() {
+
+
+        //   mActionOTW.setWidth((int)( displayRectangle.width() ));
+
+
+        mActionConfirm.setVisibility(View.VISIBLE);
+        mActionOTW.setVisibility(View.VISIBLE);
+        mActionOS.setVisibility(View.VISIBLE);
+        mActionPOB.setVisibility(View.VISIBLE);
+        mActionPNS.setVisibility(View.VISIBLE);
+        mActionComplete.setVisibility(View.VISIBLE);
+        mActionPNS1.setVisibility(GONE);
+
+        mActionConfirm.setBackgroundResource(R.drawable.rounded_button_grey);
+        mActionOTW.setBackgroundResource(R.drawable.rounded_button_grey);
+        mActionOS.setBackgroundResource(R.drawable.rounded_button_grey);
+        mActionPOB.setBackgroundResource(R.drawable.rounded_button_grey);
+        mActionPNS.setBackgroundResource(R.drawable.rounded_button_grey);
+        mActionPNS1.setBackgroundResource(R.drawable.rounded_button_grey);
+        mActionComplete.setBackgroundResource(R.drawable.rounded_button_grey);
 
 
         switch (job.getJobStatus().toUpperCase()) {
             case "CONFIRM":
-                changeUpdateButtonBackground(otw, true);
+                mActionConfirm.setVisibility(GONE);
+                mActionOTW.setBackgroundResource(R.drawable.rounded_button_green);
+                scrollActionButtons(1);
                 break;
 
             case "ON THE WAY":
-                changeUpdateButtonBackground(onSite, true);
+                mActionConfirm.setBackgroundResource(R.drawable.rounded_button_red);
+                mActionOTW.setVisibility(GONE);
+                mActionOS.setBackgroundResource(R.drawable.rounded_button_green);
+                scrollActionButtons(1);
                 break;
 
             case "ON SITE":
-                changeUpdateButtonBackground(pob, true);
+                mActionOTW.setBackgroundResource(R.drawable.rounded_button_red);
+                mActionOS.setVisibility(GONE);
+
+                mActionPOB.setBackgroundResource(R.drawable.rounded_button_green);
+                mActionPNS.setBackgroundResource(R.drawable.rounded_button_green);
+                scrollActionButtons(1);
                 break;
 
             case "PASSENGER ON BOARD":
-                changeUpdateButtonBackground(cmpl, true);
+                mActionOS.setBackgroundResource(R.drawable.rounded_button_red);
+                mActionPOB.setVisibility(GONE);
+                mActionPNS.setVisibility(GONE);
+                mActionPNS1.setVisibility(View.VISIBLE);
+
+                mActionComplete.setBackgroundResource(R.drawable.rounded_button_green);
+                scrollActionButtons(2);
                 break;
 
-//            case "PASSENGER NO SHOW":
-//                changeUpdateButtonBackground(cnpl, true);
-//                break;
+            case "PASSENGER NO SHOW":
+                mActionOS.setBackgroundResource(R.drawable.rounded_button_red);
+                mActionPNS.setVisibility(GONE);
 
-//            case "COMPLETE":
-//                changeUpdateButtonBackground(cnpl, true);
-//                break;
+                mActionComplete.setBackgroundResource(R.drawable.rounded_button_green);
+                scrollActionButtons(3);
+                break;
+
         }
 
-        confirm.setOnClickListener(new View.OnClickListener() {
+        setButtonWidth();
+    }
+
+    private void setActionButtonsListener() {
+
+        mActionConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 updateJobStatus("Confirm");
-                dialog.dismiss();
+
             }
         });
 
-        otw.setOnClickListener(new View.OnClickListener() {
+        mActionOTW.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 updateJobStatus("On The Way");
-                dialog.dismiss();
+
             }
         });
 
-        onSite.setOnClickListener(new View.OnClickListener() {
+        mActionOS.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 updateJobStatus("On Site");
-                dialog.dismiss();
+
             }
         });
 
-        pob.setOnClickListener(new View.OnClickListener() {
+        mActionPOB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
                 showPassengerOnBoardDialog();
 
             }
         });
 
-        pns.setOnClickListener(new View.OnClickListener() {
+        mActionPNS.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
                 showPassengerNoShowDialog();
             }
         });
 
-        cmpl.setOnClickListener(new View.OnClickListener() {
+        mActionPNS1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
+                showPassengerNoShowDialog();
+            }
+        });
+
+        mActionComplete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 showCompleteDialog();
             }
         });
-
-        dialog.show();
-
-        // call update driver location when dialog dismiss
-        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                callUpdateDriverLocation();
-            }
-        });
-
     }
 
     private void callUpdateDriverLocation() {
@@ -445,9 +538,10 @@ public class JobDetailFragment extends AbstractFragment {
         TextView time = dialog.findViewById(R.id.time);
         TextView location = dialog.findViewById(R.id.location);
 
-        date.setText(job.getUsageDate());
-        time.setText(job.getPickUpTime());
-        location.setText(job.getLocation());
+        date.setText(Util.convertDateToString(Calendar.getInstance().getTime(), "EEE, dd MMM yyyy "));
+        time.setText(Util.convertDateToString(Calendar.getInstance().getTime(), "hh:mm a"));
+
+        location.setText(App.fullAddress.replace( "#.#", ","));
 
         Button complete = dialog.findViewById(R.id.complete);
 
@@ -659,6 +753,8 @@ public class JobDetailFragment extends AbstractFragment {
     }
 
     private void callUpdateShowPassenger() {
+        App.fullAddress = (App.fullAddress.isEmpty()) ? " " : App.fullAddress;
+
         EditText remark = dialog.findViewById(R.id.remarks);
         Call<JobRes> call = RestClient.COACH().getApiService().UpdateShowConfirmJob(
                 job.getJobNo(),
@@ -685,6 +781,8 @@ public class JobDetailFragment extends AbstractFragment {
     }
 
     private void callUpdateNoShowPassenger() {
+        App.fullAddress = (App.fullAddress.isEmpty()) ? " " : App.fullAddress;
+
         EditText remark = dialog.findViewById(R.id.remarks);
         Call<JobRes> call = RestClient.COACH().getApiService().UpdateNoShowConfirmJob(
                 job.getJobNo(),
@@ -712,6 +810,8 @@ public class JobDetailFragment extends AbstractFragment {
     }
 
     private void callCompletedJob() {
+        App.fullAddress = (App.fullAddress.isEmpty()) ? " " : App.fullAddress;
+
         EditText remark = dialog.findViewById(R.id.remarks);
         Call<JobRes> call = RestClient.COACH().getApiService().UpdateCompletJob(
                 job.getJobNo(),
@@ -835,7 +935,6 @@ public class JobDetailFragment extends AbstractFragment {
 
     public void openCamera(final int requestCode, final String jobNo) {
 
-
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -855,40 +954,16 @@ public class JobDetailFragment extends AbstractFragment {
     }
 
 
-    private void changeUpdateButtonBackground(LinearLayout layout, boolean selected) {
-        final int sdk = android.os.Build.VERSION.SDK_INT;
-
-        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            layout.setBackgroundDrawable(ContextCompat.getDrawable(getContext(),
-                    selected ? R.drawable.rounded_button_orange : R.drawable.rounded_button
-            ));
-        } else {
-            layout.setBackground(ContextCompat.getDrawable(getContext(),
-                    selected ? R.drawable.rounded_button_orange : R.drawable.rounded_button));
-        }
-    }
-
     @Override
     public void setMenuVisibility(boolean menuVisible) {
         super.setMenuVisibility(menuVisible);
         if (menuVisible) {
 
         }
-
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        displayJobDetail();
-
-
-
     }
 
 
-    private void scrollActionButtons(final int buttonIndex){
+    private void scrollActionButtons(final int buttonIndex) {
         rootView.post(new Runnable() {
             @Override
             public void run() {
@@ -902,6 +977,7 @@ public class JobDetailFragment extends AbstractFragment {
     private void displayUpdateStatus(String status) {
         job.setJobStatus(status);
         displayJobDetail();
+        changeCurrentStatusButton();
     }
 
     private void displayJobDetail() {
@@ -942,14 +1018,40 @@ public class JobDetailFragment extends AbstractFragment {
             mPhoneLayout1.setVisibility(GONE);
             mPhoneLayout2.setVisibility(GONE);
 
-            mUpdateStatus.setVisibility(GONE);
+            mHSView.setVisibility(GONE);
         }
 
 
+        // PAX
+        int adult =Integer.parseInt( job.getNoOfAdult());
+        int child =Integer.parseInt( job.getNoOfChild());
+        int infant =Integer.parseInt( job.getNoOfInfant());
+
+        mNoOfAdult.setText(job.getNoOfAdult());
+        mNoOfChild.setText(job.getNoOfChild());
+        mNoOfInfant.setText(job.getNoOfInfant());
+
+        if(adult>0 || child>0 || infant >0){
+            mLayoutPax.setVisibility(View.VISIBLE);
+            mDividerPax.setVisibility(View.VISIBLE);
+
+
+        }else{
+            mLayoutPax.setVisibility(View.GONE);
+            mDividerPax.setVisibility(View.GONE);
+        }
+
         // UAE
-        if (job.getJobType().equalsIgnoreCase("UAE")) {
-            mLabelFlightNo.setText("FILE NO");
-            mFlightNo.setText(job.getFileNo());
+        if (job.getJobType().equalsIgnoreCase("MEDICAL")) {
+
+            if (job.getFileNo() != null && job.getFileNo().length() > 0) {
+                mLabelFlightNo.setText("FILE NO");
+                mFlightNo.setText(job.getFileNo());
+            } else {
+                mLayoutFlight.setVisibility(GONE);
+                mLabelFlightNo.setVisibility(GONE);
+                mFlightNo.setVisibility(GONE);
+            }
 
             mLabelETA.setVisibility(GONE);
             mETA.setVisibility(GONE);
@@ -983,6 +1085,10 @@ public class JobDetailFragment extends AbstractFragment {
         );
 
 
+        if (job.getJobType().equalsIgnoreCase("ARRIVAL") || job.getJobType().equalsIgnoreCase("DISPOSAL"))
+            mLabelETA.setText("ETA");
+
+
         // Set Mobile Numbers
 
 
@@ -1001,9 +1107,9 @@ public class JobDetailFragment extends AbstractFragment {
         mPickup.setText(job.getPickUp());
         mDropOff.setText(job.getDestination());
         mRemarks.setText(job.getRemarks());
+        mVehicleType.setText(job.getVehicleType());
 
         mItinerary.setVisibility((job.getFile1().
-
                 isEmpty()) ? GONE : View.VISIBLE);
     }
 
@@ -1059,6 +1165,9 @@ public class JobDetailFragment extends AbstractFragment {
     private void updateJobStatus(final String status) {
         App.fullAddress = (App.fullAddress.isEmpty()) ? " " : App.fullAddress;
 
+        Log.e("Address Update", App.fullAddress);
+
+
         Call<JobRes> call = RestClient.COACH().getApiService().UpdateJobStatus(
                 job.getJobNo(),
                 App.fullAddress,
@@ -1070,8 +1179,11 @@ public class JobDetailFragment extends AbstractFragment {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
                 Log.e("Update Job Successful", response.toString());
+
                 mAssignLayout.setVisibility(GONE);
-                mUpdateLayout.setVisibility(View.VISIBLE);
+                mHSView.setVisibility(View.VISIBLE);
+
+
                 Toast.makeText(getContext(), "Update Successful", Toast.LENGTH_SHORT).show();
 
                 displayUpdateStatus(status);

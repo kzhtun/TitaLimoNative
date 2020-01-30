@@ -143,7 +143,7 @@ public class SmartLocationService extends Service implements OnLocationUpdatedLi
            // App.fullAddress = "Kyaw Thu 20St"; //getCompleteAddressString(mLocation);
             App.fullAddress = getCompleteAddressString(mLocation).replace(",", "#.#");
 
-            Log.e("Address : " , getCompleteAddressString(mLocation));
+            Log.e("Address : " , App.fullAddress);
 
             // fake location
 //            mLocation.setLatitude(16.0000);

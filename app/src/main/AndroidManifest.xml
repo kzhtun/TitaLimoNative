@@ -21,11 +21,8 @@
         android:name="android.hardware.camera.autofocus"
         android:required="false" />
 
-
-
     <application
-        android:name="com.info121.nativelimo.App"
-        tools:replace="android:allowBackup"
+        android:name=".App"
         android:allowBackup="false"
         android:icon="@mipmap/my_limo_launcher"
         android:label="@string/app_name"
@@ -33,36 +30,35 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="android:allowBackup">
+        <activity android:name=".activities.NotifyActivity"></activity>
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@mipmap/my_limo_launcher" />
-
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/black" />
 
         <activity
-            android:name="com.info121.nativelimo.activities.DialogActivity"
+            android:name=".activities.DialogActivity"
             android:excludeFromRecents="true"
-
             android:theme="@style/Theme.Transparent" />
 
-        <service android:name="com.info121.nativelimo.services.ShowDialogService" />
-        <service android:name="com.info121.nativelimo.services.FirebaseMessagingService">
+        <service android:name=".services.ShowDialogService" />
+        <service android:name=".services.FirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service android:name="com.info121.nativelimo.services.SmartLocationService" />
+        <service android:name=".services.SmartLocationService" />
 
-
-        <activity android:name="com.info121.nativelimo.activities.ToneSelection" />
-        <activity android:name="com.info121.nativelimo.activities.JobDetailActivity"></activity>
-        <activity android:name="com.info121.nativelimo.activities.JobOverviewActivity" />
-        <activity android:name="com.info121.nativelimo.activities.LoginActivity" />
-        <activity android:name="com.info121.nativelimo.activities.MainActivity">
+        <activity android:name=".activities.ToneSelection" />
+        <activity android:name=".activities.JobDetailActivity" />
+        <activity android:name=".activities.JobOverviewActivity" />
+        <activity android:name=".activities.LoginActivity" />
+        <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

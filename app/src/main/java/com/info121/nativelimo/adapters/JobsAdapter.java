@@ -69,6 +69,8 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.ViewHolder> {
         viewHolder.passenger.setText(mJobList.get(i).getCustomer());
         viewHolder.mobile.setText(mJobList.get(i).getCustomerTel());
 
+        viewHolder.jobDate.setText(mJobList.get(i).getUsageDate() );
+
 
         //viewHolder.passenger.setText(mJobList.get(i).getJobNo());
 
@@ -89,6 +91,9 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.ViewHolder> {
 
             }
         });
+
+        if(mCurrentTab.equalsIgnoreCase("HISTORY") || mCurrentTab.equalsIgnoreCase("FUTURE"))
+            viewHolder.jobDate.setVisibility(View.VISIBLE);
 
 //        if (!mCurrentTab.equalsIgnoreCase("HISTORY"))
 //            viewHolder.parent.setOnClickListener(new View.OnClickListener() {
@@ -147,6 +152,9 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.ViewHolder> {
 
         @BindView(R.id.mobile)
         TextView mobile;
+
+        @BindView(R.id.job_date)
+        TextView jobDate;
 
         @BindView(R.id.main_layout)
         LinearLayout parent;

@@ -18,6 +18,7 @@ import com.info121.nativelimo.R;
 import com.info121.nativelimo.App;
 import com.info121.nativelimo.activities.DialogActivity;
 import com.info121.nativelimo.activities.JobOverviewActivity;
+import com.info121.nativelimo.activities.NotifyActivity;
 import com.info121.nativelimo.models.Action;
 
 import org.greenrobot.eventbus.EventBus;
@@ -33,7 +34,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     String NEW_CH = "";
 
     private void showNotification(String title, String body) {
-        OLD_CH  = App.getOldChannelId();
+        OLD_CH = App.getOldChannelId();
         NEW_CH = App.getNewChannelId();
 
         Intent intent = new Intent(this, JobOverviewActivity.class);
@@ -48,7 +49,6 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 .setAutoCancel(true)
                 .setSound(soundUri)
                 .setContentIntent(pendingIntent);
-
 
 
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -86,20 +86,49 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
 
+        //        Key .title = title, _
+//        Key .message = body, _
+//        Key .action = action, _
+//        Key .jobno = jobno, _
+//        Key .jobtype = jobtype, _
+//        Key .vehicletype = vehicletype, _
+//        Key .jobdate = jobdate, _
+//        Key .pickuptime = pickuptime, _
+//        Key .endtime = endtime, _
+//        Key .pickuppoint = pickuppoint, _
+//        Key .alightpoint = alightpoint, _
+//        Key .clientname = clientname, _
+//        Key .phone = phone _
+
+
         if (remoteMessage.getData() != null) {
-            if(remoteMessage.getData().get("action")==null){
+            if (remoteMessage.getData().get("action") == null) {
                 showDialog(remoteMessage.getData().get("jobNo"),
                         remoteMessage.getData().get("Name"),
                         remoteMessage.getData().get("phone"),
                         remoteMessage.getData().get("displayMsg")
                 );
-            }else{
-                showNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("message"));
-                EventBus.getDefault().post(new Action(remoteMessage.getData().get("action"),
-                        remoteMessage.getData().get("jobno")
-                        ));
+            } else {
 
-                EventBus.getDefault().postSticky("UPDATE_JOB_COUNT");
+                if (remoteMessage.getData().get("action").equalsIgnoreCase("Assign") || remoteMessage.getData().get("action").equalsIgnoreCase("Reassign")) {
+                    showNotifyJob(remoteMessage.getData().get("jobno"),
+                            remoteMessage.getData().get("jobtype"),
+                            remoteMessage.getData().get("jobdate"),
+                            remoteMessage.getData().get("pickuptime"),
+                            remoteMessage.getData().get("pickuppoint"),
+                            remoteMessage.getData().get("alightpoint"),
+                            remoteMessage.getData().get("clientname")
+                    );
+                }else {
+                    showNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("message"));
+                    //----------------------------------------------------------------------------------//
+
+                    EventBus.getDefault().post(new Action(remoteMessage.getData().get("action"),
+                            remoteMessage.getData().get("jobno")
+                    ));
+
+                    EventBus.getDefault().postSticky("UPDATE_JOB_COUNT");
+                }
             }
         }
 
@@ -109,7 +138,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
 
     public void showDialog(String jobNo, String name, String phone, String displayMessage) {
-        OLD_CH  = App.getOldChannelIdP();
+        OLD_CH = App.getOldChannelIdP();
         NEW_CH = App.getNewChannelIdP();
 
         Intent intent = new Intent(this, DialogActivity.class);
@@ -127,7 +156,6 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 .setAutoCancel(true)
                 .setSound(soundUri)
                 .setContentIntent(pendingIntent);
-
 
 
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -175,6 +203,78 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         startActivity(intent);
     }
 
+    public void showNotifyJob(String jobNo, String jobType, String jobDate, String jobTime, String pickup, String dropoff, String clientName) {
+
+        // bundle
+        Bundle bundle = new Bundle();
+
+        bundle.putString("JOB_NO", jobNo);
+        bundle.putString("JOB_TYPE", jobType);
+        bundle.putString("JOB_DATE", jobDate);
+        bundle.putString("JOB_TIME", jobTime);
+        bundle.putString("PICKUP", pickup);
+        bundle.putString("DROPOFF", dropoff);
+        bundle.putString("CUST_NAME", clientName);
+
+
+        // -----------------------------------
+        OLD_CH = App.getOldChannelIdP();
+        NEW_CH = App.getNewChannelIdP();
+
+        Intent intent = new Intent(this, NotifyActivity.class);
+        //   intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        PendingIntent pendingIntent = PendingIntent.getService(this, 0 /* Request code */, intent,
+                PendingIntent.FLAG_ONE_SHOT);
+
+        Uri soundUri = App.getProminentSoundUri();
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NEW_CH)
+                .setSmallIcon(R.mipmap.my_limo_launcher)
+                .setContentTitle("My Coach")
+                .setContentText("A job has been alerted for your confirmation.")
+                .setAutoCancel(true)
+                .setSound(soundUri)
+                .setContentIntent(pendingIntent);
+
+
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            if (soundUri != null) {
+                // Changing Default mode of notification
+                notificationBuilder.setDefaults(Notification.DEFAULT_VIBRATE);
+                // Creating an Audio Attribute
+                AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .setUsage(AudioAttributes.USAGE_ALARM)
+                        .build();
+
+
+//                //it will delete existing channel if it exists
+                if (mNotificationManager.getNotificationChannel(OLD_CH) != null) {
+                    mNotificationManager.deleteNotificationChannel(OLD_CH);
+                }
+
+                // Creating Channel
+                NotificationChannel notificationChannel = new NotificationChannel(NEW_CH, NEW_CH, NotificationManager.IMPORTANCE_HIGH);
+
+                notificationChannel.enableLights(true);
+                notificationChannel.enableVibration(true);
+                notificationChannel.setSound(soundUri, audioAttributes);
+                mNotificationManager.createNotificationChannel(notificationChannel);
+            }
+        }
+
+        mNotificationManager.notify(0, notificationBuilder.build());
+
+        //mNotificationManager.cancel(0);
+
+        intent.putExtras(bundle);
+        // startService(intent);
+
+        startActivity(intent);
+    }
+
     @Override
     public void onDeletedMessages() {
         super.onDeletedMessages();
@@ -189,7 +289,6 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     public void onSendError(String s, Exception e) {
         super.onSendError(s, e);
     }
-
 
 
 }

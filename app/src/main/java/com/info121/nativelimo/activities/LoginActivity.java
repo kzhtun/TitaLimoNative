@@ -9,8 +9,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
@@ -38,6 +41,9 @@ import com.info121.nativelimo.services.SmartLocationService;
 import com.info121.nativelimo.utils.PrefDB;
 import com.info121.nativelimo.utils.Util;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -64,6 +70,9 @@ public class LoginActivity extends AbstractActivity {
 
     @BindView(R.id.ui_version)
     TextView mUiVersion;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,14 +104,18 @@ public class LoginActivity extends AbstractActivity {
 //
 //      //  }
 
+
+
+
     }
+
+
 
 
     @OnClick(R.id.login)
     public void loginOnClick(){
         mProgressBar.setVisibility(View.VISIBLE);
         callValidateDriver();
-
 //        showNotification("test", "blal ala alal a");
     }
 
@@ -117,9 +130,10 @@ public class LoginActivity extends AbstractActivity {
                     App.userName = mUserName.getText().toString();
                     App.deviceID = Util.getDeviceID(getApplicationContext());
                     App.authToken = response.body().getToken();
-                    App.timerDelay = 1000;
+                    App.timerDelay = 6000;
 
                     callUpdateDevice();
+
                 }else{
                     mUserName.setError("Wrong user name");
                     mUserName.requestFocus();
@@ -268,6 +282,8 @@ public class LoginActivity extends AbstractActivity {
 
 
     private void showOutdatedDialog() {
+        if(App.CONST_REST_API_URL.indexOf(":83")>0) return;
+
         AlertDialog dialog = new AlertDialog.Builder(mContext)
                 .setTitle(R.string.AppName)
                 .setMessage(R.string.message_version_outdated)

@@ -2,11 +2,14 @@ package com.info121.nativelimo.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
@@ -18,6 +21,7 @@ import com.info121.nativelimo.models.Song;
 import com.info121.nativelimo.utils.PrefDB;
 import com.info121.nativelimo.utils.SongLoader;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ToneSelection extends AppCompatActivity {
@@ -45,7 +49,7 @@ public class ToneSelection extends AppCompatActivity {
         initializeControls();
 
         SongLoader.getSongListFromLocal(ToneSelection.this);
-        mSongList = SongLoader.getSongList();
+        mSongList =  listRingtones(); //SongLoader.getSongList();
         songAdapter = new SongAdapter(mSongList, MODE);
 
         populateSongs();
@@ -119,6 +123,39 @@ public class ToneSelection extends AppCompatActivity {
         mRecyclerView.setAdapter(songAdapter);
 
         mProgressBar.setVisibility(View.GONE);
+    }
+
+
+    public List<Song> listRingtones() {
+        RingtoneManager manager = new RingtoneManager(this);
+        manager.setType(RingtoneManager.TYPE_NOTIFICATION);
+        // manager.setType(RingtoneManager.TYPE_RINGTONE);//For Get System Ringtone
+        Cursor cursor = manager.getCursor();
+
+        mSongList = new ArrayList<>();
+
+        while (cursor.moveToNext()) {
+            String id = cursor.getString(RingtoneManager.ID_COLUMN_INDEX);
+            String title = cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX);
+            String uri = cursor.getString(RingtoneManager.URI_COLUMN_INDEX);
+
+            Song song = new Song();
+
+            //song.setSongId((Long.parseLong(id));
+            song.setSongName(title);
+            song.setSongUri(manager.getRingtoneUri(cursor.getPosition()));
+
+            mSongList.add(song);
+
+            String ringtoneName= cursor.getString(cursor.getColumnIndex("title"));
+
+
+
+            Log.e("All Data", "getNotifications: "+ title+"-=---"+uri+"------"+ringtoneName);
+            // Do something with the title and the URI of ringtone
+        }
+
+        return mSongList;
     }
 
 }

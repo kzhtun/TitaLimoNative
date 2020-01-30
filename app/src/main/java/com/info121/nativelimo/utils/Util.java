@@ -10,11 +10,16 @@ import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
 import android.widget.Toast;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by KZHTUN on 7/20/2017.
@@ -97,8 +102,11 @@ public class Util {
         return versionName;
     }
 
+    public static int convertDpToPx(int dp) {
+        return Math.round(dp * (Resources.getSystem().getDisplayMetrics().xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
 
-    private int convertPxToDp(int px) {
+    public static int convertPxToDp(int px) {
         return Math.round(px / (Resources.getSystem().getDisplayMetrics().xdpi / DisplayMetrics.DENSITY_DEFAULT));
     }
 
@@ -108,6 +116,50 @@ public class Util {
             return str.replace(",", "###");
         else
             return " ";
+    }
+
+
+    public static long convertDateStringToInt(String dateString) {
+        long dateLong = 0L;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            Date date = sdf.parse(dateString);
+
+            dateLong = date.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return dateLong;
+    }
+
+    public static Date convertDateStringToDate(String dateString, String inputDateFormat) {
+
+        Date date = new Date();
+
+        SimpleDateFormat sdf = new SimpleDateFormat(inputDateFormat);
+        try {
+            date = sdf.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+
+        }
+        return date;
+    }
+
+    public static String convertLongDateToString(long date, String outputDateFormat) {
+        return DateFormat.format(outputDateFormat, new Date(date)).toString();
+    }
+
+    public static String convertDateToString(Date date, String outputDateFormat) {
+        return new SimpleDateFormat(outputDateFormat).format(date).toString();
+    }
+
+    public static float convertDpToPixel(float dp, Context context){
+        return dp * ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+    }
+
+    public static float convertPixelsToDp(float px, Context context){
+        return px / ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
     }
 
 

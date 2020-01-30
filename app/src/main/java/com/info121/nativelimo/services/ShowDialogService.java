@@ -31,6 +31,7 @@ public class ShowDialogService extends Service {
     public static final String NAME = "NAME";
     public static final String PHONE = "PHONE";
     public static final String MESSAGE = "MESSAGE";
+    public static final String ADDRESS = "ADDRESS";
 
 
     @Override

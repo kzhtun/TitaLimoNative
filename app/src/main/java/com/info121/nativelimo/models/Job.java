@@ -60,6 +60,15 @@ public class Job {
 	@SerializedName("NoShowRemarks")
 	private String noShowRemarks;
 
+	@SerializedName("NoofAdult")
+	private String noOfAdult;
+
+	@SerializedName("NoofChild")
+	private String noOfChild;
+
+	@SerializedName("NoofInfant")
+	private String noOfInfant;
+
 	@SerializedName("BookNo")
 	private String bookNo;
 
@@ -264,33 +273,59 @@ public class Job {
 		this.fileNo = fileNo;
 	}
 
+	public String getNoOfAdult() {
+		return noOfAdult;
+	}
+
+	public void setNoOfAdult(String noOfAdult) {
+		this.noOfAdult = noOfAdult;
+	}
+
+	public String getNoOfChild() {
+		return noOfChild;
+	}
+
+	public void setNoOfChild(String noOfChild) {
+		this.noOfChild = noOfChild;
+	}
+
+	public String getNoOfInfant() {
+		return noOfInfant;
+	}
+
+	public void setNoOfInfant(String noOfInfant) {
+		this.noOfInfant = noOfInfant;
+	}
+
 	@Override
-	public String toString(){
-		return
-				"Response{" +
-						"customer_Tel = '" + customerTel + '\'' +
-						",usageDate = '" + usageDate + '\'' +
-						",destination = '" + destination + '\'' +
-						",customer = '" + customer + '\'' +
-						",pickUp = '" + pickUp + '\'' +
-						",flight = '" + flight + '\'' +
-						",vehicleType = '" + vehicleType + '\'' +
-						",jobCat = '" + jobCat + '\'' +
-						",showRemarks = '" + showRemarks + '\'' +
-						",jobStatus = '" + jobStatus + '\'' +
-						",eTA = '" + eTA + '\'' +
-						",jobType = '" + jobType + '\'' +
-						",showPhoto = '" + showPhoto + '\'' +
-						",statusOrder = '" + statusOrder + '\'' +
-						",remarks = '" + remarks + '\'' +
-						",jobNo = '" + jobNo + '\'' +
-						",pickUpTime = '" + pickUpTime + '\'' +
-						",noShowPhoto = '" + noShowPhoto + '\'' +
-						",noShowRemarks = '" + noShowRemarks + '\'' +
-						",bookNo = '" + bookNo + '\'' +
-						",file1 = '" + file1 + '\'' +
-						",fileNo = '" + fileNo + '\'' +
-						",location = '" + location + '\'' +
-						"}";
+	public String toString() {
+		return "Job{" +
+				"customerTel='" + customerTel + '\'' +
+				", usageDate='" + usageDate + '\'' +
+				", destination='" + destination + '\'' +
+				", customer='" + customer + '\'' +
+				", pickUp='" + pickUp + '\'' +
+				", flight='" + flight + '\'' +
+				", vehicleType='" + vehicleType + '\'' +
+				", jobCat='" + jobCat + '\'' +
+				", showRemarks='" + showRemarks + '\'' +
+				", jobStatus='" + jobStatus + '\'' +
+				", eTA='" + eTA + '\'' +
+				", jobType='" + jobType + '\'' +
+				", showPhoto='" + showPhoto + '\'' +
+				", statusOrder='" + statusOrder + '\'' +
+				", remarks='" + remarks + '\'' +
+				", jobNo='" + jobNo + '\'' +
+				", pickUpTime='" + pickUpTime + '\'' +
+				", noShowPhoto='" + noShowPhoto + '\'' +
+				", noShowRemarks='" + noShowRemarks + '\'' +
+				", noOfAdult='" + noOfAdult + '\'' +
+				", noOfChild='" + noOfChild + '\'' +
+				", noOfInfant='" + noOfInfant + '\'' +
+				", bookNo='" + bookNo + '\'' +
+				", file1='" + file1 + '\'' +
+				", fileNo='" + fileNo + '\'' +
+				", location='" + location + '\'' +
+				'}';
 	}
 }

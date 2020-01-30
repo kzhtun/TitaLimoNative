@@ -2,10 +2,13 @@ package com.info121.nativelimo.adapters;
 
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -73,12 +76,15 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
         TextView songName, path;
         RadioButton select;
 
+        LinearLayout mainLayout;
+
         public ViewHolder(View itemView) {
             super(itemView);
 
             songName = (TextView) itemView.findViewById(R.id.song_title);
             path = (TextView) itemView.findViewById(R.id.song_path);
             select = (RadioButton) itemView.findViewById(R.id.select);
+            mainLayout = itemView.findViewById(R.id.select_layout);
 
             select.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -86,12 +92,21 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
                     lastIndex = getAdapterPosition();
                     notifyDataSetChanged();
 
+//                    if(MODE.equalsIgnoreCase("PROMINENT")){
+//                        prefDB.putString(App.CONST_PROMINENT_TONE, mSongs.get(lastIndex).getData());
+//                    }
+//
+//                    if(MODE.equalsIgnoreCase("NOTIFICATION")){
+//                        prefDB.putString(App.CONST_NOTIFICATION_TONE, mSongs.get(lastIndex).getData());
+//                    }
+
+
                     if(MODE.equalsIgnoreCase("PROMINENT")){
-                        prefDB.putString(App.CONST_PROMINENT_TONE, mSongs.get(lastIndex).getData());
+                        prefDB.putString(App.CONST_PROMINENT_TONE,   mSongs.get(lastIndex).getSongUri().toString());
                     }
 
                     if(MODE.equalsIgnoreCase("NOTIFICATION")){
-                        prefDB.putString(App.CONST_NOTIFICATION_TONE, mSongs.get(lastIndex).getData());
+                        prefDB.putString(App.CONST_NOTIFICATION_TONE, mSongs.get(lastIndex).getSongUri().toString());
                     }
 
                     Date now = new Date();
@@ -103,15 +118,20 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
                     prefDB.putString("OLD_CH_ID_P", prefDB.getString("NEW_CH_ID_P"));
                     prefDB.putString("NEW_CH_ID_P", CHANNEL_ID + "_P");
 
-                    Toast.makeText(mContext, "Set notification tone (" + mSongs.get(lastIndex) + ")" , Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Set notification tone (" + mSongs.get(lastIndex).getSongName() + ")" , Toast.LENGTH_SHORT).show();
                 }
             });
 
-            songName.setOnClickListener(new View.OnClickListener() {
+
+
+            mainLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Song song = mSongs.get(getAdapterPosition());
-                    playAudio(song.getData());
+                    //playAudio(song.getData());
+
+                    Ringtone r = RingtoneManager.getRingtone(mContext, song.getSongUri());
+                    r.play();
 
                 }
             });
