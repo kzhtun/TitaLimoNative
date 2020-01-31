@@ -131,8 +131,17 @@ public class JobDetailFragment extends AbstractFragment {
     @BindView(R.id.dropoff)
     TextView mDropOff;
 
+    @BindView(R.id.layout_remarks)
+    LinearLayout mLayoutRemarks;
+
     @BindView(R.id.remarks)
     TextView mRemarks;
+
+    @BindView(R.id.line_remarks)
+    View mLineRemarks;
+
+    @BindView(R.id.line_itinerary)
+    View mLineItinerary;
 
     @BindView(R.id.assign_layout)
     LinearLayout mAssignLayout;
@@ -1100,6 +1109,12 @@ public class JobDetailFragment extends AbstractFragment {
             mLabelETA.setText("ETA");
 
 
+        if(job.getRemarks() == null || job.getRemarks().length() == 0) {
+            mRemarks.setVisibility(GONE);
+            mLayoutRemarks.setVisibility(GONE);
+            mLineRemarks.setVisibility(GONE);
+        }
+
         // Set Mobile Numbers
 
 
@@ -1122,8 +1137,15 @@ public class JobDetailFragment extends AbstractFragment {
         mRemarks.setText(job.getRemarks());
         mVehicleType.setText(job.getVehicleType());
 
-        mItinerary.setVisibility((job.getFile1().
-                isEmpty()) ? GONE : View.VISIBLE);
+
+       if(job.getFile1().isEmpty()){
+           mItinerary.setVisibility(GONE);
+         //  mLineItinerary.setVisibility(GONE);
+       }else{
+           mItinerary.setVisibility(View.VISIBLE);
+         //  mLineItinerary.setVisibility(View.VISIBLE);
+       }
+
     }
 
     @OnClick(R.id.itinerary)
