@@ -54,10 +54,10 @@
         </service>
         <service android:name=".services.SmartLocationService" />
 
-        <activity android:name=".activities.ToneSelection" />
-        <activity android:name=".activities.JobDetailActivity" />
-        <activity android:name=".activities.JobOverviewActivity" />
-        <activity android:name=".activities.LoginActivity" />
+        <activity android:name=".activities.ToneSelection" android:configChanges="orientation|screenSize"/>
+        <activity android:name=".activities.JobDetailActivity" android:configChanges="orientation|screenSize"/>
+        <activity android:name=".activities.JobOverviewActivity" android:configChanges="orientation|screenSize" />
+        <activity android:name=".activities.LoginActivity" android:configChanges="orientation|screenSize"/>
         <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

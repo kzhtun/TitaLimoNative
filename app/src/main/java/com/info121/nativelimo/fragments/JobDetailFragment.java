@@ -57,6 +57,8 @@ import com.squareup.picasso.Picasso;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -113,6 +115,12 @@ public class JobDetailFragment extends AbstractFragment {
 
     @BindView(R.id.flight_no)
     TextView mFlightNo;
+
+    @BindView(R.id.file_no)
+    TextView mFileNo;
+
+    @BindView(R.id.label_file_no)
+    TextView mLabelFileNo;
 
     @BindView(R.id.eta)
     TextView mETA;
@@ -541,7 +549,7 @@ public class JobDetailFragment extends AbstractFragment {
         date.setText(Util.convertDateToString(Calendar.getInstance().getTime(), "EEE, dd MMM yyyy "));
         time.setText(Util.convertDateToString(Calendar.getInstance().getTime(), "hh:mm a"));
 
-        location.setText(App.fullAddress.replace( "#.#", ","));
+        location.setText(App.fullAddress.replace("#.#", ","));
 
         Button complete = dialog.findViewById(R.id.complete);
 
@@ -895,15 +903,15 @@ public class JobDetailFragment extends AbstractFragment {
                 ImageView passenger_photo = dialog.findViewById(R.id.passenger_photo);
                 passenger_photo.setImageBitmap(photo);
 
-                // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
+//                // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
+//                Uri tempUri = getImageUri(getActivity().getApplicationContext(), photo);
+//
+//                // CALL THIS METHOD TO GET THE ACTUAL PATH
+//                File finalFile = new File(getRealPathFromURI(getActivity().getApplicationContext(), tempUri));
+//
+//                InputStream inputStream = getActivity().getContentResolver().openInputStream(tempUri);
 
-                Uri tempUri = getImageUri(getActivity().getApplicationContext(), photo);
-
-                // CALL THIS METHOD TO GET THE ACTUAL PATH
-                File finalFile = new File(getRealPathFromURI(getActivity().getApplicationContext(), tempUri));
-
-                InputStream inputStream = getActivity().getContentResolver().openInputStream(tempUri);
-
+                InputStream inputStream = bitmap2InputStream(photo);
 
                 // FTP Uploading
                 FtpHelper.uploadTask async = new FtpHelper.uploadTask(getContext(), inputStream);
@@ -1014,53 +1022,56 @@ public class JobDetailFragment extends AbstractFragment {
 
 
         if (mCurrentTab.equalsIgnoreCase("HISTORY")) {
-
             mPhoneLayout1.setVisibility(GONE);
             mPhoneLayout2.setVisibility(GONE);
 
             mHSView.setVisibility(GONE);
         }
 
-
-        // PAX
-        int adult =Integer.parseInt( job.getNoOfAdult());
-        int child =Integer.parseInt( job.getNoOfChild());
-        int infant =Integer.parseInt( job.getNoOfInfant());
-
-        mNoOfAdult.setText(job.getNoOfAdult());
-        mNoOfChild.setText(job.getNoOfChild());
-        mNoOfInfant.setText(job.getNoOfInfant());
-
-        if(adult>0 || child>0 || infant >0){
-            mLayoutPax.setVisibility(View.VISIBLE);
-            mDividerPax.setVisibility(View.VISIBLE);
-
-
-        }else{
-            mLayoutPax.setVisibility(View.GONE);
-            mDividerPax.setVisibility(View.GONE);
-        }
-
         // UAE
         if (job.getJobType().equalsIgnoreCase("MEDICAL")) {
 
+            // File No Show/Hide
             if (job.getFileNo() != null && job.getFileNo().length() > 0) {
-                mLabelFlightNo.setText("FILE NO");
-                mFlightNo.setText(job.getFileNo());
+                mFileNo.setText(job.getFileNo());
+
             } else {
-                mLayoutFlight.setVisibility(GONE);
-                mLabelFlightNo.setVisibility(GONE);
-                mFlightNo.setVisibility(GONE);
+                mLabelFileNo.setVisibility(View.GONE);
+                mFileNo.setVisibility(View.GONE);
             }
 
-            mLabelETA.setVisibility(GONE);
-            mETA.setVisibility(GONE);
-        } else {
+//            mLayoutFlight.setVisibility(GONE);
+//            mLabelFlightNo.setVisibility(GONE);
+//            mFlightNo.setVisibility(GONE);
+//
+//            mLabelETA.setVisibility(GONE);
+//            mETA.setVisibility(GONE);
+
+        } else { // NOT UAE  (MEDICAL)
+
             mLabelFlightNo.setText("FLIGHT NO");
             mFlightNo.setText(job.getFlight());
 
             mLabelETA.setVisibility(View.VISIBLE);
             mETA.setVisibility(View.VISIBLE);
+
+
+            // PAX
+            int adult = Integer.parseInt(job.getNoOfAdult());
+            int child = Integer.parseInt(job.getNoOfChild());
+            int infant = Integer.parseInt(job.getNoOfInfant());
+
+            mNoOfAdult.setText(job.getNoOfAdult());
+            mNoOfChild.setText(job.getNoOfChild());
+            mNoOfInfant.setText(job.getNoOfInfant());
+
+            if (adult > 0 || child > 0 || infant > 0) {
+                mLayoutPax.setVisibility(View.VISIBLE);
+                mDividerPax.setVisibility(View.VISIBLE);
+            } else {
+                mLayoutPax.setVisibility(View.GONE);
+                mDividerPax.setVisibility(View.GONE);
+            }
         }
 
 
@@ -1101,6 +1112,8 @@ public class JobDetailFragment extends AbstractFragment {
         mDate.setText(job.getUsageDate());
         mTime.setText(job.getPickUpTime());
         mPassenger.setText(job.getCustomer());
+
+        mPassenger.setVisibility(View.VISIBLE);
 
 
         mETA.setText(job.getETA());
@@ -1465,13 +1478,15 @@ public class JobDetailFragment extends AbstractFragment {
 
             photo = getResizedBitmap(photo, 400);
 
-            // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
-            Uri tempUri = getImageUri(getContext(), photo);
+//            // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
+//            Uri tempUri = getImageUri(getContext(), photo);
+//
+//            // CALL THIS METHOD TO GET THE ACTUAL PATH
+//            File finalFile = new File(getRealPathFromURI(getContext(), tempUri));
+//
+//            InputStream inputStream = getContext().getContentResolver().openInputStream(tempUri);
 
-            // CALL THIS METHOD TO GET THE ACTUAL PATH
-            File finalFile = new File(getRealPathFromURI(getContext(), tempUri));
-
-            InputStream inputStream = getContext().getContentResolver().openInputStream(tempUri);
+            InputStream inputStream = bitmap2InputStream(photo);
 
             FtpHelper.uploadTask async = new FtpHelper.uploadTask(getActivity(), inputStream);
             async.execute(App.FTP_URL, App.FTP_USER, App.FTP_PASSWORD, App.FTP_DIR, job.getJobNo() + "_signature.jpg", job.getJobNo(), "SIGNATURE");   //Passing arguments to AsyncThread
@@ -1481,6 +1496,14 @@ public class JobDetailFragment extends AbstractFragment {
             Log.e("FTP Error : ", e.getLocalizedMessage().toString());
         }
     }
+
+
+    public static InputStream bitmap2InputStream(Bitmap bm) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        InputStream is = new ByteArrayInputStream(baos.toByteArray());
+        return is;
+    }/*from   ww w  .ja v a2 s .co  m*/
 
 
     public Bitmap getResizedBitmap(Bitmap image, int maxSize) {

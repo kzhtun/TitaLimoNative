@@ -62,7 +62,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int i) {
         holder.songName.setText(mSongs.get(i).getSongName());
-        holder.path.setText(mSongs.get(i).getData());
+        holder.path.setText(mSongs.get(i).getSongUri().toString());
 
         holder.select.setChecked(lastIndex == i);
     }
