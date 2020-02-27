@@ -62,12 +62,15 @@ public class FutureHistoryFragment extends Fragment {
     @BindView(R.id.pullToRefresh)
     SwipeRefreshLayout mSwipeLayout;
 
+    @BindView(R.id.from_date)
+    EditText mFromDate;
+
+    @BindView(R.id.to_date)
+    EditText mToDate;
 
     @BindView(R.id.passenger)
     EditText mPassenger;
 
-    @BindView(R.id.date)
-    EditText mDate;
 
     @BindView(R.id.sort_layout)
     LinearLayout mSortLayout;
@@ -75,6 +78,9 @@ public class FutureHistoryFragment extends Fragment {
 
     @BindView(R.id.sort_asc)
     RadioButton sortAsc;
+
+    @BindView(R.id.job_count)
+    TextView mJobCount;
 
     Context mContext = getActivity();
 
@@ -117,20 +123,32 @@ public class FutureHistoryFragment extends Fragment {
         }
     }
 
-    @OnFocusChange(R.id.date)
-    public void dateOnFocusChange(boolean focused) {
-        if (focused) showDateDialog();
+    @OnFocusChange(R.id.from_date)
+    public void fromDateOnFocusChange(boolean focused) {
+        if (focused) showDateDialog(mFromDate);
     }
 
-    @OnClick(R.id.date)
-    public void dateOnClick() {
-        showDateDialog();
+    @OnFocusChange(R.id.to_date)
+    public void toDateOnFocusChange(boolean focused) {
+        if (focused) showDateDialog(mToDate);
     }
 
-    private void showDateDialog() {
+    @OnClick(R.id.from_date)
+    public void fromDateOnClick() {
+        showDateDialog(mFromDate);
+    }
 
+    @OnClick(R.id.to_date)
+    public void toDateOnClick() {
+        showDateDialog(mToDate);
+    }
 
+//    @OnClick(R.id.date)
+//    public void dateOnClick() {
+//        showDateDialog();
+//    }
 
+    private void showDateDialog(final EditText target) {
         DatePickerDialog.OnDateSetListener dateListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear,
@@ -143,7 +161,7 @@ public class FutureHistoryFragment extends Fragment {
                 String myFormat = "dd MMM yyyy"; //In which you need put here
                 SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
-                mDate.setText(sdf.format(myCalendar.getTime()));
+                target.setText(sdf.format(myCalendar.getTime()));
             }
         };
 
@@ -163,11 +181,14 @@ public class FutureHistoryFragment extends Fragment {
 
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//
+//        mPassenger.setText("");
+//        mDate.setText("");
+//
+//    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -222,6 +243,8 @@ public class FutureHistoryFragment extends Fragment {
 
     @OnClick(R.id.search)
     public void searchOnClick() {
+        mSwipeLayout.setRefreshing(true);
+
         switch (mCurrentTab) {
             case "FUTURE": {
                 getFutureJobs();
@@ -234,6 +257,16 @@ public class FutureHistoryFragment extends Fragment {
         }
     }
 
+
+
+    @Override
+    public void setMenuVisibility(boolean menuVisible) {
+        super.setMenuVisibility(menuVisible);
+        if (menuVisible) {
+
+        }
+    }
+
     private void getFutureJobs() {
         String customer = " ";
 
@@ -242,10 +275,15 @@ public class FutureHistoryFragment extends Fragment {
         else
             customer = mPassenger.getText().toString();
 
-        if(mDate.getText().length() == 0)
-            mDate.setText(" ");
+        if(mFromDate.getText().length() == 0)
+            mFromDate.setText(" ");
 
-        Call<JobRes> call = RestClient.COACH().getApiService().GetFutureJobs(mDate.getText().toString(),
+        if(mToDate.getText().length() == 0)
+            mToDate.setText(" ");
+
+        Call<JobRes> call = RestClient.COACH().getApiService().GetFutureJobs(
+                mFromDate.getText().toString(),
+                mToDate.getText().toString(),
                 Util.replaceEscapeChr(customer),
                 sort
         );
@@ -255,6 +293,8 @@ public class FutureHistoryFragment extends Fragment {
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
                 mSwipeLayout.setRefreshing(false);
                 mJobList = (List<Job>) response.body().getJobs();
+
+                mJobCount.setText(String.valueOf(mJobList.size()) );
 
                 if (mJobList.size() > 0)
                     mNoData.setVisibility(View.GONE);
@@ -284,11 +324,15 @@ public class FutureHistoryFragment extends Fragment {
         else
             customer = mPassenger.getText().toString();
 
-        if(mDate.getText().length() == 0)
-            mDate.setText(" ");
+        if(mFromDate.getText().length() == 0)
+            mFromDate.setText(" ");
+
+        if(mToDate.getText().length() == 0)
+            mToDate.setText(" ");
 
         Call<JobRes> call = RestClient.COACH().getApiService().GetHistoryJobs(
-                mDate.getText().toString(),
+                mFromDate.getText().toString(),
+                mToDate.getText().toString(),
                 Util.replaceEscapeChr(customer),
                 sort
         );
@@ -298,6 +342,8 @@ public class FutureHistoryFragment extends Fragment {
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
                 mSwipeLayout.setRefreshing(false);
                 mJobList = (List<Job>) response.body().getJobs();
+
+                mJobCount.setText(String.valueOf(mJobList.size()) );
 
                 if (mJobList.size() > 0)
                     mNoData.setVisibility(View.GONE);

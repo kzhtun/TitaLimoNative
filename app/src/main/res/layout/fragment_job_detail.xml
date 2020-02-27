@@ -223,7 +223,7 @@
                         style="@style/cell_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="DL8779" />
+                        android:text="" />
 
                 </LinearLayout>
 
@@ -234,96 +234,11 @@
                 android:layout_height="20dp" />
 
 
-            <LinearLayout
-                android:id="@+id/phone_layout1"
+            <ListView
+                android:id="@+id/list_contact"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        style="@style/cell_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="MOBILE 1" />
-
-                    <TextView
-                        android:id="@+id/mobile1"
-                        style="@style/cell_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="0000000" />
-
-                </LinearLayout>
-
-                <ImageView
-                    android:id="@+id/call1"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_marginRight="8dp"
-                    android:src="@mipmap/ic_phone" />
-
-                <ImageView
-                    android:id="@+id/sms1"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_marginRight="8dp"
-                    android:src="@mipmap/ic_sms" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/phone_layout2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        style="@style/cell_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="MOBILE 2" />
-
-                    <TextView
-                        android:id="@+id/mobile2"
-                        style="@style/cell_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="0000000" />
-
-                </LinearLayout>
-
-                <ImageView
-                    android:id="@+id/call2"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_marginRight="8dp"
-                    android:src="@mipmap/ic_phone" />
-
-                <ImageView
-                    android:id="@+id/sms2"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_marginRight="8dp"
-                    android:src="@mipmap/ic_sms" />
-
-            </LinearLayout>
+                android:dividerHeight="1dp" />
 
             <View
                 android:id="@+id/divider_pax"
@@ -417,7 +332,7 @@
                 android:id="@+id/layout_flight"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -431,6 +346,7 @@
                         style="@style/cell_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
                         android:text="FLIGHT NO." />
 
                     <TextView
@@ -454,6 +370,7 @@
                         style="@style/cell_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
                         android:text="ETA" />
 
                     <TextView
@@ -557,7 +474,8 @@
             </LinearLayout>
 
 
-            <View android:id="@+id/line_remarks"
+            <View
+                android:id="@+id/line_remarks"
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
                 android:layout_marginTop="20dp"
@@ -588,7 +506,8 @@
 
             </LinearLayout>
 
-            <View android:id="@+id/line_itinerary"
+            <View
+                android:id="@+id/line_itinerary"
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
                 android:layout_marginTop="20dp"
@@ -607,123 +526,161 @@
 
         </LinearLayout>
 
-        <HorizontalScrollView
-            android:id="@+id/hs_view"
+        <!--        <HorizontalScrollView-->
+        <!--            android:id="@+id/hs_view"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_gravity="center_vertical"-->
+        <!--            android:fillViewport="true">-->
+
+        <!--            <LinearLayout-->
+        <!--                android:id="@+id/hs_root_layout"-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_gravity="center_vertical"-->
+        <!--                android:layout_marginTop="16dp"-->
+        <!--                android:layout_marginBottom="16dp"-->
+        <!--                android:orientation="horizontal"-->
+        <!--                android:paddingTop="6dp"-->
+        <!--                android:paddingBottom="6dp">-->
+
+        <!--                <Button-->
+        <!--                    android:id="@+id/confirm"-->
+        <!--                    android:layout_width="170dp"-->
+        <!--                    android:layout_height="42dp"-->
+        <!--                    android:layout_gravity="center"-->
+        <!--                    android:layout_marginRight="8dp"-->
+        <!--                    android:background="@drawable/rounded_button"-->
+        <!--                    android:gravity="center"-->
+        <!--                    android:paddingLeft="16dp"-->
+        <!--                    android:paddingRight="16dp"-->
+        <!--                    android:text="CONFIRMED"-->
+        <!--                    android:textColor="@color/white" />-->
+
+        <!--                <Button-->
+        <!--                    android:id="@+id/otw"-->
+        <!--                    android:layout_width="170dp"-->
+        <!--                    android:layout_height="42dp"-->
+        <!--                    android:layout_gravity="center"-->
+        <!--                    android:layout_marginLeft="8dp"-->
+        <!--                    android:layout_marginRight="8dp"-->
+        <!--                    android:background="@drawable/rounded_button"-->
+        <!--                    android:gravity="center"-->
+        <!--                    android:paddingLeft="16dp"-->
+        <!--                    android:paddingRight="16dp"-->
+        <!--                    android:text="ON THE WAY"-->
+        <!--                    android:textColor="@color/white" />-->
+
+        <!--                <Button-->
+        <!--                    android:id="@+id/os"-->
+        <!--                    android:layout_width="170dp"-->
+        <!--                    android:layout_height="42dp"-->
+        <!--                    android:layout_gravity="center"-->
+        <!--                    android:layout_marginLeft="8dp"-->
+        <!--                    android:layout_marginRight="8dp"-->
+        <!--                    android:background="@drawable/rounded_button"-->
+        <!--                    android:gravity="center"-->
+        <!--                    android:paddingLeft="16dp"-->
+        <!--                    android:paddingRight="16dp"-->
+        <!--                    android:text="ON SITE"-->
+        <!--                    android:textColor="@color/white" />-->
+
+        <!--                <Button-->
+        <!--                    android:id="@+id/pob"-->
+        <!--                    android:layout_width="170dp"-->
+        <!--                    android:layout_height="42dp"-->
+        <!--                    android:layout_gravity="center"-->
+        <!--                    android:layout_marginLeft="8dp"-->
+        <!--                    android:layout_marginRight="8dp"-->
+        <!--                    android:background="@drawable/rounded_button"-->
+        <!--                    android:gravity="center"-->
+        <!--                    android:text="PASSENGER ON BOARD"-->
+        <!--                    android:textColor="@color/white"-->
+        <!--                    android:textSize="12dp" />-->
+
+        <!--                <Button-->
+        <!--                    android:id="@+id/pns"-->
+        <!--                    android:layout_width="170dp"-->
+        <!--                    android:layout_height="42dp"-->
+        <!--                    android:layout_gravity="center"-->
+        <!--                    android:layout_marginLeft="8dp"-->
+        <!--                    android:layout_marginRight="8dp"-->
+        <!--                    android:background="@drawable/rounded_button"-->
+        <!--                    android:gravity="center"-->
+        <!--                    android:paddingLeft="16dp"-->
+        <!--                    android:paddingRight="16dp"-->
+        <!--                    android:text="NO SHOW"-->
+        <!--                    android:textColor="@color/white" />-->
+
+        <!--                <Button-->
+        <!--                    android:id="@+id/complete"-->
+        <!--                    android:layout_width="170dp"-->
+        <!--                    android:layout_height="42dp"-->
+        <!--                    android:layout_gravity="center"-->
+        <!--                    android:layout_marginLeft="8dp"-->
+        <!--                    android:layout_marginRight="8dp"-->
+        <!--                    android:background="@drawable/rounded_button"-->
+        <!--                    android:gravity="center"-->
+        <!--                    android:paddingLeft="16dp"-->
+        <!--                    android:paddingRight="16dp"-->
+        <!--                    android:text="COMPLETE"-->
+        <!--                    android:textColor="@color/white" />-->
+
+
+        <!--                <Button-->
+        <!--                    android:id="@+id/pns1"-->
+        <!--                    android:layout_width="match_parent"-->
+        <!--                    android:layout_height="42dp"-->
+        <!--                    android:layout_gravity="center"-->
+        <!--                    android:layout_marginLeft="8dp"-->
+        <!--                    android:background="@drawable/rounded_button"-->
+        <!--                    android:gravity="center"-->
+        <!--                    android:paddingLeft="16dp"-->
+        <!--                    android:paddingRight="16dp"-->
+        <!--                    android:text="NO SHOW"-->
+        <!--                    android:textColor="@color/white" />-->
+
+        <!--            </LinearLayout>-->
+
+        <!--        </HorizontalScrollView>-->
+
+        <LinearLayout
+            android:id="@+id/action_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:fillViewport="true">
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
 
-            <LinearLayout
-                android:id="@+id/hs_root_layout"
+            <Button
+                android:id="@+id/prev"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:orientation="horizontal"
-                android:paddingTop="6dp"
-                android:paddingBottom="6dp">
+                android:layout_height="42dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@drawable/rounded_button_outline_red"
+                android:drawableLeft="@mipmap/ic_prev_arrow"
+                android:paddingLeft="16dp"
+                android:paddingRight="32dp"
+                android:text="BACK"
+                android:textColor="@color/red" />
 
-                <Button
-                    android:id="@+id/confirm"
-                    android:layout_width="170dp"
-                    android:layout_height="42dp"
-                    android:layout_gravity="center"
-                    android:layout_marginRight="8dp"
-                    android:background="@drawable/rounded_button"
-                    android:gravity="center"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
-                    android:text="CONFIRMED"
-                    android:textColor="@color/white" />
+            <View
+                android:layout_width="16dp"
+                android:layout_height="16dp" />
 
-                <Button
-                    android:id="@+id/otw"
-                    android:layout_width="170dp"
-                    android:layout_height="42dp"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:background="@drawable/rounded_button"
-                    android:gravity="center"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
-                    android:text="ON THE WAY"
-                    android:textColor="@color/white" />
-
-                <Button
-                    android:id="@+id/os"
-                    android:layout_width="170dp"
-                    android:layout_height="42dp"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:background="@drawable/rounded_button"
-                    android:gravity="center"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
-                    android:text="ON SITE"
-                    android:textColor="@color/white" />
-
-                <Button
-                    android:id="@+id/pob"
-                    android:layout_width="170dp"
-                    android:layout_height="42dp"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:background="@drawable/rounded_button"
-                    android:gravity="center"
-                    android:text="PASSENGER ON BOARD"
-                    android:textColor="@color/white"
-                    android:textSize="12dp" />
-
-                <Button
-                    android:id="@+id/pns"
-                    android:layout_width="170dp"
-                    android:layout_height="42dp"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:background="@drawable/rounded_button"
-                    android:gravity="center"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
-                    android:text="NO SHOW"
-                    android:textColor="@color/white" />
-
-                <Button
-                    android:id="@+id/complete"
-                    android:layout_width="170dp"
-                    android:layout_height="42dp"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:background="@drawable/rounded_button"
-                    android:gravity="center"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
-                    android:text="COMPLETE"
-                    android:textColor="@color/white" />
-
-
-                <Button
-                    android:id="@+id/pns1"
-                    android:layout_width="match_parent"
-                    android:layout_height="42dp"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8dp"
-                    android:background="@drawable/rounded_button"
-                    android:gravity="center"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
-                    android:text="NO SHOW"
-                    android:textColor="@color/white" />
-
-            </LinearLayout>
-
-        </HorizontalScrollView>
+            <Button
+                android:id="@+id/next"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@drawable/rounded_button_green"
+                android:drawableRight="@mipmap/ic_next_arrow"
+                android:paddingLeft="32dp"
+                android:paddingRight="16dp"
+                android:text="NEXT"
+                android:textColor="@color/white" />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/assign_layout"
@@ -756,6 +713,10 @@
                 android:text="REJECT"
                 android:textColor="@color/white" />
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
 
     </LinearLayout>
 

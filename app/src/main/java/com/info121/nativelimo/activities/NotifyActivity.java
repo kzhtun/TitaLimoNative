@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
+import android.os.Build;
 import android.os.Handler;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,35 +17,40 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.adprogressbarlib.AdCircleProgress;
+import com.info121.nativelimo.AbstractActivity;
 import com.info121.nativelimo.App;
 import com.info121.nativelimo.R;
 import com.info121.nativelimo.api.RestClient;
+import com.info121.nativelimo.models.Action;
 import com.info121.nativelimo.models.JobRes;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import static android.view.View.GONE;
 
-public class NotifyActivity extends AppCompatActivity {
+public class NotifyActivity extends AbstractActivity {
     int i = 0;
 
     @BindView(R.id.pgb_progress)
     AdCircleProgress mProgress;
 
-    @BindView(R.id.job_type)
-    TextView mJobType;
-
-    @BindView(R.id.job_date)
-    TextView mJobDate;
+//    @BindView(R.id.job_type)
+//    TextView mJobType;
+//
+//    @BindView(R.id.job_date)
+//    TextView mJobDate;
 
     @BindView(R.id.pickup_time)
     TextView mPickupTime;
@@ -53,9 +61,10 @@ public class NotifyActivity extends AppCompatActivity {
     @BindView(R.id.dropoff)
     TextView mDropOff;
 
-    @BindView(R.id.client_name)
-    TextView mCustName;
+    @BindView(R.id.vehicle_type)
+    TextView mVehicleType;
 
+    AudioManager audioManager;
 
     ToneGenerator toneGen = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
     Timer t1 = new Timer();
@@ -67,6 +76,10 @@ public class NotifyActivity extends AppCompatActivity {
 //    AdCircleProgress mAddress;
 
     Context mContext = NotifyActivity.this;
+
+    String jobNo;
+
+    Vibrator vibrator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,25 +102,29 @@ public class NotifyActivity extends AppCompatActivity {
 //        bundle.putString("DROPOFF", dropoff);
 //        bundle.putString("CUST_NAME", clientName);
 
-        final String jobNo = intent.getExtras().getString("JOB_NO");
-        final String jobType = intent.getExtras().getString("JOB_TYPE");
-        final String jobDate = intent.getExtras().getString("JOB_DATE");
+        jobNo = intent.getExtras().getString("JOB_NO");
+    //    final String jobType = intent.getExtras().getString("JOB_TYPE");
+     //   final String jobDate = intent.getExtras().getString("JOB_DATE");
         final String jobTime = intent.getExtras().getString("JOB_TIME");
         final String pickup = intent.getExtras().getString("PICKUP");
         final String dropoff = intent.getExtras().getString("DROPOFF");
+        final String vehicleType = intent.getExtras().getString("VEHICLE_TYPE");
         final String custName = intent.getExtras().getString("CUST_NAME");
 
 
-        mJobType.setText(jobType);
-        mJobDate.setText(jobDate);
+//        mJobType.setText(jobType);
+//        mJobDate.setText(jobDate);
+        mVehicleType.setText(vehicleType);
         mPickupTime.setText(jobTime);
         mPickup.setText(pickup);
         mDropOff.setText(dropoff);
-        mCustName.setText(custName);
+       // mVehicleType.setText(custName);
 
 
         ButterKnife.bind(this);
 
+        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 
         final Timer t = new Timer();
         t.scheduleAtFixedRate(new TimerTask() {
@@ -115,55 +132,99 @@ public class NotifyActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     public void run() {
                         mProgress.setAdProgress(i);
+                        //vibrate();
                         i++;
+
                     }
                 });
             }
         }, 1000, 90);
 
+        vibrate();
 
         // toneGen.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD,50);
 
         mProgress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                updateJobStatus(jobNo, "Confirm");
-                callUpdateDriverLocation();
+                acceptJob();
             }
         });
 
+
+
+
+        App.notiActivityIsShowing = true;
         playBeep1();
+
+    }
+
+    @OnClick(R.id.root_layout)
+    public void rootLayoutOnClick(){
+        acceptJob();
     }
 
 
-    private  void playBeep1(){
+    private void acceptJob(){
+        updateJobStatus(jobNo, "Confirm");
+        callUpdateDriverLocation();
+    }
+
+
+    private void vibrate() {
+        if (Build.VERSION.SDK_INT >= 26) {
+            vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            vibrator.vibrate(200);
+        }
+
+    }
+
+    private void playAcceptBeep() {
+        toneGen.startTone(ToneGenerator.TONE_CDMA_ALERT_INCALL_LITE, 100);
+        toneGen.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 20);
+    }
+
+
+    private void playBeep1() {
         t1.scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        toneGen.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 250);
+
+                        playSound();
                         count--;
 
-                        if(count==0){
+                        if (count == 0) {
                             t1.cancel();
                             playBeep2();
                         }
+
+                        vibrate();
                     }
                 });
             }
         }, 500, 1000);
     }
 
-    private  void playBeep2(){
+    private void playBeep2() {
         t2.scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        toneGen.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 250);
+                        playSound();
                     }
                 });
+
+                vibrate();
+
             }
         }, 500, 500);
+    }
+
+    private void playSound() {
+        if (audioManager.getRingerMode() == AudioManager.MODE_NORMAL)
+            toneGen.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200);
     }
 
     @Override
@@ -172,6 +233,15 @@ public class NotifyActivity extends AppCompatActivity {
 
         t1.cancel();
         t2.cancel();
+
+        vibrator.cancel();
+
+        App.notiActivityIsShowing = false;
+
+        if (App.intents.size() > 0) {
+            startActivity(App.intents.get(0));
+            App.intents.remove(App.intents.get(0));
+        }
     }
 
     private void callUpdateDriverLocation() {
@@ -189,6 +259,7 @@ public class NotifyActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
                 Log.e("Update Driver Location", " Success");
+
 
             }
 
@@ -215,6 +286,8 @@ public class NotifyActivity extends AppCompatActivity {
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
                 Log.e("Update Job Successful", response.toString());
 
+                playAcceptBeep();
+
                 finish();
 
                 Toast.makeText(mContext, "Update Successful", Toast.LENGTH_SHORT).show();
@@ -228,4 +301,22 @@ public class NotifyActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Subscribe(sticky = false)
+    public void onEvent(Action action) {
+        //  Toast.makeText(getContext(), "Action Done", Toast.LENGTH_SHORT).show();
+
+        if (action.getAction().equalsIgnoreCase("Cancel Full Notification"))
+            if (action.getJobNo().equalsIgnoreCase(jobNo)) {
+                finish();
+            } else {
+                for (int i = 0; i < App.intents.size(); i++) {
+                    String jNo = App.intents.get(i).getStringExtra("JOB_NO");
+                    if (action.getJobNo().equalsIgnoreCase(jNo))
+                        App.intents.remove(App.intents.get(i));
+                }
+            }
+    }
+
+
 }

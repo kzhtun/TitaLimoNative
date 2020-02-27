@@ -115,7 +115,7 @@ public class JobOverviewActivity extends AbstractActivity {
                 else
                     initializeTabs(response.body().getJobcountlist());
 
-                Toast.makeText(mContext, "Update Job List", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(mContext, "Update Job List", Toast.LENGTH_SHORT).show();
             }
 
             @Override

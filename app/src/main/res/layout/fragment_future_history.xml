@@ -31,11 +31,11 @@
 
             <EditText
                 android:id="@+id/passenger"
+                style="@style/cell_text"
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
                 android:background="@drawable/rounded_edittext"
                 android:paddingLeft="10dp"
-                style="@style/cell_text"
                 android:textColor="@color/edit_text_color" />
 
         </LinearLayout>
@@ -50,6 +50,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_marginRight="3dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -58,10 +59,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="2dp"
                     android:layout_marginBottom="2dp"
-                    android:text="DATE" />
+                    android:text="FROM " />
 
                 <EditText
-                    android:id="@+id/date"
+                    android:id="@+id/from_date"
+                    style="@style/cell_text"
                     android:layout_width="match_parent"
                     android:layout_height="32dp"
                     android:background="@drawable/rounded_edittext"
@@ -70,9 +72,48 @@
                     android:inputType="none"
                     android:paddingLeft="10dp"
                     android:paddingRight="8dp"
-                    style="@style/cell_text"
                     android:textColor="@color/edit_text_color" />
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="3dp"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/cell_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:text="TO " />
+
+                <EditText
+                    android:id="@+id/to_date"
+                    style="@style/cell_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:background="@drawable/rounded_edittext"
+                    android:drawableRight="@mipmap/ic_calendar"
+                    android:focusable="false"
+                    android:inputType="none"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="8dp"
+                    android:textColor="@color/edit_text_color" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+
 
             <LinearLayout
                 android:id="@+id/sort_layout"
@@ -85,7 +126,6 @@
                     style="@style/cell_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
                     android:layout_marginBottom="2dp"
                     android:text="TIME SORTING" />
 
@@ -93,7 +133,6 @@
                     android:id="@+id/radio_group"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
                     android:orientation="horizontal">
 
                     <RadioButton
@@ -114,17 +153,65 @@
                         android:textSize="10sp" />
                 </RadioGroup>
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/search"
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginLeft="3dp"
+                    android:background="@drawable/rounded_button"
+                    android:text="SEARCH"
+                    android:textColor="@color/white" />
+
+            </LinearLayout>
         </LinearLayout>
 
-        <Button
-            android:id="@+id/search"
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="32dp"
-            android:layout_gravity="center"
+            android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:background="@drawable/rounded_button"
-            android:text="SEARCH"
-            android:textColor="@color/white" />
+            android:gravity="right"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:gravity="center_vertical|left"
+                android:letterSpacing="0.1"
+                android:paddingLeft="18dp"
+                android:text="TOTAL :"
+                android:textColor="@color/orange" />
+
+            <TextView
+                android:id="@+id/job_count"
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:gravity="center_vertical|left"
+                android:letterSpacing="0.1"
+                android:paddingLeft="12dp"
+                android:text="0"
+                android:textColor="@color/orange" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:layout_marginRight="12dp"
+                android:gravity="center_vertical|left"
+                android:letterSpacing="0.1"
+                android:paddingLeft="12dp"
+                android:text="JOBS"
+                android:textColor="@color/orange" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -144,6 +231,7 @@
             android:text="There is no jobs."
             android:textColor="@color/colorAccent" />
 
+
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/pullToRefresh"
             android:layout_width="match_parent"
@@ -154,7 +242,7 @@
                 android:id="@+id/rv_jobs"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="50dp"
                 android:layout_marginBottom="16dp"
                 android:clipToPadding="false"
                 android:paddingTop="16dp"

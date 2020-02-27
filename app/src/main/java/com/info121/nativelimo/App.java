@@ -2,6 +2,7 @@ package com.info121.nativelimo;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -22,6 +23,7 @@ import com.info121.nativelimo.models.Job;
 import com.info121.nativelimo.utils.PrefDB;
 
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,15 +35,15 @@ public class App extends Application {
     String TAG = "Application";
 
     // DEV
-    public static String CONST_REST_API_URL = "http://alexisinfo121.noip.me:83/RestAPITitanium/MyLimoService.svc/";
-    public static String CONST_PDF_URL = "http://alexisinfo121.noip.me:83/iops/uploads/";
-    public static String CONST_PHOTO_URL = "http://alexisinfo121.noip.me/IOPS/images/mycoachpics/";
+//    public static String CONST_REST_API_URL = "http://alexisinfo121.noip.me:83/RestAPITitanium/MyLimoService.svc/";
+//    public static String CONST_PDF_URL = "http://alexisinfo121.noip.me:83/iops/uploads/";
+//    public static String CONST_PHOTO_URL = "http://103.7.10.47/iops/images/limopics/";
 
 
     // Playstore
-//    public static String CONST_REST_API_URL = "http://103.7.10.47/RestApiTitanium/MyLimoService.svc/";
-//    public static String CONST_PDF_URL = "http://103.7.10.47/iops/uploads/";
-//    public static String CONST_PHOTO_URL = "http://103.7.10.47/iops/images/limopics";
+    public static String CONST_REST_API_URL = "http://103.7.10.47/RestApiTitanium/MyLimoService.svc/";
+    public static String CONST_PDF_URL = "http://103.7.10.47/iops/uploads/";
+    public static String CONST_PHOTO_URL = "http://103.7.10.47/iops/images/limopics/";
 
 
     public static String CONST_USER_NAME = "USER_NAME";
@@ -76,6 +78,9 @@ public class App extends Application {
     public static Uri DEFAULT_SOUND_URI = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
     public static Uri NOTIFICATION_SOUND_URI = null;
     public static Uri PROMINENT_SOUND_URI = null;
+
+    public static List<Intent> intents = new ArrayList<>();
+    public static boolean notiActivityIsShowing = false;
 
 
     public static String test = "";
@@ -141,8 +146,6 @@ public class App extends Application {
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
-
-
 
         // for notification tone
         prefDB = new PrefDB(getApplicationContext());

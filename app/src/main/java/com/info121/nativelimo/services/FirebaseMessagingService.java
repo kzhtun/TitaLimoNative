@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.view.View;
 
 import com.google.firebase.messaging.RemoteMessage;
@@ -100,9 +101,8 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 //        Key .clientname = clientname, _
 //        Key .phone = phone _
 
-
         if (remoteMessage.getData() != null) {
-            if (remoteMessage.getData().get("action") == null) {
+          if (remoteMessage.getData().get("action") == null) {
                 showDialog(remoteMessage.getData().get("jobNo"),
                         remoteMessage.getData().get("Name"),
                         remoteMessage.getData().get("phone"),
@@ -117,18 +117,21 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                             remoteMessage.getData().get("pickuptime"),
                             remoteMessage.getData().get("pickuppoint"),
                             remoteMessage.getData().get("alightpoint"),
-                            remoteMessage.getData().get("clientname")
+                            remoteMessage.getData().get("clientname"),
+                            remoteMessage.getData().get("vehicletype")
                     );
-                }else {
+                }else{
                     showNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("message"));
                     //----------------------------------------------------------------------------------//
-
                     EventBus.getDefault().post(new Action(remoteMessage.getData().get("action"),
                             remoteMessage.getData().get("jobno")
                     ));
 
-                    EventBus.getDefault().postSticky("UPDATE_JOB_COUNT");
+                    Log.e("FB Msg : " , remoteMessage.getData().toString());
+
                 }
+
+                EventBus.getDefault().postSticky("UPDATE_JOB_COUNT");
             }
         }
 
@@ -203,7 +206,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         startActivity(intent);
     }
 
-    public void showNotifyJob(String jobNo, String jobType, String jobDate, String jobTime, String pickup, String dropoff, String clientName) {
+    public void showNotifyJob(String jobNo, String jobType, String jobDate, String jobTime, String pickup, String dropoff, String clientName, String vehicleType) {
 
         // bundle
         Bundle bundle = new Bundle();
@@ -215,6 +218,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         bundle.putString("PICKUP", pickup);
         bundle.putString("DROPOFF", dropoff);
         bundle.putString("CUST_NAME", clientName);
+        bundle.putString("VEHICLE_TYPE", vehicleType);
 
 
         // -----------------------------------
@@ -272,7 +276,11 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         intent.putExtras(bundle);
         // startService(intent);
 
-        startActivity(intent);
+        if (App.notiActivityIsShowing)
+            App.intents.add(intent);
+        else
+            startActivity(intent);
+
     }
 
     @Override

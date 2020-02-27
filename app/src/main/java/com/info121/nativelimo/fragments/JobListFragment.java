@@ -61,6 +61,8 @@ public class JobListFragment extends AbstractFragment {
     @BindView(R.id.pullToRefresh)
     SwipeRefreshLayout mSwipeLayout;
 
+
+
     JobsAdapter jobsAdapter;
 
     Context mContext = getActivity();
@@ -100,7 +102,7 @@ public class JobListFragment extends AbstractFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        getRelatedTabData();
+        //getRelatedTabData();
     }
 
 
@@ -109,7 +111,7 @@ public class JobListFragment extends AbstractFragment {
         super.setUserVisibleHint(isVisibleToUser);
 
         if (isVisibleToUser) {
-
+            //getRelatedTabData();
         }
     }
 
@@ -118,25 +120,18 @@ public class JobListFragment extends AbstractFragment {
         super.setMenuVisibility(menuVisible);
         if (menuVisible) {
             getRelatedTabData();
-
-
         }
     }
 
     private void getRelatedTabData() {
-
-
         switch (mCurrentTab) {
-            case "TODAY": {
+            case "TODAY":
                 getTodayJobs();
+                break;
 
-            }
-            break;
-            case "TOMORROW": {
+            case "TOMORROW":
                 getTomorrowJobs();
-
-            }
-            break;
+                break;
         }
     }
 
@@ -171,7 +166,6 @@ public class JobListFragment extends AbstractFragment {
         tomorrowDate = df.format(c.getTime());
 
 
-
         // Inflate the layout for this fragment
         return view;
     }
@@ -200,7 +194,7 @@ public class JobListFragment extends AbstractFragment {
                 jobsAdapter.updateJobList(mJobList, mCurrentTab);
                 mRecyclerView.getAdapter().notifyDataSetChanged();
 
-                Toast.makeText(getContext(), "Today Jobs Updated", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(getContext(), "Today Jobs Updated", Toast.LENGTH_SHORT).show();
 
             }
 
@@ -235,7 +229,7 @@ public class JobListFragment extends AbstractFragment {
                 jobsAdapter.updateJobList(mJobList, mCurrentTab);
                 mRecyclerView.getAdapter().notifyDataSetChanged();
 
-                Toast.makeText(getContext(), "Tomorrow Jobs Updated", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(getContext(), "Tomorrow Jobs Updated", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -283,7 +277,6 @@ public class JobListFragment extends AbstractFragment {
     public void onEvent(Action action) {
         //  Toast.makeText(getContext(), "Action Done", Toast.LENGTH_SHORT).show();
         getRelatedTabData();
-
     }
 
 

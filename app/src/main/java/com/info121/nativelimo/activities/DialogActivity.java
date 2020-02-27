@@ -191,7 +191,8 @@ public class DialogActivity extends AppCompatActivity {
 
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.copyFrom(getWindow().getAttributes());
-        lp.width = (int) (displayRectangle.width() * 0.89f);
+     //   lp.width = (int) (displayRectangle.width() * 0.89f);
+        lp.width = (int) (displayRectangle.width() * 0.95f);
 
         getWindow().setAttributes(lp);
 

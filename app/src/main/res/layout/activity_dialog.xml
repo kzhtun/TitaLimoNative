@@ -1,122 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.dd.ShadowLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/rounded_layout">
-
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_margin="32dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/message"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:paddingBottom="10dp"
-            android:layout_marginBottom="8dp"
-            android:textColor="@color/aluminum"
-            android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. " />
-
-
-        <LinearLayout android:id="@+id/phone_layout_main"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:padding = "8dp"
-            android:orientation="vertical"
-            android:background="@drawable/rounded_layout_light">
-
-            <LinearLayout android:id="@+id/phone_layout1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="6dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/phone_no1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/cell_text_bold"
-                    android:letterSpacing="0.2"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:text="019299234"/>
-
-                <ImageView android:id="@+id/call1"
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
-                    android:layout_marginRight="8dp"
-                    android:src="@mipmap/ic_phone" />
-
-            </LinearLayout>
-
-            <LinearLayout android:id="@+id/phone_layout2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="6dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/phone_no2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/cell_text_bold"
-                    android:letterSpacing="0.2"
-                    android:textColor="@color/white"
-                    android:layout_weight="1"
-                    android:text="019299234"/>
-
-                <ImageView android:id="@+id/call2"
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
-                    android:layout_marginRight="8dp"
-                    android:src="@mipmap/ic_phone" />
-
-            </LinearLayout>
-
-        </LinearLayout>
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:background="@color/layout"
+    app:sl_cornerRadius="3dp"
+    app:sl_dx="5dp"
+    app:sl_dy="5dp"
+    app:sl_shadowColor="#AA000000"
+    app:sl_shadowRadius="25dp">
 
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:background="@drawable/rounded_layout_dark">
 
-            <Button
-                android:id="@+id/btn_confirm"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="42dp"
-                android:textColor="@color/white"
+                android:layout_height="wrap_content"
+                android:layout_margin="32dp"
                 android:layout_weight="1"
-                android:background="@drawable/rounded_button_green"
-                android:textSize="12sp"
-                android:textAllCaps="true"
-                android:text="Confirm" />
+                android:orientation="vertical">
 
-            <View
-                android:layout_width="6dp"
-                android:layout_height="match_parent"/>
+                <TextView
+                    android:id="@+id/message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingBottom="10dp"
+                    android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. "
+                    android:textColor="@color/aluminum" />
 
-            <Button
-                android:id="@+id/btn_remind_later"
-                android:layout_width="match_parent"
-                android:layout_height="42dp"
-                android:layout_weight="1"
-                android:background="@drawable/rounded_button_orange"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                android:textAllCaps="true"
-                android:text="Remind Later" />
+
+                <LinearLayout
+                    android:id="@+id/phone_layout_main"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/rounded_layout_light"
+                    android:orientation="vertical"
+                    android:padding="8dp">
+
+                    <LinearLayout
+                        android:id="@+id/phone_layout1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="6dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/phone_no1"
+                            style="@style/cell_text_bold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:letterSpacing="0.2"
+                            android:text="019299234"
+                            android:textColor="@color/white" />
+
+                        <ImageView
+                            android:id="@+id/call1"
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
+                            android:layout_marginRight="8dp"
+                            android:src="@mipmap/ic_phone" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/phone_layout2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="6dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/phone_no2"
+                            style="@style/cell_text_bold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:letterSpacing="0.2"
+                            android:text="019299234"
+                            android:textColor="@color/white" />
+
+                        <ImageView
+                            android:id="@+id/call2"
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
+                            android:layout_marginRight="8dp"
+                            android:src="@mipmap/ic_phone" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_confirm"
+                        android:layout_width="match_parent"
+                        android:layout_height="42dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/rounded_button_green"
+                        android:text="Confirm"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+
+                    <View
+                        android:layout_width="6dp"
+                        android:layout_height="match_parent" />
+
+                    <Button
+                        android:id="@+id/btn_remind_later"
+                        android:layout_width="match_parent"
+                        android:layout_height="42dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/rounded_button_orange"
+                        android:text="Remind Later"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+            </LinearLayout>
         </LinearLayout>
 
-    </LinearLayout>
-</LinearLayout>
+</com.dd.ShadowLayout>

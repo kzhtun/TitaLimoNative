@@ -48,11 +48,11 @@ public interface APIService {
     @GET("getTomorrowJobsList")
     Call<JobRes> GetTomorrowJobs();
 
-    @GET("getFutureJobsList/{date},{passenger},{sort}")
-    Call<JobRes> GetFutureJobs(@Path("date") String date, @Path("passenger") String passenger, @Path("sort") String sort);
+    @GET("getFutureJobsList/{fromDate},{toDate},{passenger},{sort}")
+    Call<JobRes> GetFutureJobs(@Path("fromDate") String fromDate,@Path("toDate") String toDate, @Path("passenger") String passenger, @Path("sort") String sort);
 
-    @GET("getHistoryJobsList/{date},{passenger},{addparam}")
-    Call<JobRes> GetHistoryJobs(@Path("date") String date, @Path("passenger") String passenger, @Path("addparam") String addparam);
+    @GET("getHistoryJobsList/{fromDate},{toDate},{passenger},{addparam}")
+    Call<JobRes> GetHistoryJobs(@Path("fromDate") String fromDate,@Path("toDate") String toDate, @Path("passenger") String passenger, @Path("addparam") String addparam);
 
     @GET("updateJobStatus/{jobno},{address},{status}")
     Call<JobRes> UpdateJobStatus(@Path("jobno") String jobno, @Path("address") String address, @Path("status") String status);

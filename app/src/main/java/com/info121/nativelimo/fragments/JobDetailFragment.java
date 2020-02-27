@@ -3,6 +3,10 @@ package com.info121.nativelimo.fragments;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,6 +18,9 @@ import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -23,7 +30,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -36,6 +45,8 @@ import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,16 +54,21 @@ import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.info121.nativelimo.R;
 import com.info121.nativelimo.AbstractFragment;
 import com.info121.nativelimo.App;
+import com.info121.nativelimo.activities.DialogActivity;
+import com.info121.nativelimo.activities.NotifyActivity;
+import com.info121.nativelimo.adapters.ContactAdapter;
 import com.info121.nativelimo.api.RestClient;
 import com.info121.nativelimo.models.Action;
 import com.info121.nativelimo.models.Job;
 import com.info121.nativelimo.models.JobRes;
+import com.info121.nativelimo.services.ShowDialogService;
 import com.info121.nativelimo.utils.FtpHelper;
 import com.info121.nativelimo.utils.GeocodingLocation;
 import com.info121.nativelimo.utils.Util;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -78,6 +94,7 @@ import retrofit2.Response;
 
 import static android.app.Activity.RESULT_OK;
 import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static com.info121.nativelimo.utils.FtpHelper.getImageUri;
 import static com.info121.nativelimo.utils.FtpHelper.getRealPathFromURI;
 
@@ -156,18 +173,6 @@ public class JobDetailFragment extends AbstractFragment {
     TextView mLabelFlightNo;
 
 
-    @BindView(R.id.phone_layout1)
-    LinearLayout mPhoneLayout1;
-
-    @BindView(R.id.phone_layout2)
-    LinearLayout mPhoneLayout2;
-
-    @BindView(R.id.mobile1)
-    TextView mMobile1;
-
-    @BindView(R.id.mobile2)
-    TextView mMobile2;
-
     @BindView(R.id.no_adult)
     TextView mNoOfAdult;
 
@@ -189,32 +194,46 @@ public class JobDetailFragment extends AbstractFragment {
     @BindView(R.id.layout_flight)
     LinearLayout mLayoutFlight;
 
-    @BindView(R.id.hs_view)
-    HorizontalScrollView mHSView;
+    @BindView(R.id.list_contact)
+    ListView mContactList;
 
-    @BindView(R.id.hs_root_layout)
-    LinearLayout mHSLayout;
+//    @BindView(R.id.hs_view)
+//    HorizontalScrollView mHSView;
+//
+//    @BindView(R.id.hs_root_layout)
+//    LinearLayout mHSLayout;
 
-    @BindView(R.id.confirm)
-    Button mActionConfirm;
 
-    @BindView(R.id.otw)
-    Button mActionOTW;
+    @BindView(R.id.action_layout)
+    LinearLayout mActionLayout;
 
-    @BindView(R.id.os)
-    Button mActionOS;
 
-    @BindView(R.id.pob)
-    Button mActionPOB;
+    @BindView(R.id.prev)
+    Button mActionPrev;
 
-    @BindView(R.id.pns)
-    Button mActionPNS;
+    @BindView(R.id.next)
+    Button mActionNext;
 
-    @BindView(R.id.pns1)
-    Button mActionPNS1;
+//    @BindView(R.id.confirm)
+//    Button mActionConfirm;
+//
+//    @BindView(R.id.otw)
+//    Button mActionOTW;
 
-    @BindView(R.id.complete)
-    Button mActionComplete;
+//    @BindView(R.id.os)
+//    Button mActionOS;
+//
+//    @BindView(R.id.pob)
+//    Button mActionPOB;
+//
+//    @BindView(R.id.pns)
+//    Button mActionPNS;
+//
+//    @BindView(R.id.pns1)
+//    Button mActionPNS1;
+
+//    @BindView(R.id.complete)
+//    Button mActionComplete;
 
 
     int bWidth, bHeight, bPadding;
@@ -222,9 +241,10 @@ public class JobDetailFragment extends AbstractFragment {
     View rootView;
 
     TextView photoLabel, signatureLabel, clear, done;
-    ImageView addPhoto, passengerPhoto;
+    ImageView addPhoto, passengerPhoto, signaturePhoto;
     SignaturePad signaturePad;
 
+    ToneGenerator toneGen = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
 
     Boolean visible = false;
 
@@ -245,11 +265,63 @@ public class JobDetailFragment extends AbstractFragment {
         return fragment;
     }
 
+//    public void showNotifyJob(String jobNo, String jobType, String jobDate, String jobTime, String pickup, String dropoff, String clientName) {
+//
+//        // bundle
+//        Bundle bundle = new Bundle();
+//
+//        bundle.putString("JOB_NO", jobNo);
+//        bundle.putString("JOB_TYPE", jobType);
+//        bundle.putString("JOB_DATE", jobDate);
+//        bundle.putString("JOB_TIME", jobTime);
+//        bundle.putString("PICKUP", pickup);
+//        bundle.putString("DROPOFF", dropoff);
+//        bundle.putString("CUST_NAME", clientName);
+//
+//        Intent intent = new Intent(getActivity(), NotifyActivity.class);
+//        intent.putExtras(bundle);
+//        startActivity(intent);
+//    }
+
+    public void showDialog(String jobNo, String name, String phone, String displayMessage) {
+
+
+        Intent intent = new Intent(getContext(), DialogActivity.class);
+        //   intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+
+        Bundle bundle = new Bundle();
+
+        bundle.putString(ShowDialogService.JOB_NO, jobNo);
+        bundle.putString(ShowDialogService.NAME, name);
+        bundle.putString(ShowDialogService.PHONE, phone);
+        bundle.putString(ShowDialogService.MESSAGE, displayMessage);
+
+        intent.putExtras(bundle);
+        // startService(intent);
+
+        startActivity(intent);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //TODO: remove when release.
 
+//        showDialog("9293",
+//                "Kyaw Zin",
+//                "029393/0293939",
+//        "Testing");
+
+//        showNotifyJob("77338",
+//                "MEDICAL",
+//                "12/12/2020",
+//                "12:00",
+//                "",
+//                "",
+//                "Kyaw");
     }
 
     @Override
@@ -261,15 +333,15 @@ public class JobDetailFragment extends AbstractFragment {
         ButterKnife.bind(this, rootView);
 
         if (job.getJobStatus().equalsIgnoreCase("JOB ASSIGNED")) {
-            mAssignLayout.setVisibility(View.VISIBLE);
-            mHSView.setVisibility(GONE);
+            mAssignLayout.setVisibility(VISIBLE);
+            mActionLayout.setVisibility(GONE);
         } else {
             mAssignLayout.setVisibility(GONE);
-            mHSView.setVisibility(View.VISIBLE);
+            mActionLayout.setVisibility(VISIBLE);
         }
 
         setActionButtonsListener();
-        changeCurrentStatusButton();
+        changeCurrentStatusButton(job.getJobStatus());
 
         return rootView;
     }
@@ -280,7 +352,7 @@ public class JobDetailFragment extends AbstractFragment {
         super.onViewCreated(view, savedInstanceState);
 
         displayJobDetail();
-        changeCurrentStatusButton();
+        changeCurrentStatusButton(job.getJobStatus());
     }
 
     @OnClick(R.id.flight_no)
@@ -324,129 +396,230 @@ public class JobDetailFragment extends AbstractFragment {
 
     }
 
-    private void changeCurrentStatusButton() {
+    private void changeCurrentStatusButton(String status) {
 
-
-        //   mActionOTW.setWidth((int)( displayRectangle.width() ));
-
-
-        mActionConfirm.setVisibility(View.VISIBLE);
-        mActionOTW.setVisibility(View.VISIBLE);
-        mActionOS.setVisibility(View.VISIBLE);
-        mActionPOB.setVisibility(View.VISIBLE);
-        mActionPNS.setVisibility(View.VISIBLE);
-        mActionComplete.setVisibility(View.VISIBLE);
-        mActionPNS1.setVisibility(GONE);
-
-        mActionConfirm.setBackgroundResource(R.drawable.rounded_button_grey);
-        mActionOTW.setBackgroundResource(R.drawable.rounded_button_grey);
-        mActionOS.setBackgroundResource(R.drawable.rounded_button_grey);
-        mActionPOB.setBackgroundResource(R.drawable.rounded_button_grey);
-        mActionPNS.setBackgroundResource(R.drawable.rounded_button_grey);
-        mActionPNS1.setBackgroundResource(R.drawable.rounded_button_grey);
-        mActionComplete.setBackgroundResource(R.drawable.rounded_button_grey);
-
-
-        switch (job.getJobStatus().toUpperCase()) {
+        switch (status.toUpperCase()) {
             case "CONFIRM":
-                mActionConfirm.setVisibility(GONE);
-                mActionOTW.setBackgroundResource(R.drawable.rounded_button_green);
-                scrollActionButtons(1);
+                mAssignLayout.setVisibility(GONE);
+                mActionLayout.setVisibility(VISIBLE);
+
+                mJobStatus.setText("Confirm");
+
+                mActionPrev.setVisibility(View.INVISIBLE);
+                mActionNext.setText("ON THE WAY");
                 break;
 
             case "ON THE WAY":
-                mActionConfirm.setBackgroundResource(R.drawable.rounded_button_red);
-                mActionOTW.setVisibility(GONE);
-                mActionOS.setBackgroundResource(R.drawable.rounded_button_green);
-                scrollActionButtons(1);
+                mJobStatus.setText("On The Way");
+
+                mActionPrev.setVisibility(VISIBLE);
+                mActionNext.setText("ON SITE");
                 break;
 
             case "ON SITE":
-                mActionOTW.setBackgroundResource(R.drawable.rounded_button_red);
-                mActionOS.setVisibility(GONE);
+                mJobStatus.setText("On Site");
 
-                mActionPOB.setBackgroundResource(R.drawable.rounded_button_green);
-                mActionPNS.setBackgroundResource(R.drawable.rounded_button_green);
-                scrollActionButtons(1);
+                mActionPrev.setVisibility(VISIBLE);
+                mActionNext.setText("POB");
                 break;
 
             case "PASSENGER ON BOARD":
-                mActionOS.setBackgroundResource(R.drawable.rounded_button_red);
-                mActionPOB.setVisibility(GONE);
-                mActionPNS.setVisibility(GONE);
-                mActionPNS1.setVisibility(View.VISIBLE);
+                mJobStatus.setText("Passenger On Board");
 
-                mActionComplete.setBackgroundResource(R.drawable.rounded_button_green);
-                scrollActionButtons(2);
+                mActionPrev.setVisibility(VISIBLE);
+                mActionNext.setText("COMPLETE");
                 break;
 
             case "PASSENGER NO SHOW":
-                mActionOS.setBackgroundResource(R.drawable.rounded_button_red);
-                mActionPNS.setVisibility(GONE);
+                mJobStatus.setText("Passenger No Show");
 
-                mActionComplete.setBackgroundResource(R.drawable.rounded_button_green);
-                scrollActionButtons(3);
+                mActionPrev.setVisibility(VISIBLE);
+                mActionNext.setText("NEXT");
                 break;
+//
+//            case "ON SITE":
+//                mActionOTW.setBackgroundResource(R.drawable.rounded_button_red);
+//                mActionOS.setVisibility(GONE);
+//
+//                mActionPOB.setBackgroundResource(R.drawable.rounded_button_green);
+//                mActionPNS.setBackgroundResource(R.drawable.rounded_button_green);
+//                scrollActionButtons(1);
+//                break;
+//
+//            case "PASSENGER ON BOARD":
+//                mActionOS.setBackgroundResource(R.drawable.rounded_button_red);
+//                mActionPOB.setVisibility(GONE);
+//                mActionPNS.setVisibility(GONE);
+//                mActionPNS1.setVisibility(View.VISIBLE);
+//
+//                mActionComplete.setBackgroundResource(R.drawable.rounded_button_green);
+//                scrollActionButtons(2);
+//                break;
+//
+//            case "PASSENGER NO SHOW":
+//                mActionOS.setBackgroundResource(R.drawable.rounded_button_red);
+//                mActionPNS.setVisibility(GONE);
+//
+//                mActionComplete.setBackgroundResource(R.drawable.rounded_button_green);
+//                scrollActionButtons(3);
+//                break;
 
         }
 
-        setButtonWidth();
+//        setButtonWidth();
+    }
+
+
+    @OnClick(R.id.prev)
+    public void prevOnClick() {
+        actionButtonClick(job.getJobStatus(), 0);
+        playBackBeep();
+    }
+
+    @OnClick(R.id.next)
+    public void nextOnClick() {
+        actionButtonClick(job.getJobStatus(), 1);
+        playNextBeep();
+    }
+
+    private void actionButtonClick(String status, int button) {
+
+        switch (status.toUpperCase()) {
+            case "CONFIRM":
+                updateJobStatus("On The Way");
+                break;
+
+            case "ON THE WAY":
+                if (button == 0)
+                    updateJobStatus("Confirm");
+                else
+                    updateJobStatus("On Site");
+                break;
+
+            case "ON SITE":
+                if (button == 0)
+                    updateJobStatus("On The Way");
+                else
+                    showActionButtonsDialog();
+                break;
+
+            case "PASSENGER ON BOARD":
+                if (button == 0)
+                    updateJobStatus("On Site");
+                else
+                    showCompleteDialog();
+                break;
+        }
+
+
+    }
+
+    private void showActionButtonsDialog() {
+        dialog = new Dialog(getActivity());
+
+        dialog.setContentView(R.layout.dialog_actions);
+        dialog.setTitle("");
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        // register events
+        Button pob = dialog.findViewById(R.id.pob);
+        Button pns = dialog.findViewById(R.id.pns);
+        Button cancel = dialog.findViewById(R.id.cancel);
+
+        pob.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                showPassengerOnBoardDialog();
+                playNextBeep();
+            }
+        });
+
+        pns.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                showPassengerNoShowDialog();
+                playNextBeep();
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                changeCurrentStatusButton("On Site");
+                playBackBeep();
+            }
+        });
+
+        // resize dialog
+        Rect displayRectangle = new Rect();
+        Window window = getActivity().getWindow();
+        window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = (int) (displayRectangle.width() * 0.85f);
+
+        dialog.show();
+        dialog.getWindow().setAttributes(lp);
     }
 
     private void setActionButtonsListener() {
 
-        mActionConfirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateJobStatus("Confirm");
-
-            }
-        });
-
-        mActionOTW.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateJobStatus("On The Way");
-
-            }
-        });
-
-        mActionOS.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateJobStatus("On Site");
-
-            }
-        });
-
-        mActionPOB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPassengerOnBoardDialog();
-
-            }
-        });
-
-        mActionPNS.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPassengerNoShowDialog();
-            }
-        });
-
-        mActionPNS1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPassengerNoShowDialog();
-            }
-        });
-
-        mActionComplete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showCompleteDialog();
-            }
-        });
+//        mActionConfirm.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                updateJobStatus("Confirm");
+//
+//            }
+//        });
+//
+//        mActionOTW.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                updateJobStatus("On The Way");
+//
+//            }
+//        });
+//
+//        mActionOS.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                updateJobStatus("On Site");
+//
+//            }
+//        });
+//
+//        mActionPOB.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showPassengerOnBoardDialog();
+//
+//            }
+//        });
+//
+//        mActionPNS.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showPassengerNoShowDialog();
+//            }
+//        });
+//
+//        mActionPNS1.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showPassengerNoShowDialog();
+//            }
+//        });
+//
+//        mActionComplete.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showCompleteDialog();
+//            }
+//        });
     }
 
     private void callUpdateDriverLocation() {
@@ -663,6 +836,8 @@ public class JobDetailFragment extends AbstractFragment {
         signaturePad = dialog.findViewById(R.id.signature_pad);
         addPhoto = dialog.findViewById(R.id.add_photo);
         passengerPhoto = dialog.findViewById(R.id.passenger_photo);
+        //  signaturePhoto = dialog.findViewById(R.id.signature_photo);
+
         TextView title = dialog.findViewById(R.id.title);
         TextView label = dialog.findViewById(R.id.photo_label);
         TextView remarks = dialog.findViewById(R.id.remarks);
@@ -680,6 +855,28 @@ public class JobDetailFragment extends AbstractFragment {
                 .memoryPolicy(MemoryPolicy.NO_CACHE)
                 //    .placeholder(R.drawable.bv_logo_default).stableKey(id)
                 .into(passengerPhoto);
+
+
+        Picasso.get().load(App.CONST_PHOTO_URL + job.getJobNo() + "_signature.jpg")
+                .networkPolicy(NetworkPolicy.NO_CACHE)
+                .memoryPolicy(MemoryPolicy.NO_CACHE)
+                //    .placeholder(R.drawable.bv_logo_default).stableKey(id)
+                .into(new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        signaturePad.setSignatureBitmap(bitmap);
+                    }
+
+                    @Override
+                    public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                    }
+                });
 
 
         addPhoto.setOnClickListener(new View.OnClickListener() {
@@ -707,6 +904,7 @@ public class JobDetailFragment extends AbstractFragment {
 
 
         save.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 callUpdateShowPassenger();
@@ -725,19 +923,19 @@ public class JobDetailFragment extends AbstractFragment {
 
         togglePlaceHolder(1);
 
-        photoLabel.setOnClickListener(new View.OnClickListener() {
+        signatureLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 togglePlaceHolder(1);
             }
         });
-
-        signatureLabel.setOnClickListener(new View.OnClickListener() {
+        photoLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 togglePlaceHolder(2);
             }
         });
+
 
         dialog.show();
         dialog.getWindow().setAttributes(lp);
@@ -747,8 +945,20 @@ public class JobDetailFragment extends AbstractFragment {
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         if (tab == 1) {
-            addPhoto.setVisibility(View.VISIBLE);
-            passengerPhoto.setVisibility(View.VISIBLE);
+            addPhoto.setVisibility(GONE);
+            passengerPhoto.setVisibility(GONE);
+            signaturePad.setVisibility(VISIBLE);
+            clear.setVisibility(VISIBLE);
+            done.setVisibility(View.VISIBLE);
+
+            // signatureLabel.setLayoutParams(params);
+            photoLabel.setTextColor(ContextCompat.getColor(getContext(), R.color.aluminum));
+            signatureLabel.setTextColor(ContextCompat.getColor(getContext(), R.color.cell_label));
+
+        } else {
+
+            addPhoto.setVisibility(VISIBLE);
+            passengerPhoto.setVisibility(VISIBLE);
             signaturePad.setVisibility(GONE);
             clear.setVisibility(View.GONE);
             done.setVisibility(View.GONE);
@@ -756,16 +966,6 @@ public class JobDetailFragment extends AbstractFragment {
             //photoLabel.setLayoutParams(params);
             photoLabel.setTextColor(ContextCompat.getColor(getContext(), R.color.cell_label));
             signatureLabel.setTextColor(ContextCompat.getColor(getContext(), R.color.aluminum));
-        } else {
-            addPhoto.setVisibility(GONE);
-            passengerPhoto.setVisibility(GONE);
-            signaturePad.setVisibility(View.VISIBLE);
-            clear.setVisibility(View.VISIBLE);
-            done.setVisibility(View.VISIBLE);
-
-            // signatureLabel.setLayoutParams(params);
-            photoLabel.setTextColor(ContextCompat.getColor(getContext(), R.color.aluminum));
-            signatureLabel.setTextColor(ContextCompat.getColor(getContext(), R.color.cell_label));
         }
     }
 
@@ -785,7 +985,6 @@ public class JobDetailFragment extends AbstractFragment {
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
                 Toast.makeText(getContext(), "Passenger On Board Successful", Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
-                displayUpdateStatus("Passenger On Board");
 
                 callJobDetail();
             }
@@ -855,48 +1054,48 @@ public class JobDetailFragment extends AbstractFragment {
     }
 
 
-    @OnClick(R.id.call1)
-    public void phone1OnClick() {
-        String phoneNo = phoneList.get(0);
-        Uri number = Uri.parse("tel:" + phoneNo);
-        Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
-        startActivity(callIntent);
+//    @OnClick(R.id.call1)
+//    public void phone1OnClick() {
+//        String phoneNo = phoneList.get(0);
+//        Uri number = Uri.parse("tel:" + phoneNo);
+//        Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
+//        startActivity(callIntent);
+//
+//        Toast.makeText(getContext(), "Phone Call .... to  " + phoneNo, Toast.LENGTH_SHORT).show();
+//    }
+//
+//    @OnClick(R.id.sms1)
+//    public void sms1OnClick() {
+//        String phoneNo = phoneList.get(0);
+//        String msg = "";
+//        Uri number = Uri.parse("sms:" + phoneNo);
+//        Intent smsIntent = new Intent(Intent.ACTION_VIEW, number);
+//        startActivity(smsIntent);
+//
+//        Toast.makeText(getContext(), "Send SMS .... to  " + phoneNo, Toast.LENGTH_SHORT).show();
+//    }
 
-        Toast.makeText(getContext(), "Phone Call .... to  " + phoneNo, Toast.LENGTH_SHORT).show();
-    }
 
-    @OnClick(R.id.sms1)
-    public void sms1OnClick() {
-        String phoneNo = phoneList.get(0);
-        String msg = "";
-        Uri number = Uri.parse("sms:" + phoneNo);
-        Intent smsIntent = new Intent(Intent.ACTION_VIEW, number);
-        startActivity(smsIntent);
-
-        Toast.makeText(getContext(), "Send SMS .... to  " + phoneNo, Toast.LENGTH_SHORT).show();
-    }
-
-
-    @OnClick(R.id.call2)
-    public void phone2OnClick() {
-        String phoneNo = phoneList.get(1);
-        Uri number = Uri.parse("tel:" + phoneNo);
-        Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
-        startActivity(callIntent);
-
-        Toast.makeText(getContext(), "Phone Call .... to  " + phoneNo, Toast.LENGTH_SHORT).show();
-    }
-
-    @OnClick(R.id.sms2)
-    public void sms2OnClick() {
-        String phoneNo = phoneList.get(1);
-        String msg = "";
-        Uri number = Uri.parse("sms:" + phoneNo);
-        Intent smsIntent = new Intent(Intent.ACTION_VIEW, number);
-        startActivity(smsIntent);
-
-        Toast.makeText(getContext(), "Send SMS .... to  " + phoneNo, Toast.LENGTH_SHORT).show();
-    }
+//    @OnClick(R.id.call2)
+//    public void phone2OnClick() {
+//        String phoneNo = phoneList.get(1);
+//        Uri number = Uri.parse("tel:" + phoneNo);
+//        Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
+//        startActivity(callIntent);
+//
+//        Toast.makeText(getContext(), "Phone Call .... to  " + phoneNo, Toast.LENGTH_SHORT).show();
+//    }
+//
+//    @OnClick(R.id.sms2)
+//    public void sms2OnClick() {
+//        String phoneNo = phoneList.get(1);
+//        String msg = "";
+//        Uri number = Uri.parse("sms:" + phoneNo);
+//        Intent smsIntent = new Intent(Intent.ACTION_VIEW, number);
+//        startActivity(smsIntent);
+//
+//        Toast.makeText(getContext(), "Send SMS .... to  " + phoneNo, Toast.LENGTH_SHORT).show();
+//    }
 
 
     @Override
@@ -980,27 +1179,28 @@ public class JobDetailFragment extends AbstractFragment {
     }
 
 
-    private void scrollActionButtons(final int buttonIndex) {
-        rootView.post(new Runnable() {
-            @Override
-            public void run() {
-                Log.v("", "Left position of 12th child = " + mHSLayout.getChildAt(buttonIndex).getLeft());
-                mHSView.smoothScrollTo(mHSLayout.getChildAt(buttonIndex).getLeft(), 0);
-            }
-        });
-    }
+//    private void scrollActionButtons(final int buttonIndex) {
+//        rootView.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                Log.v("", "Left position of 12th child = " + mHSLayout.getChildAt(buttonIndex).getLeft());
+//                mHSView.smoothScrollTo(mHSLayout.getChildAt(buttonIndex).getLeft(), 0);
+//            }
+//        });
+//    }
 
 
-    private void displayUpdateStatus(String status) {
-        job.setJobStatus(status);
-        displayJobDetail();
-        changeCurrentStatusButton();
-    }
+//    private void displayUpdateStatus(String status) {
+//        job.setJobStatus(status);
+//        displayJobDetail();
+//        changeCurrentStatusButton(status);
+//    }
 
     private void displayJobDetail() {
 
         Log.e("Detail Fragment", mCurrentTab);
 
+        phoneList = new ArrayList<>();
 
         if (job.getCustomerTel().trim().length() > 0) {
             String p[] = job.getCustomerTel().trim().split("/");
@@ -1009,60 +1209,75 @@ public class JobDetailFragment extends AbstractFragment {
             }
         }
 
-        if (phoneList.size() == 0) {
-            mPhoneLayout1.setVisibility(View.GONE);
-            mPhoneLayout2.setVisibility(View.GONE);
-        }
 
-        if (phoneList.size() == 1) {
-            mPhoneLayout1.setVisibility(View.VISIBLE);
-            mPhoneLayout2.setVisibility(View.GONE);
+        ContactAdapter contactAdapter = new ContactAdapter(phoneList, getContext());
+        mContactList.setAdapter(contactAdapter);
+        setListViewHeightBasedOnItems(mContactList);
 
-            mMobile1.setText(phoneList.get(0));
-        }
-
-        if (phoneList.size() == 2) {
-            mPhoneLayout1.setVisibility(View.VISIBLE);
-            mPhoneLayout2.setVisibility(View.VISIBLE);
-
-            mMobile1.setText(phoneList.get(0));
-            mMobile2.setText(phoneList.get(1));
-        }
+//        if (phoneList.size() == 0) {
+//            mPhoneLayout1.setVisibility(View.GONE);
+//            mPhoneLayout2.setVisibility(View.GONE);
+//        }
+//
+//        if (phoneList.size() == 1) {
+//            mPhoneLayout1.setVisibility(View.VISIBLE);
+//            mPhoneLayout2.setVisibility(View.GONE);
+//
+//            mMobile1.setText(phoneList.get(0));
+//        }
+//
+//        if (phoneList.size() == 2) {
+//            mPhoneLayout1.setVisibility(View.VISIBLE);
+//            mPhoneLayout2.setVisibility(View.VISIBLE);
+//
+//            mMobile1.setText(phoneList.get(0));
+//            mMobile2.setText(phoneList.get(1));
+//        }
 
 
         if (mCurrentTab.equalsIgnoreCase("HISTORY")) {
-            mPhoneLayout1.setVisibility(GONE);
-            mPhoneLayout2.setVisibility(GONE);
+//            mPhoneLayout1.setVisibility(GONE);
+//            mPhoneLayout2.setVisibility(GONE);
 
-            mHSView.setVisibility(GONE);
+            mActionLayout.setVisibility(GONE);
+            //mHSView.setVisibility(GONE);
         }
 
         // UAE
         if (job.getJobType().equalsIgnoreCase("MEDICAL")) {
 
-            // File No Show/Hide
-            if (job.getFileNo() != null && job.getFileNo().length() > 0) {
-                mFileNo.setText(job.getFileNo());
-
-            } else {
-                mLabelFileNo.setVisibility(View.GONE);
-                mFileNo.setVisibility(View.GONE);
-            }
-
-//            mLayoutFlight.setVisibility(GONE);
-//            mLabelFlightNo.setVisibility(GONE);
-//            mFlightNo.setVisibility(GONE);
+//            // File No Show/Hide
+//            if (job.getFileNo() != null && job.getFileNo().length() > 0) {
+//                mFileNo.setText(job.getFileNo());
 //
-//            mLabelETA.setVisibility(GONE);
-//            mETA.setVisibility(GONE);
+//            } else {
+//                mLabelFileNo.setVisibility(View.GONE);
+//                mFileNo.setVisibility(View.GONE);
+//            }
+            mFileNo.setText(job.getFileNo());
+            mLabelFileNo.setVisibility(VISIBLE);
+            mFileNo.setVisibility(VISIBLE);
+
+            mLayoutPax.setVisibility(View.GONE);
+            mDividerPax.setVisibility(View.GONE);
+
+            mLayoutFlight.setVisibility(GONE);
+            mLabelFlightNo.setVisibility(GONE);
+            mFlightNo.setVisibility(GONE);
+
+            mLabelETA.setVisibility(GONE);
+            mETA.setVisibility(GONE);
 
         } else { // NOT UAE  (MEDICAL)
+
+            mLabelFileNo.setVisibility(GONE);
+            mFileNo.setVisibility(GONE);
 
             mLabelFlightNo.setText("FLIGHT NO");
             mFlightNo.setText(job.getFlight());
 
-            mLabelETA.setVisibility(View.VISIBLE);
-            mETA.setVisibility(View.VISIBLE);
+            mLabelETA.setVisibility(VISIBLE);
+            mETA.setVisibility(VISIBLE);
 
 
             // PAX
@@ -1075,8 +1290,8 @@ public class JobDetailFragment extends AbstractFragment {
             mNoOfInfant.setText(job.getNoOfInfant());
 
             if (adult > 0 || child > 0 || infant > 0) {
-                mLayoutPax.setVisibility(View.VISIBLE);
-                mDividerPax.setVisibility(View.VISIBLE);
+                mLayoutPax.setVisibility(VISIBLE);
+                mDividerPax.setVisibility(VISIBLE);
             } else {
                 mLayoutPax.setVisibility(View.GONE);
                 mDividerPax.setVisibility(View.GONE);
@@ -1105,11 +1320,13 @@ public class JobDetailFragment extends AbstractFragment {
         );
 
 
-        if (job.getJobType().equalsIgnoreCase("ARRIVAL") || job.getJobType().equalsIgnoreCase("DISPOSAL"))
+        if (job.getJobType().equalsIgnoreCase("ARRIVAL") || job.getJobType().equalsIgnoreCase("DISPOSAL")) {
             mLabelETA.setText("ETA");
 
+        }
 
-        if(job.getRemarks() == null || job.getRemarks().length() == 0) {
+
+        if (job.getRemarks() == null || job.getRemarks().length() == 0) {
             mRemarks.setVisibility(GONE);
             mLayoutRemarks.setVisibility(GONE);
             mLineRemarks.setVisibility(GONE);
@@ -1121,6 +1338,18 @@ public class JobDetailFragment extends AbstractFragment {
         //  mMobile.setText(job.getCustomerTel());
 
 
+        // check data on FlightNo, ETA
+        if (Util.isNullOrEmpty(job.getFlight())) {
+            mLabelFlightNo.setVisibility(GONE);
+            mFlightNo.setVisibility(GONE);
+        }
+
+        if (Util.isNullOrEmpty(job.getFlight())) {
+            mLabelETA.setVisibility(GONE);
+            mETA.setVisibility(GONE);
+        }
+
+
         mJobNo.setText(job.getJobNo());
         mJobType.setText(job.getJobType());
         mJobStatus.setText(job.getJobStatus());
@@ -1128,7 +1357,7 @@ public class JobDetailFragment extends AbstractFragment {
         mTime.setText(job.getPickUpTime());
         mPassenger.setText(job.getCustomer());
 
-        mPassenger.setVisibility(View.VISIBLE);
+        mPassenger.setVisibility(VISIBLE);
 
 
         mETA.setText(job.getETA());
@@ -1138,13 +1367,13 @@ public class JobDetailFragment extends AbstractFragment {
         mVehicleType.setText(job.getVehicleType());
 
 
-       if(job.getFile1().isEmpty()){
-           mItinerary.setVisibility(GONE);
-         //  mLineItinerary.setVisibility(GONE);
-       }else{
-           mItinerary.setVisibility(View.VISIBLE);
-         //  mLineItinerary.setVisibility(View.VISIBLE);
-       }
+        if (job.getFile1().isEmpty()) {
+            mItinerary.setVisibility(GONE);
+            //  mLineItinerary.setVisibility(GONE);
+        } else {
+            mItinerary.setVisibility(VISIBLE);
+            //  mLineItinerary.setVisibility(View.VISIBLE);
+        }
 
     }
 
@@ -1215,13 +1444,9 @@ public class JobDetailFragment extends AbstractFragment {
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
                 Log.e("Update Job Successful", response.toString());
 
-                mAssignLayout.setVisibility(GONE);
-                mHSView.setVisibility(View.VISIBLE);
-
-
                 Toast.makeText(getContext(), "Update Successful", Toast.LENGTH_SHORT).show();
 
-                displayUpdateStatus(status);
+                callJobDetail();
 
                 EventBus.getDefault().postSticky("UPDATE_JOB_COUNT");
 
@@ -1387,51 +1612,83 @@ public class JobDetailFragment extends AbstractFragment {
 
     @Subscribe(sticky = false)
     public void onEvent(Action action) {
-//        // Toast.makeText(getContext(), action.getAction() + " " + action.getJobNo(), Toast.LENGTH_SHORT).show();
-//        if (job.getJobNo().equals(action.getJobNo())) {
-//
-//            getActivity().runOnUiThread(new Runnable() {
-//                public void run() {
-//                    showCustomAlertDialog();
-//                }
-//            });
-//        }
+
+        if(action.getAction().equalsIgnoreCase("UNASSIGN") && action.getJobNo().equalsIgnoreCase(job.getJobNo())){
+            getActivity().finish();
+        }
+
+        if (action.getAction().equalsIgnoreCase("REFRESH") && action.getJobNo().equalsIgnoreCase(job.getJobNo()))
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showRefreshDialog();
+                    Log.e("Msg Received" , "REFRESH");
+                }
+            });
+
     }
 
 
-    private void showCustomAlertDialog() {
+    private void showRefreshDialog() {
 
-        dialog = new Dialog(getContext());
+        AlertDialog dialog = new AlertDialog.Builder(getContext())
+                .setTitle(R.string.AppName)
+                .setMessage("Details for this job may have changed.\nClick ok to refresh.")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        callJobDetail();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
 
-        dialog.setContentView(R.layout.dialog_message);
-        dialog.setTitle("");
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        TextView title = dialog.findViewById(R.id.title);
-        Button ok = dialog.findViewById(R.id.ok);
-
-        title.setText("MY COACH");
-
-        ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                getActivity().finish();
-            }
-        });
-
-        // resize dialog
-        Rect displayRectangle = new Rect();
-        Window window = getActivity().getWindow();
-        window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
-
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(dialog.getWindow().getAttributes());
-        lp.width = (int) (displayRectangle.width() * 0.85f);
-
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
         dialog.show();
-        dialog.getWindow().setAttributes(lp);
     }
+
+
+//    private void showCustomAlertDialog() {
+//
+//        dialog = new Dialog(getContext());
+//
+//        dialog.setContentView(R.layout.dialog_message);
+//        dialog.setTitle("");
+//        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//
+//        TextView title = dialog.findViewById(R.id.title);
+//        Button ok = dialog.findViewById(R.id.ok);
+//
+//        title.setText("MY COACH");
+//
+//        ok.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                dialog.dismiss();
+//                getActivity().finish();
+//            }
+//        });
+//
+//        // resize dialog
+//        Rect displayRectangle = new Rect();
+//        Window window = getActivity().getWindow();
+//        window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
+//
+//        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+//        lp.copyFrom(dialog.getWindow().getAttributes());
+//        lp.width = (int) (displayRectangle.width() * 0.85f);
+//
+//        dialog.show();
+//        dialog.getWindow().setAttributes(lp);
+//    }
 
 
     private void callJobDetail() {
@@ -1442,8 +1699,13 @@ public class JobDetailFragment extends AbstractFragment {
         call.enqueue(new Callback<JobRes>() {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
-                if (response.body().getJobdetails() != null)
+                if (response.body().getJobdetails() != null) {
                     job = response.body().getJobdetails();
+
+                    displayJobDetail();
+
+                    changeCurrentStatusButton(job.getJobStatus());
+                }
             }
 
             @Override
@@ -1631,4 +1893,48 @@ public class JobDetailFragment extends AbstractFragment {
     }
 
 
+    private void playNextBeep() {
+        toneGen.startTone(ToneGenerator.TONE_CDMA_ALERT_INCALL_LITE, 100);
+        toneGen.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 20);
+    }
+
+    private void playBackBeep() {
+        toneGen.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 100);
+        toneGen.startTone(ToneGenerator.TONE_CDMA_ALERT_INCALL_LITE, 20);
+    }
+
+
+    public static boolean setListViewHeightBasedOnItems(ListView listView) {
+
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter != null) {
+
+            int numberOfItems = listAdapter.getCount();
+
+            // Get total height of all items.
+            int totalItemsHeight = 0;
+            for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
+                View item = listAdapter.getView(itemPos, null, listView);
+                item.measure(0, 0);
+                totalItemsHeight += item.getMeasuredHeight();
+            }
+
+            // Get total height of all item dividers.
+            int totalDividersHeight = listView.getDividerHeight() *
+                    (numberOfItems - 1);
+
+            // Set list height.
+            ViewGroup.LayoutParams params = listView.getLayoutParams();
+            params.height = totalItemsHeight + totalDividersHeight;
+            listView.setLayoutParams(params);
+            listView.requestLayout();
+
+            return true;
+
+        } else {
+            return false;
+        }
+
+    }
 }
+

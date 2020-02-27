@@ -92,8 +92,11 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.ViewHolder> {
             }
         });
 
-        if(mCurrentTab.equalsIgnoreCase("HISTORY") || mCurrentTab.equalsIgnoreCase("FUTURE"))
+        if(mCurrentTab.equalsIgnoreCase("HISTORY") || mCurrentTab.equalsIgnoreCase("FUTURE")) {
             viewHolder.jobDate.setVisibility(View.VISIBLE);
+
+
+        }
 
 //        if (!mCurrentTab.equalsIgnoreCase("HISTORY"))
 //            viewHolder.parent.setOnClickListener(new View.OnClickListener() {
