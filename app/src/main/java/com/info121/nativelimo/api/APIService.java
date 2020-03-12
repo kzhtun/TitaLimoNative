@@ -10,6 +10,8 @@ import retrofit2.http.Path;
 
 public interface APIService {
 
+    @GET("checkSession")
+    Call<ObjectRes> CheckSession();
 
     @GET("getcurrentversion/AndriodV-{version}")
     Call<ObjectRes> CheckVersion(@Path("version") String version);

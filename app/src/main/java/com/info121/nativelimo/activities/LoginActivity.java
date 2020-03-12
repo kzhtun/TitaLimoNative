@@ -104,8 +104,20 @@ public class LoginActivity extends AbstractActivity {
 //
 //      //  }
 
+        Intent intent = new Intent(LoginActivity.this, NotifyActivity.class);
+        Bundle bundle = new Bundle();
 
+        bundle.putString("JOB_NO", "jobNo");
+        bundle.putString("JOB_TYPE", "jobType");
+        bundle.putString("JOB_DATE", "jobDate");
+        bundle.putString("JOB_TIME", "jobTime");
+        bundle.putString("PICKUP", "pickup");
+        bundle.putString("DROPOFF", "dropoff");
+        bundle.putString("CUST_NAME", "clientName");
+        bundle.putString("VEHICLE_TYPE", "vehicleType");
 
+        intent.putExtras(bundle);
+        startActivity(intent );
 
     }
 

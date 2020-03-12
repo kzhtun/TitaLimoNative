@@ -1,9 +1,18 @@
 package com.info121.nativelimo.api;
 
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
+
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.info121.nativelimo.App;
+import com.info121.nativelimo.R;
+import com.info121.nativelimo.models.ObjectRes;
+import com.info121.nativelimo.utils.Util;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -13,6 +22,8 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -76,8 +87,75 @@ public class RestClient {
         if (instance == null) {
             instance = new RestClient();
         }
+
+//        instance.service.CheckSession().enqueue(new Callback<ObjectRes>() {
+//            @Override
+//            public void onResponse(Call<ObjectRes> call, retrofit2.Response<ObjectRes> response) {
+//                if(response.body().getResponsemessage().equalsIgnoreCase("VALID")) {
+//                    Log.e("RESTCLIENT ", "VALID ..... ");
+//
+//                }
+//
+//                if(response.body().getResponsemessage().equalsIgnoreCase("BAD TOKEN")) {
+//                    Log.e("RESTCLIENT ", "BAD TOKEN ***** ");
+//
+//
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ObjectRes> call, Throwable t) {
+//
+//            }
+//        });
+
+
         return instance;
     }
+
+
+    public static void refreshToken(final String action){
+        instance.service.ValidateDriver(App.userName).enqueue(new Callback<ObjectRes>() {
+            @Override
+            public void onResponse(Call<ObjectRes> call, retrofit2.Response<ObjectRes> response) {
+                if(response.body().getResponsemessage().equalsIgnoreCase("VALID")) {
+                    App.authToken = response.body().getToken();
+
+                    EventBus.getDefault().post(action);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ObjectRes> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private static void showRefreshDialog() {
+
+        AlertDialog dialog = new AlertDialog.Builder(App.targetContent)
+                .setTitle(R.string.AppName)
+                .setMessage("Session expired. \nWould you like to extend ?")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+
+
+
+        dialog.show();
+    }
+
 
     public static void Dismiss(){
         instance = null;

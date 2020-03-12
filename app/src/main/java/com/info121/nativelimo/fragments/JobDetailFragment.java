@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -197,6 +198,7 @@ public class JobDetailFragment extends AbstractFragment {
     @BindView(R.id.list_contact)
     ListView mContactList;
 
+
 //    @BindView(R.id.hs_view)
 //    HorizontalScrollView mHSView;
 //
@@ -243,10 +245,13 @@ public class JobDetailFragment extends AbstractFragment {
     TextView photoLabel, signatureLabel, clear, done;
     ImageView addPhoto, passengerPhoto, signaturePhoto;
     SignaturePad signaturePad;
+    View signatureBackground;
 
     ToneGenerator toneGen = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
 
     Boolean visible = false;
+    Boolean hasSignature = false;
+
 
     public JobDetailFragment() {
         // Required empty public constructor
@@ -768,6 +773,7 @@ public class JobDetailFragment extends AbstractFragment {
         photoLabel = dialog.findViewById(R.id.photo_label);
         signatureLabel = dialog.findViewById(R.id.signature_label);
         signaturePad = dialog.findViewById(R.id.signature_pad);
+        signatureBackground = dialog.findViewById(R.id.signature_background);
         addPhoto = dialog.findViewById(R.id.add_photo);
         passengerPhoto = dialog.findViewById(R.id.passenger_photo);
         TextView title = dialog.findViewById(R.id.title);
@@ -783,6 +789,7 @@ public class JobDetailFragment extends AbstractFragment {
         // hide signature pad
         signatureLabel.setVisibility(GONE);
         signaturePad.setVisibility(GONE);
+        signatureBackground.setVisibility(GONE);
         clear.setVisibility(GONE);
         done.setVisibility(GONE);
 
@@ -821,6 +828,8 @@ public class JobDetailFragment extends AbstractFragment {
     }
 
     private void showPassengerOnBoardDialog() {
+
+
         dialog = new Dialog(getActivity());
 
         dialog.setContentView(R.layout.dialog_pob);
@@ -833,6 +842,7 @@ public class JobDetailFragment extends AbstractFragment {
         done = dialog.findViewById(R.id.done);
         photoLabel = dialog.findViewById(R.id.photo_label);
         signatureLabel = dialog.findViewById(R.id.signature_label);
+        signatureBackground = dialog.findViewById(R.id.signature_background);
         signaturePad = dialog.findViewById(R.id.signature_pad);
         addPhoto = dialog.findViewById(R.id.add_photo);
         passengerPhoto = dialog.findViewById(R.id.passenger_photo);
@@ -865,6 +875,7 @@ public class JobDetailFragment extends AbstractFragment {
                     @Override
                     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                         signaturePad.setSignatureBitmap(bitmap);
+                        done.setText("SAVED");
                     }
 
                     @Override
@@ -891,23 +902,92 @@ public class JobDetailFragment extends AbstractFragment {
             @Override
             public void onClick(View v) {
                 signaturePad.clear();
+                done.setText("DONE");
             }
         });
+
+
+        signaturePad.setOnSignedListener(new SignaturePad.OnSignedListener() {
+            @Override
+            public void onStartSigning() {
+
+            }
+
+            @Override
+            public void onSigned() {
+                hasSignature = true;
+            }
+
+            @Override
+            public void onClear() {
+                hasSignature = false;
+            }
+        });
+
 
         done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bitmap signatureBitmap = signaturePad.getSignatureBitmap();
-                saveSignature(signatureBitmap);
+                if (done.getText().toString().equalsIgnoreCase("DONE")) {
+                    if (!hasSignature) {
+                        AlertDialog dialog = new AlertDialog.Builder(getContext())
+                                .setTitle(R.string.AppName)
+                                .setMessage("Signature is blank do you want to save this?")
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                        saveSignature(signaturePad.getSignatureBitmap(), null);
+                                        done.setText("SAVED");
+                                    }
+                                })
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .create();
+
+                        dialog.show();
+                    } else {
+                        saveSignature(signaturePad.getSignatureBitmap(), null);
+                        done.setText("SAVED");
+                    }
+                }
             }
         });
 
-
         save.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
-                callUpdateShowPassenger();
+                if (done.getText().toString().equalsIgnoreCase("DONE")) {
+                    AlertDialog dialog = new AlertDialog.Builder(getContext())
+                            .setTitle(R.string.AppName)
+                            .setMessage("Either signature is blank or has not been done.\nDo you want to proceed?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    saveSignature(signaturePad.getSignatureBitmap(), "UPDATE_SHOW_PASSENGER");
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .create();
+
+                    dialog.setCancelable(false);
+                    dialog.setCanceledOnTouchOutside(false);
+                    dialog.show();
+                }
+
+                if (done.getText().toString().equalsIgnoreCase("SAVED"))
+                    callUpdateShowPassenger();
+
             }
         });
 
@@ -948,6 +1028,7 @@ public class JobDetailFragment extends AbstractFragment {
             addPhoto.setVisibility(GONE);
             passengerPhoto.setVisibility(GONE);
             signaturePad.setVisibility(VISIBLE);
+            signatureBackground.setVisibility(VISIBLE);
             clear.setVisibility(VISIBLE);
             done.setVisibility(View.VISIBLE);
 
@@ -960,6 +1041,7 @@ public class JobDetailFragment extends AbstractFragment {
             addPhoto.setVisibility(VISIBLE);
             passengerPhoto.setVisibility(VISIBLE);
             signaturePad.setVisibility(GONE);
+            signatureBackground.setVisibility(GONE);
             clear.setVisibility(View.GONE);
             done.setVisibility(View.GONE);
 
@@ -983,10 +1065,16 @@ public class JobDetailFragment extends AbstractFragment {
         call.enqueue(new Callback<JobRes>() {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
-                Toast.makeText(getContext(), "Passenger On Board Successful", Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
+                if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
+                    Toast.makeText(getContext(), "Passenger On Board Successful", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
 
-                callJobDetail();
+                    callJobDetail();
+                }
+
+                if (response.body().getResponsemessage().equalsIgnoreCase("BAD TOKEN")) {
+                    RestClient.refreshToken("UPDATE_SHOW_PASSENGER");
+                }
             }
 
             @Override
@@ -1010,11 +1098,17 @@ public class JobDetailFragment extends AbstractFragment {
         call.enqueue(new Callback<JobRes>() {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
-                Toast.makeText(getContext(), "Passenger No Show Successful", Toast.LENGTH_SHORT).show();
+                if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
+                    Toast.makeText(getContext(), "Passenger No Show Successful", Toast.LENGTH_SHORT).show();
 
-                dialog.dismiss();
-                getActivity().finish();
-                EventBus.getDefault().postSticky("UPDATE_JOB_COUNT");
+                    dialog.dismiss();
+                    getActivity().finish();
+                    EventBus.getDefault().postSticky("UPDATE_JOB_COUNT");
+                }
+
+                if (response.body().getResponsemessage().equalsIgnoreCase("BAD TOKEN")) {
+                    RestClient.refreshToken("UPDATE_NO_SHOW");
+                }
 
             }
 
@@ -1039,11 +1133,17 @@ public class JobDetailFragment extends AbstractFragment {
         call.enqueue(new Callback<JobRes>() {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
-                Toast.makeText(getContext(), "Job Complete Successful", Toast.LENGTH_SHORT).show();
+                if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
+                    Toast.makeText(getContext(), "Job Complete Successful", Toast.LENGTH_SHORT).show();
 
-                dialog.dismiss();
-                getActivity().finish();
-                EventBus.getDefault().postSticky("UPDATE_JOB_COUNT");
+                    dialog.dismiss();
+                    getActivity().finish();
+                    EventBus.getDefault().postSticky("UPDATE_JOB_COUNT");
+                }
+
+                if (response.body().getResponsemessage().equalsIgnoreCase("BAD TOKEN")) {
+                    RestClient.refreshToken("COMPLETE_JOB");
+                }
             }
 
             @Override
@@ -1131,7 +1231,7 @@ public class JobDetailFragment extends AbstractFragment {
                             App.FTP_DIR,
                             job.getJobNo() + "_show.jpg",
                             job.getJobNo(),
-                            "SHOW");   //Passing arguments to AsyncThread
+                            "SHOW", null);   //Passing arguments to AsyncThread
 
                 if (requestCode == REQUEST_NO_SHOW_CAMERA)
                     async.execute(App.FTP_URL,
@@ -1140,7 +1240,7 @@ public class JobDetailFragment extends AbstractFragment {
                             App.FTP_DIR,
                             job.getJobNo() + "_no_show.jpg",
                             job.getJobNo(),
-                            "NOSHOW");
+                            "NOSHOW", null);
 
             } catch (Exception e) {
                 Log.e("Camera Error : ", e.getLocalizedMessage().toString());
@@ -1244,7 +1344,7 @@ public class JobDetailFragment extends AbstractFragment {
         }
 
         // UAE
-        if (job.getJobType().equalsIgnoreCase("MEDICAL")) {
+        if (job.getJobType().equalsIgnoreCase("MEDICAL") || job.getJobType().equalsIgnoreCase("UAE")) {
 
 //            // File No Show/Hide
 //            if (job.getFileNo() != null && job.getFileNo().length() > 0) {
@@ -1322,7 +1422,6 @@ public class JobDetailFragment extends AbstractFragment {
 
         if (job.getJobType().equalsIgnoreCase("ARRIVAL") || job.getJobType().equalsIgnoreCase("DISPOSAL")) {
             mLabelETA.setText("ETA");
-
         }
 
 
@@ -1344,7 +1443,7 @@ public class JobDetailFragment extends AbstractFragment {
             mFlightNo.setVisibility(GONE);
         }
 
-        if (Util.isNullOrEmpty(job.getFlight())) {
+        if (Util.isNullOrEmpty(job.getFlight()) || job.getETA().equalsIgnoreCase("00:00")) {
             mLabelETA.setVisibility(GONE);
             mETA.setVisibility(GONE);
         }
@@ -1436,22 +1535,29 @@ public class JobDetailFragment extends AbstractFragment {
                 job.getJobNo(),
                 App.fullAddress,
                 status
-
         );
 
         call.enqueue(new Callback<JobRes>() {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
-                Log.e("Update Job Successful", response.toString());
 
-                Toast.makeText(getContext(), "Update Successful", Toast.LENGTH_SHORT).show();
+                if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
+                    Log.e("Update Job Successful", response.toString());
 
-                callJobDetail();
+                    Toast.makeText(getContext(), "Update Successful", Toast.LENGTH_SHORT).show();
 
-                EventBus.getDefault().postSticky("UPDATE_JOB_COUNT");
+                    callJobDetail();
 
-                if (status.equalsIgnoreCase("REJECTED"))
-                    getActivity().finish();
+                    EventBus.getDefault().postSticky("UPDATE_JOB_COUNT");
+
+                    if (status.equalsIgnoreCase("REJECTED"))
+                        getActivity().finish();
+
+                }
+
+                if (response.body().getResponsemessage().equalsIgnoreCase("BAD TOKEN")) {
+                    RestClient.refreshToken("ACTION_" + status);
+                }
             }
 
             @Override
@@ -1613,7 +1719,7 @@ public class JobDetailFragment extends AbstractFragment {
     @Subscribe(sticky = false)
     public void onEvent(Action action) {
 
-        if(action.getAction().equalsIgnoreCase("UNASSIGN") && action.getJobNo().equalsIgnoreCase(job.getJobNo())){
+        if (action.getAction().equalsIgnoreCase("UNASSIGN") && action.getJobNo().equalsIgnoreCase(job.getJobNo())) {
             getActivity().finish();
         }
 
@@ -1622,7 +1728,7 @@ public class JobDetailFragment extends AbstractFragment {
                 @Override
                 public void run() {
                     showRefreshDialog();
-                    Log.e("Msg Received" , "REFRESH");
+                    Log.e("Msg Received", "REFRESH");
                 }
             });
 
@@ -1656,40 +1762,29 @@ public class JobDetailFragment extends AbstractFragment {
     }
 
 
-//    private void showCustomAlertDialog() {
-//
-//        dialog = new Dialog(getContext());
-//
-//        dialog.setContentView(R.layout.dialog_message);
-//        dialog.setTitle("");
-//        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//
-//        TextView title = dialog.findViewById(R.id.title);
-//        Button ok = dialog.findViewById(R.id.ok);
-//
-//        title.setText("MY COACH");
-//
-//        ok.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                dialog.dismiss();
-//                getActivity().finish();
-//            }
-//        });
-//
-//        // resize dialog
-//        Rect displayRectangle = new Rect();
-//        Window window = getActivity().getWindow();
-//        window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
-//
-//        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-//        lp.copyFrom(dialog.getWindow().getAttributes());
-//        lp.width = (int) (displayRectangle.width() * 0.85f);
-//
-//        dialog.show();
-//        dialog.getWindow().setAttributes(lp);
-//    }
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
 
+        if (dialog != null && dialog.isShowing()) {
+            Rect displayRectangle = new Rect();
+            Window window = getActivity().getWindow();
+            window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
+
+            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+            lp.copyFrom(dialog.getWindow().getAttributes());
+            lp.width = (int) (displayRectangle.width() * 1f);
+
+            // Checks the orientation of the screen
+            if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+            } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+
+            }
+
+            dialog.getWindow().setAttributes(lp);
+        }
+    }
 
     private void callJobDetail() {
         Call<JobRes> call = RestClient.COACH().getApiService().GetJobDetails(
@@ -1699,12 +1794,16 @@ public class JobDetailFragment extends AbstractFragment {
         call.enqueue(new Callback<JobRes>() {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
-                if (response.body().getJobdetails() != null) {
+                if (response.body().getResponsemessage().equalsIgnoreCase("Success") && response.body().getJobdetails() != null) {
                     job = response.body().getJobdetails();
 
                     displayJobDetail();
 
                     changeCurrentStatusButton(job.getJobStatus());
+                }
+
+                if (response.body().getResponsemessage().equalsIgnoreCase("BAD TOKEN")) {
+                    RestClient.refreshToken("GET_JOB_DETAIL");
                 }
             }
 
@@ -1756,7 +1855,7 @@ public class JobDetailFragment extends AbstractFragment {
 
 
     // Signature Related ==================================================
-    public void saveSignature(Bitmap photo) {
+    public void saveSignature(Bitmap photo, String callBack) {
         try {
 
 
@@ -1773,7 +1872,7 @@ public class JobDetailFragment extends AbstractFragment {
             InputStream inputStream = bitmap2InputStream(photo);
 
             FtpHelper.uploadTask async = new FtpHelper.uploadTask(getActivity(), inputStream);
-            async.execute(App.FTP_URL, App.FTP_USER, App.FTP_PASSWORD, App.FTP_DIR, job.getJobNo() + "_signature.jpg", job.getJobNo(), "SIGNATURE");   //Passing arguments to AsyncThread
+            async.execute(App.FTP_URL, App.FTP_USER, App.FTP_PASSWORD, App.FTP_DIR, job.getJobNo() + "_signature.jpg", job.getJobNo(), "SIGNATURE", callBack);   //Passing arguments to AsyncThread
 
 
         } catch (Exception e) {
@@ -1935,6 +2034,34 @@ public class JobDetailFragment extends AbstractFragment {
             return false;
         }
 
+    }
+
+    @Subscribe(sticky = true)
+    public void onEvent(String action) {
+        if (action.equalsIgnoreCase("GET_JOB_DETAIL")) {
+            callJobDetail();
+        }
+
+        if (action.indexOf("ACTION") > -1) {
+            updateJobStatus(action.replace("ACTION_", ""));
+        }
+
+        if (action.equalsIgnoreCase("UPDATE_SHOW_PASSENGER")) {
+            callUpdateShowPassenger();
+        }
+
+        if (action.equalsIgnoreCase("UPDATE_NO_SHOW")) {
+            callUpdateNoShowPassenger();
+        }
+
+        if (action.equalsIgnoreCase("COMPLETE_JOB")) {
+            callCompletedJob();
+        }
+
+
+//        if (action.equalsIgnoreCase("GET_JOB_DETAIL")) {
+//            callJobDetail();
+//        }
     }
 }
 

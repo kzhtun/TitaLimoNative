@@ -2,6 +2,8 @@ package com.info121.nativelimo.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.Rect;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Build;
@@ -13,6 +15,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +49,10 @@ public class NotifyActivity extends AbstractActivity {
 
     @BindView(R.id.pgb_progress)
     AdCircleProgress mProgress;
+
+
+    @BindView(R.id.root_layout)
+    LinearLayout mRootLayout;
 
 //    @BindView(R.id.job_type)
 //    TextView mJobType;
@@ -140,7 +148,7 @@ public class NotifyActivity extends AbstractActivity {
             }
         }, 1000, 90);
 
-        vibrate();
+
 
         // toneGen.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD,50);
 
@@ -156,6 +164,7 @@ public class NotifyActivity extends AbstractActivity {
 
         App.notiActivityIsShowing = true;
         playBeep1();
+        vibrate();
 
     }
 
@@ -223,7 +232,7 @@ public class NotifyActivity extends AbstractActivity {
     }
 
     private void playSound() {
-        if (audioManager.getRingerMode() == AudioManager.MODE_NORMAL)
+        if (audioManager.getRingerMode() == 2)
             toneGen.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200);
     }
 
@@ -318,5 +327,17 @@ public class NotifyActivity extends AbstractActivity {
             }
     }
 
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mRootLayout.setVisibility(GONE);
+            // Checks the orientation of the screen
+            if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+            } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+
+            }
+    }
 
 }

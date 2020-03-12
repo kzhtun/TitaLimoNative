@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -42,7 +45,7 @@
                     style="@style/cell_label"
                     android:layout_width="100dp"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="3dp"
+                    android:layout_marginLeft="0dp"
                     android:background="@drawable/top_rounded_layout"
                     android:gravity="center"
                     android:text="SIGNATURE"
@@ -88,16 +91,25 @@
                     android:layout_margin="16dp"
                     android:src="@mipmap/ic_add_passenger" />
 
+                <View android:id="@+id/signature_background"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bottom_rounded_layout_white"
+                    />
+
                 <com.github.gcacace.signaturepad.views.SignaturePad
                     android:id="@+id/signature_pad"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/bottom_rounded_layout" />
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="25dp"
+                   />
 
                 <TextView
                     android:id="@+id/done"
                     style="@style/cell_label_bold"
-                    android:layout_width="50dp"
+                    android:layout_width="70dp"
                     android:layout_height="50dp"
                     android:layout_gravity="bottom|right"
                     android:gravity="center"
@@ -108,7 +120,7 @@
                 <TextView
                     android:id="@+id/clear"
                     style="@style/cell_label_bold"
-                    android:layout_width="50dp"
+                    android:layout_width="70dp"
                     android:layout_height="50dp"
                     android:layout_gravity="bottom|left"
                     android:gravity="center"
@@ -160,11 +172,9 @@
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:background="@drawable/rounded_button"
-                android:text="SAVE"
+                android:text="SUBMIT"
                 android:textColor="@color/white" />
 
         </LinearLayout>
-
-
     </LinearLayout>
-</LinearLayout>
+</ScrollView>

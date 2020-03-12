@@ -1,125 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:custom="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/layout"
-    android:gravity="center"
-    android:id="@+id/root_layout"
-    android:clickable="true"
-    android:orientation="vertical">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
 
-    <com.skyfishjy.library.RippleBackground
-        android:id="@+id/content"
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        app:rb_color="#0099CC"
-        app:rb_duration="3000"
-        app:rb_radius="32dp"
-        app:rb_rippleAmount="4"
-        app:rb_scale="6">
-
-        <com.app.adprogressbarlib.AdCircleProgress
-            android:id="@+id/pgb_progress"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_alignParentTop="true"
-            android:layout_margin="50dp"
-            android:backgroundTintMode="add"
-            android:clickable="true"
-            app:adpgb_finished_color="@color/colorAccent"
-            app:adpgb_unfinished_color="@color/layout_stroke"
-            custom:adpgb_finished_stroke_width="15dp"
-            custom:adpgb_show_text="true"
-            custom:adpgb_text="ACCEPT"
-            custom:adpgb_text_color="@color/orange"
-            custom:adpgb_text_size="30sp"
-            custom:adpgb_unfinished_stroke_width="15dp" />
-
-    </com.skyfishjy.library.RippleBackground>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="64dp"
-        android:layout_marginRight="64dp"
-        android:layout_marginBottom="64dp"
-        android:gravity="center_horizontal"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:background="@color/layout">
 
         <LinearLayout
+            android:id="@+id/root_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:layout_height="match_parent"
+            android:layout_marginTop="50dp"
+            android:background="@color/layout"
+            android:clickable="true"
+            android:gravity="center"
+            android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@mipmap/ic_start_48"/>
+            <com.app.adprogressbarlib.AdCircleProgress
+                android:id="@+id/pgb_progress"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_alignParentTop="true"
+                android:layout_margin="50dp"
+                android:backgroundTintMode="add"
+                android:clickable="true"
+                app:adpgb_finished_color="@color/colorAccent"
+                app:adpgb_unfinished_color="@color/layout_stroke"
+                custom:adpgb_finished_stroke_width="15dp"
+                custom:adpgb_show_text="true"
+                custom:adpgb_text="ACCEPT"
+                custom:adpgb_text_color="@color/orange"
+                custom:adpgb_text_size="30sp"
+                custom:adpgb_unfinished_stroke_width="15dp" />
 
-            <TextView
-                android:id="@+id/pickup_time"
-                style="@style/cell_label_bold"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:text="00:00:00"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                android:textSize="50sp" />
+                android:layout_marginLeft="64dp"
+                android:layout_marginRight="64dp"
+                android:layout_marginBottom="64dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@mipmap/ic_start_48"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@mipmap/ic_start_48" />
+
+                    <TextView
+                        android:id="@+id/pickup_time"
+                        style="@style/cell_label_bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:text="00:00:00"
+                        android:textColor="@color/white"
+                        android:textSize="50sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@mipmap/ic_start_48" />
+                </LinearLayout>
+
+
+                <TextView
+                    android:id="@+id/pickup"
+                    style="@style/cell_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:gravity="center_horizontal"
+                    android:text="PICK UP"
+                    android:textAllCaps="true"
+                    android:textSize="26sp" />
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@mipmap/ic_loc_arrow" />
+
+                <TextView
+                    android:id="@+id/dropoff"
+                    style="@style/cell_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="DROP OFF"
+                    android:textAllCaps="true"
+                    android:textSize="26sp" />
+
+                <TextView
+                    android:id="@+id/vehicle_type"
+                    style="@style/cell_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:text="VEHICLE TYPE"
+                    android:textAllCaps="true"
+                    android:textSize="26sp" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
+    </ScrollView>
 
-
-        <TextView
-            android:id="@+id/pickup"
-            style="@style/cell_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:text="PICK UP"
-            android:textAllCaps="true"
-            android:textSize="26sp" />
-
-        <ImageView
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@mipmap/ic_spinner" />
-
-        <TextView
-            android:id="@+id/dropoff"
-            style="@style/cell_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="DROP OFF"
-            android:textAllCaps="true"
-            android:textSize="26sp" />
-
-        <TextView
-            android:id="@+id/vehicle_type"
-            style="@style/cell_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:text="VEHICLE TYPE"
-            android:textAllCaps="true"
-            android:textSize="26sp" />
-
-    </LinearLayout>
-
-
-</LinearLayout>
+</RelativeLayout>
 
 
     <!--<LinearLayout-->

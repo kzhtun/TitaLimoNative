@@ -20,12 +20,15 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.info121.nativelimo.AbstractFragment;
 import com.info121.nativelimo.R;
 import com.info121.nativelimo.adapters.JobsAdapter;
 import com.info121.nativelimo.api.RestClient;
 import com.info121.nativelimo.models.Job;
 import com.info121.nativelimo.models.JobRes;
 import com.info121.nativelimo.utils.Util;
+
+import org.greenrobot.eventbus.Subscribe;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -49,7 +52,7 @@ import retrofit2.Response;
  * Use the {@link FutureHistoryFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FutureHistoryFragment extends Fragment {
+public class FutureHistoryFragment extends AbstractFragment {
 
     List<Job> mJobList;
 
@@ -171,11 +174,16 @@ public class FutureHistoryFragment extends Fragment {
                 myCalendar.get(Calendar.MONTH),
                 myCalendar.get(Calendar.DAY_OF_MONTH));
 
-       if(mCurrentTab.equalsIgnoreCase("FUTURE"))
-        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() + 172800000);
+        if (mCurrentTab.equalsIgnoreCase("FUTURE"))
+            datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() + 172800000);
 
-        if(mCurrentTab.equalsIgnoreCase("HISTORY"))
+        if (mCurrentTab.equalsIgnoreCase("HISTORY")) {
             datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+
+           if(target.getTag().toString().equalsIgnoreCase("TO_DATE")){
+               datePickerDialog.getDatePicker().setMinDate(myCalendar.getTimeInMillis());
+           }
+        }
 
         datePickerDialog.show();
 
@@ -196,6 +204,17 @@ public class FutureHistoryFragment extends Fragment {
 
         searchOnClick();
 
+        if (mCurrentTab.equalsIgnoreCase("HISTORY")) {
+
+            myCalendar = Calendar.getInstance();
+
+            String myFormat = "dd MMM yyyy"; //In which you need put here
+            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+            mFromDate.setText(sdf.format(myCalendar.getTime()));
+            mToDate.setText(sdf.format(myCalendar.getTime()));
+        }
+
     }
 
     @Override
@@ -215,7 +234,7 @@ public class FutureHistoryFragment extends Fragment {
 
         myCalendar = Calendar.getInstance();
 
-        if(mCurrentTab.equalsIgnoreCase("HISTORY"))
+        if (mCurrentTab.equalsIgnoreCase("HISTORY"))
             mSortLayout.setVisibility(View.INVISIBLE);
         else
             mSortLayout.setVisibility(View.VISIBLE);
@@ -235,10 +254,12 @@ public class FutureHistoryFragment extends Fragment {
 
         sortAsc.setChecked(true);
 
+
+
+
         // Inflate the layout for this fragment
         return view;
     }
-
 
 
     @OnClick(R.id.search)
@@ -258,7 +279,6 @@ public class FutureHistoryFragment extends Fragment {
     }
 
 
-
     @Override
     public void setMenuVisibility(boolean menuVisible) {
         super.setMenuVisibility(menuVisible);
@@ -270,15 +290,15 @@ public class FutureHistoryFragment extends Fragment {
     private void getFutureJobs() {
         String customer = " ";
 
-        if(mPassenger.getText().length() == 0)
+        if (mPassenger.getText().length() == 0)
             customer = " ";
         else
             customer = mPassenger.getText().toString();
 
-        if(mFromDate.getText().length() == 0)
+        if (mFromDate.getText().length() == 0)
             mFromDate.setText(" ");
 
-        if(mToDate.getText().length() == 0)
+        if (mToDate.getText().length() == 0)
             mToDate.setText(" ");
 
         Call<JobRes> call = RestClient.COACH().getApiService().GetFutureJobs(
@@ -291,19 +311,26 @@ public class FutureHistoryFragment extends Fragment {
         call.enqueue(new Callback<JobRes>() {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
-                mSwipeLayout.setRefreshing(false);
-                mJobList = (List<Job>) response.body().getJobs();
+                if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
+                    mSwipeLayout.setRefreshing(false);
+                    mJobList = (List<Job>) response.body().getJobs();
 
-                mJobCount.setText(String.valueOf(mJobList.size()) );
+                    mJobCount.setText(String.valueOf(mJobList.size()));
 
-                if (mJobList.size() > 0)
-                    mNoData.setVisibility(View.GONE);
-                else
-                    mNoData.setVisibility(View.VISIBLE);
+                    if (mJobList.size() > 0)
+                        mNoData.setVisibility(View.GONE);
+                    else
+                        mNoData.setVisibility(View.VISIBLE);
 
-                // data refresh
-                jobsAdapter.updateJobList(mJobList, mCurrentTab);
-                mRecyclerView.getAdapter().notifyDataSetChanged();
+                    // data refresh
+                    jobsAdapter.updateJobList(mJobList, mCurrentTab);
+                    mRecyclerView.getAdapter().notifyDataSetChanged();
+
+                }
+
+                if (response.body().getResponsemessage().equalsIgnoreCase("BAD TOKEN")) {
+                    RestClient.refreshToken("GET_FUTURE_JOBS");
+                }
 
             }
 
@@ -319,15 +346,15 @@ public class FutureHistoryFragment extends Fragment {
     private void getHistoryJobs() {
         String customer = " ";
 
-        if(mPassenger.getText().length() == 0)
+        if (mPassenger.getText().length() == 0)
             customer = " ";
         else
             customer = mPassenger.getText().toString();
 
-        if(mFromDate.getText().length() == 0)
+        if (mFromDate.getText().length() == 0)
             mFromDate.setText(" ");
 
-        if(mToDate.getText().length() == 0)
+        if (mToDate.getText().length() == 0)
             mToDate.setText(" ");
 
         Call<JobRes> call = RestClient.COACH().getApiService().GetHistoryJobs(
@@ -340,19 +367,26 @@ public class FutureHistoryFragment extends Fragment {
         call.enqueue(new Callback<JobRes>() {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
-                mSwipeLayout.setRefreshing(false);
-                mJobList = (List<Job>) response.body().getJobs();
 
-                mJobCount.setText(String.valueOf(mJobList.size()) );
+                if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
+                    mSwipeLayout.setRefreshing(false);
+                    mJobList = (List<Job>) response.body().getJobs();
 
-                if (mJobList.size() > 0)
-                    mNoData.setVisibility(View.GONE);
-                else
-                    mNoData.setVisibility(View.VISIBLE);
+                    mJobCount.setText(String.valueOf(mJobList.size()));
 
-                // data refresh
-                jobsAdapter.updateJobList(mJobList, mCurrentTab);
-                mRecyclerView.getAdapter().notifyDataSetChanged();
+                    if (mJobList.size() > 0)
+                        mNoData.setVisibility(View.GONE);
+                    else
+                        mNoData.setVisibility(View.VISIBLE);
+
+                    // data refresh
+                    jobsAdapter.updateJobList(mJobList, mCurrentTab);
+                    mRecyclerView.getAdapter().notifyDataSetChanged();
+                }
+
+                if (response.body().getResponsemessage().equalsIgnoreCase("BAD TOKEN")) {
+                    RestClient.refreshToken("GET_HISTORY_JOBS");
+                }
 
             }
 
@@ -392,6 +426,18 @@ public class FutureHistoryFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+
+    @Subscribe(sticky = true)
+    public void onEvent(String action) {
+        if (action.equalsIgnoreCase("GET_FUTURE_JOBS")) {
+            getFutureJobs();
+        }
+
+        if (action.equalsIgnoreCase("GET_HISTORY_JOBS")) {
+            getHistoryJobs();
+        }
     }
 
 

@@ -16,6 +16,7 @@ import com.info121.nativelimo.models.JobRes;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -40,6 +41,7 @@ public class FtpHelper {
         String mJobNo;
         String mFileName;
         String mType;
+        String mAction;
 
         public uploadTask(Context context, InputStream inputStream) {
             this.context = context;
@@ -92,6 +94,7 @@ public class FtpHelper {
                 mFileName = params[4];
                 mJobNo = params[5];
                 mType = params[6];
+                mAction = params[7];
 
 //                FTPClient ftpClient = new FTPClient();
 //
@@ -162,6 +165,10 @@ public class FtpHelper {
 
                     if (mType.equalsIgnoreCase("SIGNATURE"))
                         callSaveSignature(context, mJobNo, mFileName);
+
+
+                    if (mAction != null)
+                        EventBus.getDefault().post(mAction);
 
 
                 }

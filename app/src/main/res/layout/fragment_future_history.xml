@@ -72,6 +72,7 @@
                     android:inputType="none"
                     android:paddingLeft="10dp"
                     android:paddingRight="8dp"
+                    android:tag="FROM_DATE"
                     android:textColor="@color/edit_text_color" />
             </LinearLayout>
 
@@ -101,9 +102,9 @@
                     android:inputType="none"
                     android:paddingLeft="10dp"
                     android:paddingRight="8dp"
+                    android:tag="TO_DATE"
                     android:textColor="@color/edit_text_color" />
             </LinearLayout>
-
 
         </LinearLayout>
 

@@ -154,7 +154,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         Uri soundUri = App.getProminentSoundUri();
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NEW_CH)
                 .setSmallIcon(R.mipmap.my_limo_launcher)
-                .setContentTitle("My Coach")
+                .setContentTitle("Tita Limo")
                 .setContentText("A job has been alerted for your confirmation.")
                 .setAutoCancel(true)
                 .setSound(soundUri)
@@ -235,7 +235,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         Uri soundUri = App.getProminentSoundUri();
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NEW_CH)
                 .setSmallIcon(R.mipmap.my_limo_launcher)
-                .setContentTitle("My Coach")
+                .setContentTitle("Tita Limo")
                 .setContentText("A job has been alerted for your confirmation.")
                 .setAutoCancel(true)
                 .setSound(soundUri)

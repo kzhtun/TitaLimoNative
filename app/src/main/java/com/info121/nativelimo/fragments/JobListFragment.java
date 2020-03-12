@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,7 +61,6 @@ public class JobListFragment extends AbstractFragment {
 
     @BindView(R.id.pullToRefresh)
     SwipeRefreshLayout mSwipeLayout;
-
 
 
     JobsAdapter jobsAdapter;
@@ -179,23 +179,27 @@ public class JobListFragment extends AbstractFragment {
         call.enqueue(new Callback<JobRes>() {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
-                mSwipeLayout.setRefreshing(false);
-                mJobList = (List<Job>) response.body().getJobs();
 
-                mListDate.setText(todayDate);
+                if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
+                    mSwipeLayout.setRefreshing(false);
+                    mJobList = (List<Job>) response.body().getJobs();
 
-                if (mJobList != null)
-                    if (mJobList.size() > 0)
-                        mNoData.setVisibility(View.GONE);
-                    else
-                        mNoData.setVisibility(View.VISIBLE);
+                    mListDate.setText(todayDate);
 
-                // data refresh
-                jobsAdapter.updateJobList(mJobList, mCurrentTab);
-                mRecyclerView.getAdapter().notifyDataSetChanged();
+                    if (mJobList != null)
+                        if (mJobList.size() > 0)
+                            mNoData.setVisibility(View.GONE);
+                        else
+                            mNoData.setVisibility(View.VISIBLE);
 
-               // Toast.makeText(getContext(), "Today Jobs Updated", Toast.LENGTH_SHORT).show();
+                    // data refresh
+                    jobsAdapter.updateJobList(mJobList, mCurrentTab);
+                    mRecyclerView.getAdapter().notifyDataSetChanged();
+                }
 
+                if (response.body().getResponsemessage().equalsIgnoreCase("BAD TOKEN")) {
+                    RestClient.refreshToken("GET_TODAY_JOBS");
+                }
             }
 
             @Override
@@ -214,22 +218,27 @@ public class JobListFragment extends AbstractFragment {
         call.enqueue(new Callback<JobRes>() {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
-                mSwipeLayout.setRefreshing(false);
-                mJobList = (List<Job>) response.body().getJobs();
+                if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
+                    mSwipeLayout.setRefreshing(false);
+                    mJobList = (List<Job>) response.body().getJobs();
 
-                mListDate.setText(tomorrowDate);
+                    mListDate.setText(tomorrowDate);
 
-                if (mJobList != null)
-                    if (mJobList.size() > 0)
-                        mNoData.setVisibility(View.GONE);
-                    else
-                        mNoData.setVisibility(View.VISIBLE);
+                    if (mJobList != null)
+                        if (mJobList.size() > 0)
+                            mNoData.setVisibility(View.GONE);
+                        else
+                            mNoData.setVisibility(View.VISIBLE);
 
-                // data refresh
-                jobsAdapter.updateJobList(mJobList, mCurrentTab);
-                mRecyclerView.getAdapter().notifyDataSetChanged();
+                    // data refresh
+                    jobsAdapter.updateJobList(mJobList, mCurrentTab);
+                    mRecyclerView.getAdapter().notifyDataSetChanged();
+                }
 
-               // Toast.makeText(getContext(), "Tomorrow Jobs Updated", Toast.LENGTH_SHORT).show();
+                if (response.body().getResponsemessage().equalsIgnoreCase("BAD TOKEN")) {
+                    RestClient.refreshToken("GET_TOMORROW_JOBS");
+                }
+
             }
 
             @Override
@@ -279,5 +288,15 @@ public class JobListFragment extends AbstractFragment {
         getRelatedTabData();
     }
 
+    @Subscribe(sticky = true)
+    public void onEvent(String action) {
+        if (action.equalsIgnoreCase("GET_TODAY_JOBS")) {
+            getTodayJobs();
+        }
+
+        if (action.equalsIgnoreCase("GET_TOMORROW_JOBS")) {
+            getTomorrowJobs();
+        }
+    }
 
 }

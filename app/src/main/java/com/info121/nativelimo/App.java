@@ -45,6 +45,12 @@ public class App extends Application {
     public static String CONST_PDF_URL = "http://103.7.10.47/iops/uploads/";
     public static String CONST_PHOTO_URL = "http://103.7.10.47/iops/images/limopics/";
 
+    // NEW SERVER
+    public static final String FTP_URL = "103.7.10.47";
+    public static final String FTP_USER = "info121";
+    public static final String FTP_PASSWORD = "ja8mt988$$";
+    public static String FTP_DIR = "limopics";
+
 
     public static String CONST_USER_NAME = "USER_NAME";
     public static String CONST_ALREADY_LOGIN = "ALREADY_LOGIN";
@@ -89,11 +95,7 @@ public class App extends Application {
     public static List<Job> jobList = new ArrayList<>();
 
 
-    // NEW SERVER
-    public static final String FTP_URL = "103.7.10.47";
-    public static final String FTP_USER = "info121";
-    public static final String FTP_PASSWORD = "ja8mt988$$";
-    public static String FTP_DIR = "limopics";
+
 
     public static final String[] SONG_PROJECTION = new String[]{
             MediaStore.Audio.Media._ID
@@ -112,6 +114,7 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
 
+        App.targetContent = getApplicationContext();
 
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                 .setDefaultFontPath("fonts/Lato-Regular.ttf")

@@ -32,7 +32,7 @@
                     style="@style/dialog_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="MY COACH" />
+                    android:text="Tita Limo" />
             </LinearLayout>
         </LinearLayout>
 
