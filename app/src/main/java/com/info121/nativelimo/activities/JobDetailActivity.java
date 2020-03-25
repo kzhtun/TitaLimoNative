@@ -46,7 +46,7 @@ public class JobDetailActivity extends AbstractActivity {
         String currentTab = intent.getStringExtra("currentTab");
 
         // set view pager
-        JobDetailPageAdapter pageAdapter  = new JobDetailPageAdapter(getSupportFragmentManager(), App.jobList, currentTab );
+        JobDetailPageAdapter pageAdapter  = new JobDetailPageAdapter(getSupportFragmentManager(), App.jobList, currentTab, index);
         mViewPager.setAdapter(pageAdapter);
         mViewPager.setCurrentItem(index);
 

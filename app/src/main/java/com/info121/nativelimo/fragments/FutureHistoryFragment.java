@@ -245,6 +245,8 @@ public class FutureHistoryFragment extends AbstractFragment {
         jobsAdapter = new JobsAdapter(mContext, mJobList);
         mRecyclerView.setAdapter(jobsAdapter);
 
+        mRecyclerView.setNestedScrollingEnabled(true);
+
         mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

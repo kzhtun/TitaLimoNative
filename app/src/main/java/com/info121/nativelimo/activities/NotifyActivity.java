@@ -12,8 +12,12 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
@@ -72,6 +76,11 @@ public class NotifyActivity extends AbstractActivity {
     @BindView(R.id.vehicle_type)
     TextView mVehicleType;
 
+    @BindView(R.id.adjust_view)
+    View mAdjustView;
+
+    ViewGroup.LayoutParams params;
+
     AudioManager audioManager;
 
     ToneGenerator toneGen = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
@@ -79,6 +88,11 @@ public class NotifyActivity extends AbstractActivity {
     Timer t2 = new Timer();
 
     int count = 10;
+
+    int screenWidth, screenHeight, rootHeight, rootWidth;
+    DisplayMetrics displayMetrics;
+
+    Boolean startFromLandscape = false;
 
 //    @BindView(R.id.address)
 //    AdCircleProgress mAddress;
@@ -88,6 +102,8 @@ public class NotifyActivity extends AbstractActivity {
     String jobNo;
 
     Vibrator vibrator;
+
+    Boolean getHeightAlready = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,8 +127,8 @@ public class NotifyActivity extends AbstractActivity {
 //        bundle.putString("CUST_NAME", clientName);
 
         jobNo = intent.getExtras().getString("JOB_NO");
-    //    final String jobType = intent.getExtras().getString("JOB_TYPE");
-     //   final String jobDate = intent.getExtras().getString("JOB_DATE");
+        //    final String jobType = intent.getExtras().getString("JOB_TYPE");
+        //   final String jobDate = intent.getExtras().getString("JOB_DATE");
         final String jobTime = intent.getExtras().getString("JOB_TIME");
         final String pickup = intent.getExtras().getString("PICKUP");
         final String dropoff = intent.getExtras().getString("DROPOFF");
@@ -126,7 +142,7 @@ public class NotifyActivity extends AbstractActivity {
         mPickupTime.setText(jobTime);
         mPickup.setText(pickup);
         mDropOff.setText(dropoff);
-       // mVehicleType.setText(custName);
+        // mVehicleType.setText(custName);
 
 
         ButterKnife.bind(this);
@@ -149,7 +165,6 @@ public class NotifyActivity extends AbstractActivity {
         }, 1000, 90);
 
 
-
         // toneGen.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD,50);
 
         mProgress.setOnClickListener(new View.OnClickListener() {
@@ -160,21 +175,101 @@ public class NotifyActivity extends AbstractActivity {
         });
 
 
-
-
         App.notiActivityIsShowing = true;
         playBeep1();
         vibrate();
 
+
+        displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        screenHeight = displayMetrics.heightPixels;
+        screenWidth = displayMetrics.widthPixels;
+
+
+        params = mAdjustView.getLayoutParams();
+
+        final ViewTreeObserver observer = mRootLayout.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        if (!getHeightAlready) {
+
+                            rootHeight = mRootLayout.getHeight();
+                            rootWidth = mRootLayout.getWidth();
+
+                            params.height = (screenHeight - rootHeight) / 2;
+                            mAdjustView.setLayoutParams(params);
+                            getHeightAlready = true;
+                        }
+//                        if (screenHeight > rootHeight)
+//                            mRootLayout.setLayoutParams(params);
+                    }
+                });
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+            startFromLandscape = true;
+        else
+            startFromLandscape = false;
+
+//        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//
+//        } else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+//
+//        }
+
+    }
+
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        //  rootHeight = mRootLayout.getHeight();
+
+
+//        displayMetrics = new DisplayMetrics();
+//        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+//        screenHeight = displayMetrics.heightPixels;
+//        screenWidth = displayMetrics.widthPixels;
+
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            if (startFromLandscape)
+                params.height = (screenHeight - rootHeight) / 2;
+            else
+                params.height = (screenWidth - rootHeight) / 2;
+
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            if (startFromLandscape)
+                params.height = (screenWidth - rootHeight) / 2;
+            else
+                params.height = (screenHeight - rootHeight) / 2;
+
+        }
+        mAdjustView.setLayoutParams(params);
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
     }
 
     @OnClick(R.id.root_layout)
-    public void rootLayoutOnClick(){
+    public void rootLayoutOnClick() {
         acceptJob();
     }
 
 
-    private void acceptJob(){
+    private void acceptJob() {
         updateJobStatus(jobNo, "Confirm");
         callUpdateDriverLocation();
     }
@@ -282,7 +377,6 @@ public class NotifyActivity extends AbstractActivity {
     private void updateJobStatus(final String jobNo, final String status) {
         App.fullAddress = (App.fullAddress.isEmpty()) ? " " : App.fullAddress;
 
-
         Call<JobRes> call = RestClient.COACH().getApiService().UpdateJobStatus(
                 jobNo,
                 App.fullAddress,
@@ -295,12 +389,11 @@ public class NotifyActivity extends AbstractActivity {
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
                 Log.e("Update Job Successful", response.toString());
 
-                playAcceptBeep();
-
-                finish();
-
-                Toast.makeText(mContext, "Update Successful", Toast.LENGTH_SHORT).show();
                 EventBus.getDefault().postSticky("UPDATE_JOB_COUNT");
+
+                playAcceptBeep();
+                finish();
+                Toast.makeText(mContext, "Update Successful", Toast.LENGTH_SHORT).show();
 
             }
 
@@ -327,17 +420,5 @@ public class NotifyActivity extends AbstractActivity {
             }
     }
 
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        mRootLayout.setVisibility(GONE);
-            // Checks the orientation of the screen
-            if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-
-            } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-
-            }
-    }
 
 }

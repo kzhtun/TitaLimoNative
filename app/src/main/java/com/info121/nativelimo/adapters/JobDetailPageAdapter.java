@@ -14,17 +14,20 @@ public class JobDetailPageAdapter extends FragmentStatePagerAdapter {
 
     List<Job> mJobList = new ArrayList<>();
     String mCurrentTab = "";
+    int mIndex;
 
-    public JobDetailPageAdapter(FragmentManager fm, List<Job> jobList , String currentTab) {
+
+    public JobDetailPageAdapter(FragmentManager fm, List<Job> jobList , String currentTab, int index) {
         super(fm);
         mJobList = jobList;
         mCurrentTab = currentTab;
+        mIndex = index;
     }
 
     @Override
     public Fragment getItem(int i) {
 
-        return JobDetailFragment.newInstance(mJobList.get(i), mCurrentTab);
+        return JobDetailFragment.newInstance(mJobList.get(i), mCurrentTab, mIndex);
     }
 
     @Override

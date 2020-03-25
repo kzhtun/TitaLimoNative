@@ -105,6 +105,7 @@ public class JobDetailFragment extends AbstractFragment {
     private static String[] PERMISSIONS_STORAGE = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     Job job;
+    int index;
     private static final int REQUEST_SHOW_CAMERA = 2001;
     private static final int REQUEST_NO_SHOW_CAMERA = 2002;
 
@@ -258,14 +259,14 @@ public class JobDetailFragment extends AbstractFragment {
     }
 
 
-    public static JobDetailFragment newInstance(Job job, String currentTab) {
+    public static JobDetailFragment newInstance(Job job, String currentTab, int index) {
         JobDetailFragment fragment = new JobDetailFragment();
         Bundle args = new Bundle();
 
         fragment.mCurrentTab = currentTab;
         fragment.job = job;
+        fragment.index = index;
         fragment.setArguments(args);
-
 
         return fragment;
     }
@@ -1719,7 +1720,7 @@ public class JobDetailFragment extends AbstractFragment {
     @Subscribe(sticky = false)
     public void onEvent(Action action) {
 
-        if (action.getAction().equalsIgnoreCase("UNASSIGN") && action.getJobNo().equalsIgnoreCase(job.getJobNo())) {
+        if (action.getAction().equalsIgnoreCase("UNASSIGN") && action.getJobNo().equalsIgnoreCase(App.jobList.get(index).getJobNo())) {
             getActivity().finish();
         }
 

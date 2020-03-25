@@ -173,7 +173,6 @@ public class JobListFragment extends AbstractFragment {
 
     private void getTodayJobs() {
 
-
         Call<JobRes> call = RestClient.COACH().getApiService().GetTodayJobs();
 
         call.enqueue(new Callback<JobRes>() {

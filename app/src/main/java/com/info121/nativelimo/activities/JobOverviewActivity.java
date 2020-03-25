@@ -104,6 +104,7 @@ public class JobOverviewActivity extends AbstractActivity {
     }
 
 
+
     private void callJobsCount(final Boolean update) {
         Call<JobRes> call = RestClient.COACH().getApiService().GetJobsCount();
 

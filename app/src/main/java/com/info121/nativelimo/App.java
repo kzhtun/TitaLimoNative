@@ -41,14 +41,24 @@ public class App extends Application {
 
 
     // Playstore
-    public static String CONST_REST_API_URL = "http://103.7.10.47/RestApiTitanium/MyLimoService.svc/";
-    public static String CONST_PDF_URL = "http://103.7.10.47/iops/uploads/";
-    public static String CONST_PHOTO_URL = "http://103.7.10.47/iops/images/limopics/";
+//    public static String CONST_REST_API_URL = "http://103.7.10.47/RestApiTitanium/MyLimoService.svc/";
+//    public static String CONST_PDF_URL = "http://103.7.10.47/iops/uploads/";
+//    public static String CONST_PHOTO_URL = "http://103.7.10.47/iops/images/limopics/";
+//    // V2 FTP
+//    public static final String FTP_URL = "103.7.10.47";
+//    public static final String FTP_USER = "info121";
+//    public static final String FTP_PASSWORD = "ja8mt988$$";
+//    public static String FTP_DIR = "limopics";
 
-    // NEW SERVER
-    public static final String FTP_URL = "103.7.10.47";
-    public static final String FTP_USER = "info121";
-    public static final String FTP_PASSWORD = "ja8mt988$$";
+    // new server
+    public static String CONST_REST_API_URL = "http://103.7.10.184/RestApiTitanium/MyLimoService.svc/";
+    public static String CONST_PDF_URL = "http://103.7.10.184/iops/uploads/";
+    public static String CONST_PHOTO_URL = "http://103.7.10.184/iops/images/limopics/";
+
+    // V1 FTP
+    public static final String FTP_URL = "103.7.10.184";
+    public static final String FTP_USER = "titalimo";
+    public static final String FTP_PASSWORD = "ja8mt988$$-Info121@sa";
     public static String FTP_DIR = "limopics";
 
 

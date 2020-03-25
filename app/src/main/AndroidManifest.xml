@@ -33,7 +33,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
-        <activity android:name=".activities.NotifyActivity"></activity>
+        <activity android:name=".activities.NotifyActivity" android:configChanges="orientation|screenSize"></activity>
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"

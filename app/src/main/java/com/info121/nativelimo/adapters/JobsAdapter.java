@@ -9,19 +9,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Adapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.info121.nativelimo.R;
 import com.info121.nativelimo.App;
 import com.info121.nativelimo.activities.JobDetailActivity;
+import com.info121.nativelimo.api.RestClient;
 import com.info121.nativelimo.models.Job;
+import com.info121.nativelimo.models.JobRes;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.ViewHolder> {
     private int lastPosition = -1;
@@ -69,7 +75,7 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.ViewHolder> {
         viewHolder.passenger.setText(mJobList.get(i).getCustomer());
         viewHolder.mobile.setText(mJobList.get(i).getCustomerTel());
 
-        viewHolder.jobDate.setText(mJobList.get(i).getUsageDate() );
+        viewHolder.jobDate.setText(mJobList.get(i).getUsageDate());
 
 
         //viewHolder.passenger.setText(mJobList.get(i).getJobNo());
@@ -81,20 +87,21 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.ViewHolder> {
         viewHolder.parent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                App.jobList = mJobList;
 
-                Intent intent = new Intent(mContext, JobDetailActivity.class);
-                intent.putExtra("jobNo", jobNo);
-                intent.putExtra("index", index);
-                intent.putExtra("currentTab", mCurrentTab);
-                mContext.startActivity(intent);
+                if (mCurrentTab.equalsIgnoreCase("TODAY")) {
+                    getTodayJobs(jobNo, index);
+                }
+
+                if (mCurrentTab.equalsIgnoreCase("TOMORROW")) {
+                    getTomorrowJobs(jobNo, index);
+                }
+
 
             }
         });
 
-        if(mCurrentTab.equalsIgnoreCase("HISTORY") || mCurrentTab.equalsIgnoreCase("FUTURE")) {
+        if (mCurrentTab.equalsIgnoreCase("HISTORY") || mCurrentTab.equalsIgnoreCase("FUTURE")) {
             viewHolder.jobDate.setVisibility(View.VISIBLE);
-
 
         }
 
@@ -166,5 +173,84 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.ViewHolder> {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
+    }
+
+
+    private void getTodayJobs(final String jobNo, final int index) {
+        Call<JobRes> call = RestClient.COACH().getApiService().GetTodayJobs();
+
+        call.enqueue(new Callback<JobRes>() {
+            @Override
+            public void onResponse(Call<JobRes> call, Response<JobRes> response) {
+
+                if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
+                    mJobList = (List<Job>) response.body().getJobs();
+                    if (mJobList != null)
+                        if (mJobList.size() > 0) {
+                            App.jobList = mJobList;
+
+                            updateJobList(mJobList, mCurrentTab);
+                            notifyDataSetChanged();
+
+                            Intent intent = new Intent(mContext, JobDetailActivity.class);
+                            intent.putExtra("jobNo", jobNo);
+                            intent.putExtra("index", index);
+                            intent.putExtra("currentTab", mCurrentTab);
+                            mContext.startActivity(intent);
+                        }
+                }
+
+                if (response.body().getResponsemessage().equalsIgnoreCase("BAD TOKEN")) {
+                    RestClient.refreshToken("GET_TODAY_JOBS");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JobRes> call, Throwable t) {
+
+            }
+        });
+
+
+    }
+
+    private void getTomorrowJobs(final String jobNo, final int index) {
+
+        Call<JobRes> call = RestClient.COACH().getApiService().GetTomorrowJobs();
+
+        call.enqueue(new Callback<JobRes>() {
+            @Override
+            public void onResponse(Call<JobRes> call, Response<JobRes> response) {
+                if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
+
+                    mJobList = (List<Job>) response.body().getJobs();
+
+                    if (mJobList != null)
+                        if (mJobList.size() > 0) {
+                            App.jobList = mJobList;
+                            updateJobList(mJobList, mCurrentTab);
+                            notifyDataSetChanged();
+
+                            Intent intent = new Intent(mContext, JobDetailActivity.class);
+                            intent.putExtra("jobNo", jobNo);
+                            intent.putExtra("index", index);
+                            intent.putExtra("currentTab", mCurrentTab);
+                            mContext.startActivity(intent);
+                        }
+                }
+
+                if (response.body().getResponsemessage().equalsIgnoreCase("BAD TOKEN")) {
+                    RestClient.refreshToken("GET_TOMORROW_JOBS");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<JobRes> call, Throwable t) {
+
+            }
+        });
+
+
     }
 }
