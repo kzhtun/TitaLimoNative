@@ -26,6 +26,7 @@ import com.info121.nativelimo.adapters.JobsAdapter;
 import com.info121.nativelimo.api.RestClient;
 import com.info121.nativelimo.models.Job;
 import com.info121.nativelimo.models.JobRes;
+import com.info121.nativelimo.models.SearchParams;
 import com.info121.nativelimo.utils.Util;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -88,6 +89,8 @@ public class FutureHistoryFragment extends AbstractFragment {
     Context mContext = getActivity();
 
     JobsAdapter jobsAdapter;
+
+    SearchParams mSearchParams;
 
     String mCurrentTab = "";
     Calendar myCalendar;
@@ -202,18 +205,21 @@ public class FutureHistoryFragment extends AbstractFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        searchOnClick();
+      //  searchOnClick();
 
-        if (mCurrentTab.equalsIgnoreCase("HISTORY")) {
+//        if (mCurrentTab.equalsIgnoreCase("HISTORY")) {
+//
+//            myCalendar = Calendar.getInstance();
+//
+//            String myFormat = "dd MMM yyyy"; //In which you need put here
+//            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+//
+//            mFromDate.setText(sdf.format(myCalendar.getTime()));
+//            mToDate.setText(sdf.format(myCalendar.getTime()));
+//        }
 
-            myCalendar = Calendar.getInstance();
 
-            String myFormat = "dd MMM yyyy"; //In which you need put here
-            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-
-            mFromDate.setText(sdf.format(myCalendar.getTime()));
-            mToDate.setText(sdf.format(myCalendar.getTime()));
-        }
+        mSwipeLayout.setEnabled(false);
 
     }
 
@@ -266,48 +272,49 @@ public class FutureHistoryFragment extends AbstractFragment {
 
     @OnClick(R.id.search)
     public void searchOnClick() {
-        mSwipeLayout.setRefreshing(true);
 
-        switch (mCurrentTab) {
-            case "FUTURE": {
-                getFutureJobs();
-            }
-            break;
-            case "HISTORY": {
-                getHistoryJobs();
-            }
-            break;
-        }
     }
 
 
     @Override
     public void setMenuVisibility(boolean menuVisible) {
         super.setMenuVisibility(menuVisible);
-        if (menuVisible) {
 
+        mSearchParams = new SearchParams("","", "", "0");
+        if (menuVisible) {
+            switch (mCurrentTab) {
+                case "FUTURE": {
+                    getFutureJobs(mSearchParams);
+                }
+                break;
+                case "HISTORY": {
+                    getHistoryJobs(mSearchParams);
+                }
+                break;
+            }
         }
     }
 
-    private void getFutureJobs() {
-        String customer = " ";
+    private void getFutureJobs(SearchParams params) {
 
-        if (mPassenger.getText().length() == 0)
-            customer = " ";
-        else
-            customer = mPassenger.getText().toString();
+//        if (mPassenger.getText().length() == 0)
+//            customer = " ";
+//        else
+//            customer = mPassenger.getText().toString();
+//
+//        if (mFromDate.getText().length() == 0)
+//            mFromDate.setText(" ");
+//
+//        if (mToDate.getText().length() == 0)
+//            mToDate.setText(" ");
 
-        if (mFromDate.getText().length() == 0)
-            mFromDate.setText(" ");
 
-        if (mToDate.getText().length() == 0)
-            mToDate.setText(" ");
 
         Call<JobRes> call = RestClient.COACH().getApiService().GetFutureJobs(
-                mFromDate.getText().toString(),
-                mToDate.getText().toString(),
-                Util.replaceEscapeChr(customer),
-                sort
+                params.getFromDate(),
+                params.getToDate(),
+                Util.replaceEscapeChr(params.getCustomer()),
+                params.getSort()
         );
 
         call.enqueue(new Callback<JobRes>() {
@@ -345,25 +352,25 @@ public class FutureHistoryFragment extends AbstractFragment {
 
     }
 
-    private void getHistoryJobs() {
-        String customer = " ";
-
-        if (mPassenger.getText().length() == 0)
-            customer = " ";
-        else
-            customer = mPassenger.getText().toString();
-
-        if (mFromDate.getText().length() == 0)
-            mFromDate.setText(" ");
-
-        if (mToDate.getText().length() == 0)
-            mToDate.setText(" ");
+    private void getHistoryJobs(SearchParams params) {
+//        String customer = " ";
+//
+//        if (mPassenger.getText().length() == 0)
+//            customer = " ";
+//        else
+//            customer = mPassenger.getText().toString();
+//
+//        if (mFromDate.getText().length() == 0)
+//            mFromDate.setText(" ");
+//
+//        if (mToDate.getText().length() == 0)
+//            mToDate.setText(" ");
 
         Call<JobRes> call = RestClient.COACH().getApiService().GetHistoryJobs(
-                mFromDate.getText().toString(),
-                mToDate.getText().toString(),
-                Util.replaceEscapeChr(customer),
-                sort
+                params.getFromDate(),
+                params.getToDate(),
+                Util.replaceEscapeChr(params.getCustomer()),
+                params.getSort()
         );
 
         call.enqueue(new Callback<JobRes>() {
@@ -430,15 +437,31 @@ public class FutureHistoryFragment extends AbstractFragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    @Subscribe(sticky = false)
+    public void onEvent(SearchParams params) {
+        mSearchParams = params;
+        mSwipeLayout.setRefreshing(true);
+
+        switch (mCurrentTab) {
+            case "FUTURE": {
+                getFutureJobs(params);
+            }
+            break;
+            case "HISTORY": {
+                getHistoryJobs(params);
+            }
+            break;
+        }
+    }
 
     @Subscribe(sticky = true)
     public void onEvent(String action) {
         if (action.equalsIgnoreCase("GET_FUTURE_JOBS")) {
-            getFutureJobs();
+            getFutureJobs(mSearchParams);
         }
 
         if (action.equalsIgnoreCase("GET_HISTORY_JOBS")) {
-            getHistoryJobs();
+            getHistoryJobs(mSearchParams);
         }
     }
 

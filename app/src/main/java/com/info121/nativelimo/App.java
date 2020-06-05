@@ -20,6 +20,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.info121.nativelimo.models.Job;
+import com.info121.nativelimo.models.SearchParams;
 import com.info121.nativelimo.utils.PrefDB;
 
 
@@ -44,7 +45,8 @@ public class App extends Application {
 //    public static String CONST_REST_API_URL = "http://103.7.10.47/RestApiTitanium/MyLimoService.svc/";
 //    public static String CONST_PDF_URL = "http://103.7.10.47/iops/uploads/";
 //    public static String CONST_PHOTO_URL = "http://103.7.10.47/iops/images/limopics/";
-//    // V2 FTP
+
+    // V2 FTP
 //    public static final String FTP_URL = "103.7.10.47";
 //    public static final String FTP_USER = "info121";
 //    public static final String FTP_PASSWORD = "ja8mt988$$";
@@ -70,7 +72,6 @@ public class App extends Application {
     public static String CONST_DEVICE_ID = "DEVICE_ID";
     public static String CONST_TIMER_DELAY = "TIMER_DELAY";
     public static String CONST_REMEMBER_ME = "REMEMBER_ME";
-
 
 
     public static String userName = "user";
@@ -104,8 +105,8 @@ public class App extends Application {
 
     public static List<Job> jobList = new ArrayList<>();
 
-
-
+    public static SearchParams futureSearchParams;
+    public static SearchParams historySearchParams;
 
     public static final String[] SONG_PROJECTION = new String[]{
             MediaStore.Audio.Media._ID
@@ -143,12 +144,9 @@ public class App extends Application {
 
                         // Get new Instance ID token
                         FCM_TOKEN = task.getResult().getToken();
-                        Log.e("TOKEN : " , FCM_TOKEN);
+                        Log.e("TOKEN : ", FCM_TOKEN);
                     }
                 });
-
-
-
 
 
 //        File f = new File(Environment.getExternalStorageDirectory(), PHOTO_FOLDER);

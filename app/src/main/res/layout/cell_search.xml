@@ -10,11 +10,208 @@
     android:background="@drawable/rounded_layout"
     android:baselineAligned="false"
     android:orientation="vertical"
+    android:visibility="gone"
     android:padding="16dp">
 
 
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
+            <TextView
+                style="@style/cell_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:layout_marginBottom="2dp"
+                android:text="PASSENGER" />
+
+            <EditText
+                android:id="@+id/passenger"
+                style="@style/cell_text"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:background="@drawable/rounded_edittext"
+                android:paddingLeft="10dp"
+                android:textColor="@color/edit_text_color" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="3dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/cell_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:text="FROM " />
+
+                <EditText
+                    android:id="@+id/from_date"
+                    style="@style/cell_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:background="@drawable/rounded_edittext"
+                    android:drawableRight="@mipmap/ic_calendar"
+                    android:focusable="false"
+                    android:inputType="none"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="8dp"
+                    android:tag="FROM_DATE"
+                    android:textColor="@color/edit_text_color" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/cell_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:text="TO " />
+
+                <EditText
+                    android:id="@+id/to_date"
+                    style="@style/cell_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:background="@drawable/rounded_edittext"
+                    android:drawableRight="@mipmap/ic_calendar"
+                    android:focusable="false"
+                    android:inputType="none"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="8dp"
+                    android:tag="TO_DATE"
+                    android:textColor="@color/edit_text_color" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+
+            <LinearLayout
+                android:id="@+id/sort_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/cell_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="2dp"
+                    android:text="TIME SORTING" />
+
+                <RadioGroup
+                    android:id="@+id/radio_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/sort_asc"
+                        style="@style/cell_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:text="ASCEN"
+                        android:textSize="10sp" />
+
+                    <RadioButton
+                        android:id="@+id/sort_desc"
+                        style="@style/cell_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="DESCEN"
+                        android:textSize="10sp" />
+                </RadioGroup>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/search"
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="3dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/rounded_button"
+                    android:text="SEARCH"
+                    android:textColor="@color/white" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="right"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:gravity="center_vertical|left"
+                android:letterSpacing="0.1"
+                android:paddingLeft="18dp"
+                android:text="TOTAL :"
+                android:textColor="@color/orange" />
+
+            <TextView
+                android:id="@+id/job_count"
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:gravity="center_vertical|left"
+                android:letterSpacing="0.1"
+                android:paddingLeft="12dp"
+                android:text="0"
+                android:textColor="@color/orange" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:layout_marginRight="12dp"
+                android:gravity="center_vertical|left"
+                android:letterSpacing="0.1"
+                android:paddingLeft="12dp"
+                android:text="JOBS"
+                android:textColor="@color/orange" />
+
+        </LinearLayout>
 
 </LinearLayout>
 

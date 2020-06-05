@@ -1,16 +1,24 @@
 package com.info121.nativelimo.adapters;
 
+import android.app.DatePickerDialog;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Adapter;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.info121.nativelimo.R;
@@ -19,9 +27,16 @@ import com.info121.nativelimo.activities.JobDetailActivity;
 import com.info121.nativelimo.api.RestClient;
 import com.info121.nativelimo.models.Job;
 import com.info121.nativelimo.models.JobRes;
+import com.info121.nativelimo.models.SearchParams;
+import com.info121.nativelimo.utils.Util;
 
+import org.greenrobot.eventbus.EventBus;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,7 +44,16 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.ViewHolder> {
+import static android.view.View.GONE;
+
+public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    Calendar myCalendar;
+
+    private static final int TYPE_HEADER = 0;
+    private static final int TYPE_ITEM = 1;
+
+    private String sort = "0";
+
     private int lastPosition = -1;
 
     private Context mContext;
@@ -46,63 +70,140 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.ViewHolder> {
         this.mJobList = mJobList;
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        return (position == 0) ? TYPE_HEADER : TYPE_ITEM;
+    }
+
+
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         mContext = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(mContext);
 
-        // Inflate the custom layout
-        View promotionView = inflater.inflate(R.layout.cell_job, parent, false);
+        if (viewType == TYPE_HEADER) {
+            View searchView = inflater.inflate(R.layout.cell_search, parent, false);
+            return new HeaderViewHolder(searchView);
+        }
 
-        // Return a new holder instance
-        return new ViewHolder(promotionView);
+        if (viewType == TYPE_ITEM) {
+            View itemView = inflater.inflate(R.layout.cell_job, parent, false);
+            return new ItemViewHolder(itemView);
+        }
+
+        return null;
     }
 
+
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
 
-        setAnimation(viewHolder.itemView, i);
+        if (viewHolder instanceof HeaderViewHolder) {
+            HeaderViewHolder headerVH = (HeaderViewHolder) viewHolder;
 
-        viewHolder.jobType.setText(mJobList.get(i).getJobType());
-        viewHolder.jobStatus.setText(mJobList.get(i).getJobStatus());
-        viewHolder.vehicleType.setText(mJobList.get(i).getVehicleType());
+            Log.e(" CURRENT TAB : ", mCurrentTab);
 
-        viewHolder.pickupTime.setText(mJobList.get(i).getPickUpTime());
-        viewHolder.pickup.setText(mJobList.get(i).getPickUp());
-        viewHolder.dropoff.setText(mJobList.get(i).getDestination());
+//            if (mCurrentTab.equalsIgnoreCase("TODAY") || mCurrentTab.equalsIgnoreCase("TOMORROW")) {
+//                headerVH.itemView.setVisibility(GONE);
+//                headerVH.itemView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
+//            }
 
-        viewHolder.passenger.setText(mJobList.get(i).getCustomer());
-        viewHolder.mobile.setText(mJobList.get(i).getCustomerTel());
+            if (mCurrentTab.equalsIgnoreCase("FUTURE") || mCurrentTab.equalsIgnoreCase("HISTORY")) {
+                headerVH.itemView.setVisibility(View.VISIBLE);
 
-        viewHolder.jobDate.setText(mJobList.get(i).getUsageDate());
-
-
-        //viewHolder.passenger.setText(mJobList.get(i).getJobNo());
-
-        final String jobNo = mJobList.get(i).getJobNo();
-        final int index = i;
-
-
-        viewHolder.parent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (mCurrentTab.equalsIgnoreCase("TODAY")) {
-                    getTodayJobs(jobNo, index);
-                }
-
-                if (mCurrentTab.equalsIgnoreCase("TOMORROW")) {
-                    getTomorrowJobs(jobNo, index);
-                }
-
-
+                int margin =(int) Util.convertDpToPixel(16, mContext);
+                RecyclerView.LayoutParams llm = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                llm.setMargins( margin,0, margin, margin);
+                headerVH.itemView.setLayoutParams(llm);
+            }else {
+                headerVH.itemView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
             }
-        });
 
-        if (mCurrentTab.equalsIgnoreCase("HISTORY") || mCurrentTab.equalsIgnoreCase("FUTURE")) {
-            viewHolder.jobDate.setVisibility(View.VISIBLE);
 
+            // show/ hide sorting panel
+            if (mCurrentTab.equalsIgnoreCase("FUTURE")) {
+                if (App.futureSearchParams == null) {
+                    headerVH.sortAsc.setChecked(true);
+                }else{
+                    headerVH.mPassenger.setText(App.futureSearchParams.getCustomer());
+                    headerVH.mFromDate.setText(App.futureSearchParams.getFromDate());
+                    headerVH.mToDate.setText(App.futureSearchParams.getToDate());
+                    if(App.futureSearchParams.getSort().equals("0"))
+                        headerVH.sortAsc.setChecked(true);
+                    else
+                        headerVH.sortDesc.setChecked(true);
+                }
+            }
+
+            if (mCurrentTab.equalsIgnoreCase("HISTORY")) {
+                headerVH.mSortLayout.setVisibility(View.INVISIBLE);
+
+                if (App.historySearchParams == null) {
+                    myCalendar = Calendar.getInstance();
+
+                    String myFormat = "dd MMM yyyy"; //In which you need put here
+                    SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+                    headerVH.mFromDate.setText(sdf.format(myCalendar.getTime()));
+                    headerVH.mToDate.setText(sdf.format(myCalendar.getTime()));
+                    // headerVH.sortAsc.setChecked(true);
+                }else{
+                    headerVH.mPassenger.setText(App.historySearchParams.getCustomer());
+                    headerVH.mFromDate.setText(App.historySearchParams.getFromDate());
+                    headerVH.mToDate.setText(App.historySearchParams.getToDate());
+
+                }
+            } else {
+                headerVH.mSortLayout.setVisibility(View.VISIBLE);
+            }
+
+            if (mJobList == null)
+                headerVH.mJobCount.setText("0");
+            else
+                headerVH.mJobCount.setText(mJobList.size() + "");
+        }
+
+
+        if (viewHolder instanceof ItemViewHolder) {
+            i--;
+
+            ItemViewHolder itemVH = (ItemViewHolder) viewHolder;
+            setAnimation(viewHolder.itemView, i);
+
+            itemVH.jobType.setText(mJobList.get(i).getJobType());
+            itemVH.jobStatus.setText(mJobList.get(i).getJobStatus());
+            itemVH.vehicleType.setText(mJobList.get(i).getVehicleType());
+            itemVH.pickupTime.setText(mJobList.get(i).getPickUpTime());
+            itemVH.pickup.setText(mJobList.get(i).getPickUp());
+            itemVH.dropoff.setText(mJobList.get(i).getDestination());
+            itemVH.passenger.setText(mJobList.get(i).getCustomer());
+            itemVH.mobile.setText(mJobList.get(i).getCustomerTel());
+            itemVH.jobDate.setText(mJobList.get(i).getUsageDate());
+            //viewHolder.passenger.setText(mJobList.get(i).getJobNo());
+
+            final String jobNo = mJobList.get(i).getJobNo();
+            final int index = i;
+
+
+            itemVH.parent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if (mCurrentTab.equalsIgnoreCase("TODAY")) {
+                        getTodayJobs(jobNo, index);
+                    }
+
+                    if (mCurrentTab.equalsIgnoreCase("TOMORROW")) {
+                        getTomorrowJobs(jobNo, index);
+                    }
+
+                }
+            });
+
+            if (mCurrentTab.equalsIgnoreCase("HISTORY") || mCurrentTab.equalsIgnoreCase("FUTURE")) {
+                itemVH.jobDate.setVisibility(View.VISIBLE);
+            }
         }
 
 //        if (!mCurrentTab.equalsIgnoreCase("HISTORY"))
@@ -124,7 +225,7 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return (mJobList == null) ? 0 : mJobList.size();
+        return (mJobList == null) ? 1 : mJobList.size() + 1;
     }
 
 
@@ -138,7 +239,150 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.ViewHolder> {
     }
 
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class HeaderViewHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.from_date)
+        EditText mFromDate;
+
+        @BindView(R.id.to_date)
+        EditText mToDate;
+
+        @BindView(R.id.passenger)
+        EditText mPassenger;
+
+        @BindView(R.id.sort_layout)
+        LinearLayout mSortLayout;
+
+        @BindView(R.id.sort_asc)
+        RadioButton sortAsc;
+
+        @BindView(R.id.sort_desc)
+        RadioButton sortDesc;
+
+        @BindView(R.id.job_count)
+        TextView mJobCount;
+
+        @BindView(R.id.search)
+        Button mSearch;
+
+        public HeaderViewHolder(@NonNull View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+
+            myCalendar = Calendar.getInstance();
+
+
+            mFromDate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showDateDialog(mFromDate);
+                }
+            });
+
+
+            mToDate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showDateDialog(mToDate);
+                }
+            });
+
+            sortAsc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+                    if (checked) {
+                        switch (compoundButton.getId()) {
+                            case R.id.sort_asc:
+                                sort = "0";
+                                break;
+                            case R.id.sort_desc:
+                                sort = "1";
+                                break;
+                        }
+                    }
+                }
+            });
+
+            sortDesc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+                    if (checked) {
+                        switch (compoundButton.getId()) {
+                            case R.id.sort_asc:
+                                sort = "0";
+                                break;
+                            case R.id.sort_desc:
+                                sort = "1";
+                                break;
+                        }
+                    }
+                }
+            });
+
+
+            mSearch.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    SearchParams searchParams = new SearchParams(
+                            mPassenger.getText().toString(),
+                            mFromDate.getText().toString(),
+                            mToDate.getText().toString(),
+                            sort);
+
+                    if (mCurrentTab.equalsIgnoreCase("HISTORY"))
+                        App.historySearchParams = searchParams;
+
+                    if (mCurrentTab.equalsIgnoreCase("FUTURE"))
+                        App.futureSearchParams = searchParams;
+
+                    EventBus.getDefault().post(searchParams);
+                }
+            });
+
+        }
+
+
+        private void showDateDialog(final EditText target) {
+            DatePickerDialog.OnDateSetListener dateListener = new DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                      int dayOfMonth) {
+
+                    myCalendar.set(Calendar.YEAR, year);
+                    myCalendar.set(Calendar.MONTH, monthOfYear);
+                    myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                    String myFormat = "dd MMM yyyy"; //In which you need put here
+                    SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+                    target.setText(sdf.format(myCalendar.getTime()));
+                }
+            };
+
+
+            DatePickerDialog datePickerDialog = new DatePickerDialog(mContext, dateListener,
+                    myCalendar.get(Calendar.YEAR),
+                    myCalendar.get(Calendar.MONTH),
+                    myCalendar.get(Calendar.DAY_OF_MONTH));
+
+            if (mCurrentTab.equalsIgnoreCase("FUTURE"))
+                datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() + 172800000);
+
+            if (mCurrentTab.equalsIgnoreCase("HISTORY")) {
+                datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+
+                if (target.getTag().toString().equalsIgnoreCase("TO_DATE")) {
+                    datePickerDialog.getDatePicker().setMinDate(myCalendar.getTimeInMillis());
+                }
+            }
+
+            datePickerDialog.show();
+
+        }
+    }
+
+    public class ItemViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.job_type)
         TextView jobType;
 
@@ -169,12 +413,11 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.ViewHolder> {
         @BindView(R.id.main_layout)
         LinearLayout parent;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
     }
-
 
     private void getTodayJobs(final String jobNo, final int index) {
         Call<JobRes> call = RestClient.COACH().getApiService().GetTodayJobs();

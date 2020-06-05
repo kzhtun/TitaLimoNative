@@ -118,7 +118,8 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                             remoteMessage.getData().get("pickuppoint"),
                             remoteMessage.getData().get("alightpoint"),
                             remoteMessage.getData().get("clientname"),
-                            remoteMessage.getData().get("vehicletype")
+                            remoteMessage.getData().get("vehicletype"),
+                            remoteMessage.getData().get("driver")
                     );
                 }else{
                     showNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("message"));
@@ -206,7 +207,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         startActivity(intent);
     }
 
-    public void showNotifyJob(String jobNo, String jobType, String jobDate, String jobTime, String pickup, String dropoff, String clientName, String vehicleType) {
+    public void showNotifyJob(String jobNo, String jobType, String jobDate, String jobTime, String pickup, String dropoff, String clientName, String vehicleType, String driver) {
 
         // bundle
         Bundle bundle = new Bundle();
@@ -219,6 +220,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         bundle.putString("DROPOFF", dropoff);
         bundle.putString("CUST_NAME", clientName);
         bundle.putString("VEHICLE_TYPE", vehicleType);
+        bundle.putString("DRIVER", driver);
 
 
         // -----------------------------------

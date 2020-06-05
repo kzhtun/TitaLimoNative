@@ -71,9 +71,6 @@ public class LoginActivity extends AbstractActivity {
     @BindView(R.id.ui_version)
     TextView mUiVersion;
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,10 +85,10 @@ public class LoginActivity extends AbstractActivity {
             mRemember.setChecked(true);
         }
 
-        callCheckVersion();
-
         mApiVersion.setText("Api " + Util.getVersionCode(mContext));
         mUiVersion.setText("Ver " + Util.getVersionName(mContext));
+
+       // callCheckVersion();
 
 
 //     //   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -104,10 +101,12 @@ public class LoginActivity extends AbstractActivity {
 //
 //      //  }
 
+//        finish();
+//
 //        Intent intent = new Intent(LoginActivity.this, NotifyActivity.class);
 //        Bundle bundle = new Bundle();
 //
-//        bundle.putString("JOB_NO", "jobNo");
+//        bundle.putString("JOB_NO", "79498");
 //        bundle.putString("JOB_TYPE", "jobType");
 //        bundle.putString("JOB_DATE", "jobDate");
 //        bundle.putString("JOB_TIME", "jobTime");
@@ -115,6 +114,7 @@ public class LoginActivity extends AbstractActivity {
 //        bundle.putString("DROPOFF", "dropoff");
 //        bundle.putString("CUST_NAME", "clientName");
 //        bundle.putString("VEHICLE_TYPE", "vehicleType");
+//        bundle.putString("DRIVER", "BOSS");
 //
 //        intent.putExtras(bundle);
 //        startActivity(intent );
@@ -137,6 +137,10 @@ public class LoginActivity extends AbstractActivity {
         call.enqueue(new Callback<ObjectRes>() {
             @Override
             public void onResponse(Call<ObjectRes> call, Response<ObjectRes> response) {
+
+                if(response.body() == null){
+                    showRefreshDialog();
+                }
 
                 if(response.body().getResponsemessage().equalsIgnoreCase("VALID")){
                     App.userName = mUserName.getText().toString();
@@ -374,6 +378,26 @@ public class LoginActivity extends AbstractActivity {
         }
 
         mNotificationManager.notify(0, notificationBuilder.build());
+    }
+
+
+    private static void showRefreshDialog() {
+
+        AlertDialog dialog = new AlertDialog.Builder(App.targetContent)
+                .setTitle(R.string.AppName)
+                .setMessage("End pint can not reach")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+
+                .create();
+
+
+
+        dialog.show();
     }
 
 }

@@ -31,6 +31,7 @@ import com.info121.nativelimo.R;
 import com.info121.nativelimo.api.RestClient;
 import com.info121.nativelimo.models.Action;
 import com.info121.nativelimo.models.JobRes;
+import com.info121.nativelimo.models.ObjectRes;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -99,11 +100,12 @@ public class NotifyActivity extends AbstractActivity {
 
     Context mContext = NotifyActivity.this;
 
-    String jobNo;
+    String jobNo, driverName;
 
     Vibrator vibrator;
 
     Boolean getHeightAlready = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +136,7 @@ public class NotifyActivity extends AbstractActivity {
         final String dropoff = intent.getExtras().getString("DROPOFF");
         final String vehicleType = intent.getExtras().getString("VEHICLE_TYPE");
         final String custName = intent.getExtras().getString("CUST_NAME");
+        driverName = intent.getExtras().getString("DRIVER");
 
 
 //        mJobType.setText(jobType);
@@ -387,14 +390,21 @@ public class NotifyActivity extends AbstractActivity {
         call.enqueue(new Callback<JobRes>() {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
-                Log.e("Update Job Successful", response.toString());
 
-                EventBus.getDefault().postSticky("UPDATE_JOB_COUNT");
+                Log.e("Update Call Back", response.body().getResponsemessage().toString());
 
-                playAcceptBeep();
-                finish();
-                Toast.makeText(mContext, "Update Successful", Toast.LENGTH_SHORT).show();
+                if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
+                    EventBus.getDefault().postSticky("UPDATE_JOB_COUNT");
 
+                    playAcceptBeep();
+                    finish();
+                    Toast.makeText(mContext, "Update Successful", Toast.LENGTH_SHORT).show();
+                    Log.e("Update Job Successful", response.toString());
+                }
+
+                if (response.body().getResponsemessage().equalsIgnoreCase("BAD TOKEN")) {
+                    refreshToken(driverName, status);
+                }
             }
 
             @Override
@@ -421,4 +431,23 @@ public class NotifyActivity extends AbstractActivity {
     }
 
 
+    public void refreshToken(final String driver, final String action){
+        App.userName = driver;
+
+        RestClient.COACH().getApiService().ValidateDriver(driver).enqueue(new Callback<ObjectRes>() {
+            @Override
+            public void onResponse(Call<ObjectRes> call, retrofit2.Response<ObjectRes> response) {
+                if(response.body().getResponsemessage().equalsIgnoreCase("VALID")) {
+                    App.authToken = response.body().getToken();
+
+                    updateJobStatus(jobNo, action);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ObjectRes> call, Throwable t) {
+
+            }
+        });
+    }
 }
