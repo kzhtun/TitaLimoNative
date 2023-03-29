@@ -53,9 +53,25 @@ public class App extends Application {
 //    public static String FTP_DIR = "limopics";
 
     // new server
-    public static String CONST_REST_API_URL = "http://103.7.10.184/RestApiTitanium/MyLimoService.svc/";
-    public static String CONST_PDF_URL = "http://103.7.10.184/iops/uploads/";
-    public static String CONST_PHOTO_URL = "http://103.7.10.184/iops/images/limopics/";
+//    public static String CONST_REST_API_URL = "http://103.7.10.184/RestApiTitanium/MyLimoService.svc/";
+//    public static String CONST_PDF_URL = "http://103.7.10.184/iops/uploads/";
+//    public static String CONST_PHOTO_URL = "http://103.7.10.184/iops/images/limopics/";
+
+    // demo
+//    public static String CONST_REST_API_URL = "http://info121.sytes.net/RestApiTitanium/MyLimoService.svc/";
+//    public static String CONST_PDF_URL = "http://info121.sytes.net/iops/uploads/";
+//    public static String CONST_PHOTO_URL = "http://info121.sytes.net/iops/images/limopics/";
+
+   // http://118.200.45.215/IOPS%20PORTAL%20WS%20Dev/QWS.asmx
+    // TitaLimo Live 1
+    public static String CONST_REST_API_URL = "http://118.200.45.215/RestApiTitanium/MyLimoService.svc/";
+    public static String CONST_PDF_URL = "http://118.200.45.215/iops/uploads/";
+    public static String CONST_PHOTO_URL = "http://118.200.45.215/iops/images/limopics/";
+
+    // TitaLimo Live
+//    public static String CONST_REST_API_URL = "http://titaniumlimos.com/RestApiTitanium/MyLimoService.svc/";
+//    public static String CONST_PDF_URL = "http://titaniumlimos.com/iops/uploads/";
+//    public static String CONST_PHOTO_URL = "http://titaniumlimos.com/iops/images/limopics/";
 
     // V1 FTP
     public static final String FTP_URL = "103.7.10.184";

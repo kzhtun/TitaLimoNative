@@ -199,6 +199,9 @@ public class JobDetailFragment extends AbstractFragment {
     @BindView(R.id.list_contact)
     ListView mContactList;
 
+    @BindView(R.id.update)
+    EditText mUpdate;
+
 
 //    @BindView(R.id.hs_view)
 //    HorizontalScrollView mHSView;
@@ -1429,7 +1432,7 @@ public class JobDetailFragment extends AbstractFragment {
         if (job.getRemarks() == null || job.getRemarks().length() == 0) {
             mRemarks.setVisibility(GONE);
             mLayoutRemarks.setVisibility(GONE);
-            mLineRemarks.setVisibility(GONE);
+           // mLineRemarks.setVisibility(GONE);
         }
 
         // Set Mobile Numbers
@@ -1465,6 +1468,7 @@ public class JobDetailFragment extends AbstractFragment {
         mDropOff.setText(job.getDestination());
         mRemarks.setText(job.getRemarks());
         mVehicleType.setText(job.getVehicleType());
+        mUpdate.setText(job.getRemark());
 
 
         if (job.getFile1().isEmpty()) {
@@ -1535,6 +1539,7 @@ public class JobDetailFragment extends AbstractFragment {
         Call<JobRes> call = RestClient.COACH().getApiService().UpdateJobStatus(
                 job.getJobNo(),
                 App.fullAddress,
+                (mUpdate.getText().toString().isEmpty()) ? " " : mUpdate.getText().toString(),
                 status
         );
 

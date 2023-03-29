@@ -43,4 +43,11 @@
         android:layout_marginRight="8dp"
         android:src="@mipmap/ic_sms" />
 
+    <ImageView
+        android:id="@+id/whatsapp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginRight="8dp"
+        android:src="@mipmap/ic_whatsapp" />
+
 </LinearLayout>

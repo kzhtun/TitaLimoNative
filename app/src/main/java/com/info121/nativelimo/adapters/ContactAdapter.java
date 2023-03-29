@@ -2,7 +2,10 @@ package com.info121.nativelimo.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.info121.nativelimo.R;
+import com.info121.nativelimo.activities.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +53,7 @@ public class ContactAdapter extends BaseAdapter {
         TextView mobileNo = view.findViewById(R.id.mobile_no);
         ImageView call = view.findViewById(R.id.call);
         ImageView sms = view.findViewById(R.id.sms);
+        ImageView whatsapp = view.findViewById(R.id.whatsapp);
 
         label.setText("MOBILE " + (i + 1));
         mobileNo.setText(contacts.get(i));
@@ -78,6 +83,60 @@ public class ContactAdapter extends BaseAdapter {
             }
         });
 
+
+
+
+
+        whatsapp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String message = "This is whatsapp msg";
+                //boolean installed = appInstalledOrNot("com.whatsapp");
+                String phNo = "";
+
+                if(phoneNo.length() > 8)
+                    phNo = "+";
+                else
+                    phNo = "+65" + phoneNo;
+
+                try {
+                    String text = "This is a test";// Replace with your message.
+
+                  //  String toNumber = "xxxxxxxxxx"; // Replace with mobile phone number without +Sign or leading zeros, but with country code
+                    //Suppose your country is India and your phone number is “xxxxxxxxxx”, then you need to send “91xxxxxxxxxx”.
+
+
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse("http://api.whatsapp.com/send?phone="+ phNo +"&text="+message));
+                    context.startActivity(intent);
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+
+//                if (installed){
+//                    Intent intent = new Intent(Intent.ACTION_VIEW);
+//                    intent.setData(Uri.parse("http://api.whatsapp.com/send?phone="+ phNo + "&text="+ message));
+//                    context.startActivity(intent);
+//                }else {
+//                    Toast.makeText(context, "Whats app not installed on your device", Toast.LENGTH_SHORT).show();
+//                }
+
+            }
+        });
+
         return view;
+    }
+
+    private boolean appInstalledOrNot(String url){
+        PackageManager packageManager =   context.getPackageManager();
+        boolean app_installed;
+        try {
+            packageManager.getPackageInfo(url,PackageManager.GET_ACTIVITIES);
+            app_installed = true;
+        }catch (PackageManager.NameNotFoundException e){
+            app_installed = false;
+        }
+        return app_installed;
     }
 }

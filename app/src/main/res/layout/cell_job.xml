@@ -69,6 +69,29 @@
 
         </LinearLayout>
 
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/cell_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TYPE" />
+
+            <TextView
+                android:id="@+id/vehicle_type"
+                style="@style/cell_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="JOB TYPE" />
+
+        </LinearLayout>
+
         <LinearLayout
             android:layout_weight="1"
             android:layout_width="match_parent"
@@ -89,29 +112,6 @@
                 android:layout_weight="1"
                 android:textColor="@color/green"
                 android:text="JOB STATUS" />
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                style="@style/cell_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="VEHICLE TYPE" />
-
-            <TextView
-                android:id="@+id/vehicle_type"
-                style="@style/cell_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="JOB TYPE" />
 
         </LinearLayout>
 

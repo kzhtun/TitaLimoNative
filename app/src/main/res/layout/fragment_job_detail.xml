@@ -12,7 +12,6 @@
         android:layout_margin="16dp"
         android:orientation="vertical">
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -61,7 +60,7 @@
                         style="@style/cell_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="JOB TYPE" />
+                        android:text="TYPE" />
 
                     <TextView
                         android:id="@+id/job_type"
@@ -482,11 +481,35 @@
                 android:layout_marginBottom="20dp"
                 android:background="@color/divider" />
 
+            <LinearLayout
+                android:id="@+id/layout_daily_update"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/cell_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="DAILY UPDATE" />
+
+                <EditText
+                    android:id="@+id/update"
+                    style="@style/cell_text"
+                    android:layout_width="match_parent"
+                    android:gravity="top|start"
+                    android:layout_height="100dp"
+                    android:layout_weight="1"
+                    android:text="" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/layout_remarks"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
