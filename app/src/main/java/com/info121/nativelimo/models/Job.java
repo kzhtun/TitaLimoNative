@@ -84,6 +84,9 @@ public class Job {
 	@SerializedName("Remark")
 	private String remark;
 
+	@SerializedName("Updates")
+	private String updates;
+
 	public void setCustomerTel(String customerTel){
 		this.customerTel = customerTel;
 	}
@@ -306,6 +309,14 @@ public class Job {
 
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+
+	public String getUpdates() {
+		return updates;
+	}
+
+	public void setUpdates(String updates) {
+		this.updates = updates;
 	}
 
 	@Override

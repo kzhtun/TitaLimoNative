@@ -123,7 +123,7 @@
         android:layout_width="wrap_content"
         android:layout_height="20dp"/>
 
-    <!-- 2st Row -->
+    <!-- 2nd Row -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -202,7 +202,7 @@
         android:layout_width="wrap_content"
         android:layout_height="20dp"/>
 
-    <!-- 3st Row -->
+    <!-- 3rd Row -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -253,6 +253,56 @@
 
         </LinearLayout>
 
+    </LinearLayout>
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"/>
+
+    <!-- 4th Row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/cell_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="UPDATES" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/updateText"
+                    style="@style/cell_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:gravity="top|start"
+                    android:layout_marginRight="16dp"
+                    android:layout_weight="2"
+                    android:text="" />
+
+                <Button
+                    android:id="@+id/view"
+                    android:layout_width="70dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/rounded_button"
+                    android:text="VIEW"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+
+        </LinearLayout>
     </LinearLayout>
 
 

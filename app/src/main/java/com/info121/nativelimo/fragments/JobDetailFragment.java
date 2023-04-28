@@ -199,8 +199,8 @@ public class JobDetailFragment extends AbstractFragment {
     @BindView(R.id.list_contact)
     ListView mContactList;
 
-    @BindView(R.id.update)
-    EditText mUpdate;
+//    @BindView(R.id.update)
+//    EditText mUpdate;
 
 
 //    @BindView(R.id.hs_view)
@@ -724,6 +724,8 @@ public class JobDetailFragment extends AbstractFragment {
         } else
             gotoPlayStore(appPackageName);
     }
+
+
 
     private void showCompleteDialog() {
         dialog = new Dialog(getActivity());
@@ -1468,7 +1470,7 @@ public class JobDetailFragment extends AbstractFragment {
         mDropOff.setText(job.getDestination());
         mRemarks.setText(job.getRemarks());
         mVehicleType.setText(job.getVehicleType());
-        mUpdate.setText(job.getRemark());
+       // mUpdate.setText(job.getRemark());
 
 
         if (job.getFile1().isEmpty()) {
@@ -1539,7 +1541,6 @@ public class JobDetailFragment extends AbstractFragment {
         Call<JobRes> call = RestClient.COACH().getApiService().UpdateJobStatus(
                 job.getJobNo(),
                 App.fullAddress,
-                (mUpdate.getText().toString().isEmpty()) ? " " : mUpdate.getText().toString(),
                 status
         );
 

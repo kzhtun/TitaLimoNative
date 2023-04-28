@@ -280,7 +280,7 @@ public class FutureHistoryFragment extends AbstractFragment {
     public void setMenuVisibility(boolean menuVisible) {
         super.setMenuVisibility(menuVisible);
 
-        mSearchParams = new SearchParams("","", "", "0");
+        mSearchParams = new SearchParams("","", "", "0", "");
         if (menuVisible) {
             switch (mCurrentTab) {
                 case "FUTURE": {
@@ -370,6 +370,7 @@ public class FutureHistoryFragment extends AbstractFragment {
                 params.getFromDate(),
                 params.getToDate(),
                 Util.replaceEscapeChr(params.getCustomer()),
+                params.getUpdates(),
                 params.getSort()
         );
 

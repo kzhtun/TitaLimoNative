@@ -10,14 +10,81 @@
     android:background="@drawable/rounded_layout"
     android:baselineAligned="false"
     android:orientation="vertical"
-    android:visibility="gone"
+    android:visibility="visible"
     android:padding="16dp">
 
-
+        <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/cell_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:layout_marginBottom="2dp"
+                android:text="FROM " />
+
+            <EditText
+                android:id="@+id/from_date"
+                style="@style/cell_text"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:background="@drawable/rounded_edittext"
+                android:drawableRight="@mipmap/ic_calendar"
+                android:focusable="false"
+                android:inputType="none"
+                android:paddingLeft="10dp"
+                android:paddingRight="8dp"
+                android:tag="FROM_DATE"
+                android:textColor="@color/edit_text_color" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/cell_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:layout_marginBottom="2dp"
+                android:text="TO " />
+
+            <EditText
+                android:id="@+id/to_date"
+                style="@style/cell_text"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:background="@drawable/rounded_edittext"
+                android:drawableRight="@mipmap/ic_calendar"
+                android:focusable="false"
+                android:inputType="none"
+                android:paddingLeft="10dp"
+                android:paddingRight="8dp"
+                android:tag="TO_DATE"
+                android:textColor="@color/edit_text_color" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:orientation="vertical">
 
             <TextView
@@ -40,72 +107,31 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/cell_label"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
+            android:layout_marginLeft="2dp"
+            android:layout_marginBottom="2dp"
+            android:text="UPDATES" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="3dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
+        <EditText
+            android:id="@+id/updates"
+            style="@style/cell_text"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:background="@drawable/rounded_edittext"
+            android:paddingLeft="10dp"
+            android:textColor="@color/edit_text_color" />
 
-                <TextView
-                    style="@style/cell_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="2dp"
-                    android:layout_marginBottom="2dp"
-                    android:text="FROM " />
+    </LinearLayout>
 
-                <EditText
-                    android:id="@+id/from_date"
-                    style="@style/cell_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="32dp"
-                    android:background="@drawable/rounded_edittext"
-                    android:drawableRight="@mipmap/ic_calendar"
-                    android:focusable="false"
-                    android:inputType="none"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="8dp"
-                    android:tag="FROM_DATE"
-                    android:textColor="@color/edit_text_color" />
-            </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="3dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    style="@style/cell_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="2dp"
-                    android:layout_marginBottom="2dp"
-                    android:text="TO " />
-
-                <EditText
-                    android:id="@+id/to_date"
-                    style="@style/cell_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="32dp"
-                    android:background="@drawable/rounded_edittext"
-                    android:drawableRight="@mipmap/ic_calendar"
-                    android:focusable="false"
-                    android:inputType="none"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="8dp"
-                    android:tag="TO_DATE"
-                    android:textColor="@color/edit_text_color" />
-            </LinearLayout>
-
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"

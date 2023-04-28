@@ -383,7 +383,6 @@ public class NotifyActivity extends AbstractActivity {
         Call<JobRes> call = RestClient.COACH().getApiService().UpdateJobStatus(
                 jobNo,
                 App.fullAddress,
-                " ",
                 status
         );
 

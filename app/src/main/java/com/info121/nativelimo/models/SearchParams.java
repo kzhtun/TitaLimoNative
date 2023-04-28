@@ -5,12 +5,14 @@ public class SearchParams {
     String fromDate ;
     String toDate ;
     String sort ;
+    String updates;
 
-    public SearchParams(String customer, String fromDate, String toDate, String sort) {
+    public SearchParams(String customer, String fromDate, String toDate, String sort, String updates) {
         this.customer = customer;
         this.fromDate = fromDate;
         this.toDate = toDate;
         this.sort = sort;
+        this.updates = updates;
     }
 
     public String getCustomer() {
@@ -43,5 +45,13 @@ public class SearchParams {
 
     public void setSort(String sort) {
         this.sort = sort;
+    }
+
+    public String getUpdates() {
+        return (updates.length() == 0 ) ? " " : updates;
+    }
+
+    public void setUpdates(String updates) {
+        this.updates = updates;
     }
 }

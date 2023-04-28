@@ -1,15 +1,24 @@
 package com.info121.nativelimo.adapters;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Adapter;
@@ -20,6 +29,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.info121.nativelimo.R;
 import com.info121.nativelimo.App;
@@ -34,6 +44,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -55,6 +66,7 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private String sort = "0";
 
     private int lastPosition = -1;
+    public static List<String> updatesTextArray = new ArrayList<>(2000);
 
     private Context mContext;
     List<Job> mJobList = new ArrayList<>();
@@ -63,6 +75,7 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void updateJobList(List<Job> jobList, String currentTab) {
         mJobList = jobList;
         mCurrentTab = currentTab;
+        notifyDataSetChanged();
     }
 
     public JobsAdapter(Context mContext, List<Job> mJobList) {
@@ -180,6 +193,7 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             itemVH.passenger.setText(mJobList.get(i).getCustomer());
             itemVH.mobile.setText(mJobList.get(i).getCustomerTel());
             itemVH.jobDate.setText(mJobList.get(i).getUsageDate());
+            itemVH.updateText.setText(mJobList.get(i).getUpdates());
             //viewHolder.passenger.setText(mJobList.get(i).getJobNo());
 
             final String jobNo = mJobList.get(i).getJobNo();
@@ -225,7 +239,9 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return (mJobList == null) ? 1 : mJobList.size() + 1;
+        int size = (mJobList == null) ? 1 : mJobList.size() + 1;
+
+        return size;
     }
 
 
@@ -249,6 +265,9 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         @BindView(R.id.passenger)
         EditText mPassenger;
+
+        @BindView(R.id.updates)
+        EditText mUpdates;
 
         @BindView(R.id.sort_layout)
         LinearLayout mSortLayout;
@@ -328,7 +347,9 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             mPassenger.getText().toString(),
                             mFromDate.getText().toString(),
                             mToDate.getText().toString(),
-                            sort);
+                            sort,
+                            mUpdates.getText().toString()
+                            );
 
                     if (mCurrentTab.equalsIgnoreCase("HISTORY"))
                         App.historySearchParams = searchParams;
@@ -339,6 +360,8 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     EventBus.getDefault().post(searchParams);
                 }
             });
+
+
 
         }
 
@@ -413,10 +436,73 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         @BindView(R.id.main_layout)
         LinearLayout parent;
 
-        public ItemViewHolder(@NonNull View itemView) {
+        @BindView(R.id.view)
+        Button mViewUpdates;
+
+        @BindView(R.id.updateText)
+        TextView updateText;
+
+
+        public ItemViewHolder(@NonNull final View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+
+//            updateText.addTextChangedListener(new TextWatcher() {
+//                @Override
+//                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//                }
+//
+//                @Override
+//                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//                    //updatesTextArray.set(getAdapterPosition(), "");
+//                   // mJobList.get(getAdapterPosition()).setRemark(charSequence.toString());
+//
+//                }
+//
+//                @Override
+//                public void afterTextChanged(Editable editable) {
+//
+//                }
+//            });
+
+            mViewUpdates.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showUpdatesDialog(mJobList.get(getAdapterPosition()).getUpdates());
+                 //   Log.e("Index : "+ getAdapterPosition(), " -> " +);
+                   //
+                }
+            });
         }
+
+    }
+
+    // daily updates
+    private void updateJobRemark(final String jobNo, final String remark) {
+        Call<JobRes> call = RestClient.COACH().getApiService().UpdateJobRemark(jobNo, remark);
+
+        call.enqueue(new Callback<JobRes>() {
+            @Override
+            public void onResponse(Call<JobRes> call, Response<JobRes> response) {
+
+                if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
+                   Toast.makeText(mContext, jobNo + " Successfully Updated", Toast.LENGTH_SHORT).show();
+                }
+
+                if (response.body().getResponsemessage().equalsIgnoreCase("BAD TOKEN")) {
+                    RestClient.refreshToken("GET_TODAY_JOBS");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JobRes> call, Throwable t) {
+
+            }
+        });
+
+
     }
 
     private void getTodayJobs(final String jobNo, final int index) {
@@ -495,5 +581,40 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         });
 
 
+    }
+
+    private void showUpdatesDialog(String message) {
+        Dialog dialog = new Dialog((Activity) mContext);
+
+        dialog.setContentView(R.layout.dialog_updates);
+        dialog.setTitle("");
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        EditText updates = dialog.findViewById(R.id.updates);
+
+        updates.setText(message);
+
+        Button complete = dialog.findViewById(R.id.complete);
+
+//        complete.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                callCompletedJob();
+//            }
+//        });
+
+        // resize dialog
+        Rect displayRectangle = new Rect();
+        Window window =  ((Activity) mContext).getWindow();
+        window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = (int) (displayRectangle.width() * 0.85f);
+
+        dialog.show();
+        dialog.getWindow().setAttributes(lp);
+
+       // updateJobRemark( mJobList.get(getAdapterPosition()).getJobNo(),  mJobList.get(getAdapterPosition()).getRemark());
     }
 }

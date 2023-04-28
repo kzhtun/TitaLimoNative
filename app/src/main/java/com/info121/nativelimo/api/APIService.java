@@ -53,11 +53,14 @@ public interface APIService {
     @GET("getFutureJobsList/{fromDate},{toDate},{passenger},{sort}")
     Call<JobRes> GetFutureJobs(@Path("fromDate") String fromDate,@Path("toDate") String toDate, @Path("passenger") String passenger, @Path("sort") String sort);
 
-    @GET("getHistoryJobsList/{fromDate},{toDate},{passenger},{addparam}")
-    Call<JobRes> GetHistoryJobs(@Path("fromDate") String fromDate,@Path("toDate") String toDate, @Path("passenger") String passenger, @Path("addparam") String addparam);
+    @GET("getHistoryJobsList/{fromDate},{toDate},{passenger},{updates},{sort}")
+    Call<JobRes> GetHistoryJobs(@Path("fromDate") String fromDate,@Path("toDate") String toDate, @Path("passenger") String passenger, @Path("updates") String updates, @Path("sort") String sort);
 
-    @GET("updateJobStatus/{jobno},{address},{remarks},{status}")
-    Call<JobRes> UpdateJobStatus(@Path("jobno") String jobno, @Path("address") String address,@Path("remarks") String remarks, @Path("status") String status);
+    @GET("updateJobStatus/{jobno},{address},{status}")
+    Call<JobRes> UpdateJobStatus(@Path("jobno") String jobno, @Path("address") String address, @Path("status") String status);
+
+    @GET("updateJobRemark/{jobno},{remark}")
+    Call<JobRes> UpdateJobRemark(@Path("jobno") String jobno, @Path("remark") String remark);
 
     @GET("updateShowConfirmJob/{jobno},{address},{remarks},{status}")
     Call<JobRes> UpdateShowConfirmJob(@Path("jobno") String jobno, @Path("address") String address, @Path("remarks") String remarks, @Path("status") String status);
