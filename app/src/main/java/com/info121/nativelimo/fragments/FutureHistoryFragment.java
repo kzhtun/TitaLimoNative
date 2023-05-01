@@ -21,6 +21,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.info121.nativelimo.AbstractFragment;
+import com.info121.nativelimo.App;
 import com.info121.nativelimo.R;
 import com.info121.nativelimo.adapters.JobsAdapter;
 import com.info121.nativelimo.api.RestClient;
@@ -262,9 +263,6 @@ public class FutureHistoryFragment extends AbstractFragment {
 
         sortAsc.setChecked(true);
 
-
-
-
         // Inflate the layout for this fragment
         return view;
     }
@@ -280,15 +278,16 @@ public class FutureHistoryFragment extends AbstractFragment {
     public void setMenuVisibility(boolean menuVisible) {
         super.setMenuVisibility(menuVisible);
 
-        mSearchParams = new SearchParams("","", "", "0", "");
+        //mSearchParams = new SearchParams("","", "", "0", "");
+
         if (menuVisible) {
             switch (mCurrentTab) {
                 case "FUTURE": {
-                    getFutureJobs(mSearchParams);
+                    getFutureJobs(App.futureSearchParams);
                 }
                 break;
                 case "HISTORY": {
-                    getHistoryJobs(mSearchParams);
+                    getHistoryJobs(App.historySearchParams);
                 }
                 break;
             }

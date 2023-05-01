@@ -60,6 +60,8 @@ import static android.view.View.GONE;
 public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     Calendar myCalendar;
 
+    int adapterPosition;
+
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
 
@@ -134,39 +136,42 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
 
 
+            myCalendar = Calendar.getInstance();
+            String myFormat = "dd MMM yyyy"; //In which you need put here
+            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
             // show/ hide sorting panel
             if (mCurrentTab.equalsIgnoreCase("FUTURE")) {
-                if (App.futureSearchParams == null) {
-                    headerVH.sortAsc.setChecked(true);
-                }else{
-                    headerVH.mPassenger.setText(App.futureSearchParams.getCustomer());
-                    headerVH.mFromDate.setText(App.futureSearchParams.getFromDate());
-                    headerVH.mToDate.setText(App.futureSearchParams.getToDate());
-                    if(App.futureSearchParams.getSort().equals("0"))
-                        headerVH.sortAsc.setChecked(true);
-                    else
-                        headerVH.sortDesc.setChecked(true);
-                }
+                headerVH.mPassenger.setText(App.futureSearchParams.getCustomer());
+                headerVH.mUpdates.setText(App.futureSearchParams.getUpdates());
+
+                if(App.historySearchParams.getFromDate().trim().length() == 0)
+                    headerVH.mFromDate.setText(sdf.format(myCalendar.getTime()));
+                else
+                    headerVH.mFromDate.setText(App.historySearchParams.getFromDate());
+
+                if(App.historySearchParams.getToDate().trim().length() == 0)
+                    headerVH.mToDate.setText(sdf.format(myCalendar.getTime()));
+                else
+                    headerVH.mToDate.setText(App.historySearchParams.getToDate());
             }
 
             if (mCurrentTab.equalsIgnoreCase("HISTORY")) {
                 headerVH.mSortLayout.setVisibility(View.INVISIBLE);
 
-                if (App.historySearchParams == null) {
-                    myCalendar = Calendar.getInstance();
+                headerVH.mPassenger.setText(App.historySearchParams.getCustomer());
+                headerVH.mUpdates.setText(App.historySearchParams.getUpdates());
 
-                    String myFormat = "dd MMM yyyy"; //In which you need put here
-                    SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-
+                if(App.historySearchParams.getFromDate().trim().length() == 0)
                     headerVH.mFromDate.setText(sdf.format(myCalendar.getTime()));
-                    headerVH.mToDate.setText(sdf.format(myCalendar.getTime()));
-                    // headerVH.sortAsc.setChecked(true);
-                }else{
-                    headerVH.mPassenger.setText(App.historySearchParams.getCustomer());
+                else
                     headerVH.mFromDate.setText(App.historySearchParams.getFromDate());
+
+                if(App.historySearchParams.getToDate().trim().length() == 0)
+                    headerVH.mToDate.setText(sdf.format(myCalendar.getTime()));
+                else
                     headerVH.mToDate.setText(App.historySearchParams.getToDate());
 
-                }
             } else {
                 headerVH.mSortLayout.setVisibility(View.VISIBLE);
             }
@@ -183,6 +188,13 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             ItemViewHolder itemVH = (ItemViewHolder) viewHolder;
             setAnimation(viewHolder.itemView, i);
+
+
+            if (mCurrentTab.equalsIgnoreCase("HISTORY"))
+                itemVH.updateLayout.setVisibility(View.VISIBLE);
+            else
+                itemVH.updateLayout.setVisibility(GONE);
+
 
             itemVH.jobType.setText(mJobList.get(i).getJobType());
             itemVH.jobStatus.setText(mJobList.get(i).getJobStatus());
@@ -351,6 +363,8 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             mUpdates.getText().toString()
                             );
 
+                  //  App.mHistorySearch = searchParams;
+
                     if (mCurrentTab.equalsIgnoreCase("HISTORY"))
                         App.historySearchParams = searchParams;
 
@@ -442,6 +456,9 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         @BindView(R.id.updateText)
         TextView updateText;
 
+        @BindView(R.id.update_layout)
+        LinearLayout updateLayout;
+
 
         public ItemViewHolder(@NonNull final View itemView) {
             super(itemView);
@@ -470,9 +487,8 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             mViewUpdates.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    showUpdatesDialog(mJobList.get(getAdapterPosition()).getUpdates());
-                 //   Log.e("Index : "+ getAdapterPosition(), " -> " +);
-                   //
+                    adapterPosition = getAdapterPosition() -1;
+                    showUpdatesDialog(mJobList.get(adapterPosition).getJobNo(), mJobList.get(adapterPosition).getUpdates());
                 }
             });
         }
@@ -480,15 +496,19 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     // daily updates
-    private void updateJobRemark(final String jobNo, final String remark) {
-        Call<JobRes> call = RestClient.COACH().getApiService().UpdateJobRemark(jobNo, remark);
+    private void updateJobRemark(final String jobNo, final String message) {
+        Call<JobRes> call = RestClient.COACH().getApiService().UpdateJobRemark(jobNo, message);
 
         call.enqueue(new Callback<JobRes>() {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
-
                 if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
                    Toast.makeText(mContext, jobNo + " Successfully Updated", Toast.LENGTH_SHORT).show();
+
+                   // refresh the adapter
+                   mJobList.get(adapterPosition).setUpdates(message);
+                   notifyDataSetChanged();
+
                 }
 
                 if (response.body().getResponsemessage().equalsIgnoreCase("BAD TOKEN")) {
@@ -583,18 +603,27 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     }
 
-    private void showUpdatesDialog(String message) {
-        Dialog dialog = new Dialog((Activity) mContext);
+    private void showUpdatesDialog(final String jobno, final String message) {
+        final Dialog dialog = new Dialog((Activity) mContext);
 
         dialog.setContentView(R.layout.dialog_updates);
         dialog.setTitle("");
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        EditText updates = dialog.findViewById(R.id.updates);
+        final EditText updates = dialog.findViewById(R.id.updates);
 
         updates.setText(message);
 
-        Button complete = dialog.findViewById(R.id.complete);
+        Button save = dialog.findViewById(R.id.save);
+
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateJobRemark(jobno, updates.getText().toString());
+                dialog.hide();
+                dialog.dismiss();
+            }
+        });
 
 //        complete.setOnClickListener(new View.OnClickListener() {
 //            @Override

@@ -121,8 +121,8 @@ public class App extends Application {
 
     public static List<Job> jobList = new ArrayList<>();
 
-    public static SearchParams futureSearchParams;
-    public static SearchParams historySearchParams;
+    public static SearchParams futureSearchParams = new SearchParams("","", "", "0", "");
+    public static SearchParams historySearchParams = new SearchParams("","", "", "0", "");
 
     public static final String[] SONG_PROJECTION = new String[]{
             MediaStore.Audio.Media._ID
