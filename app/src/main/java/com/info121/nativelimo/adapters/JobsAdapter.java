@@ -190,11 +190,16 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             setAnimation(viewHolder.itemView, i);
 
 
-            if (mCurrentTab.equalsIgnoreCase("HISTORY"))
+            if (mCurrentTab.equalsIgnoreCase("HISTORY") && mJobList.get(i).getUaeType().equalsIgnoreCase("Translation Job"))
                 itemVH.updateLayout.setVisibility(View.VISIBLE);
             else
                 itemVH.updateLayout.setVisibility(GONE);
 
+
+            if(mJobList.get(i).getUpdates().length() > 0 )
+                itemVH.mViewUpdates.setText("VIEW");
+            else
+                itemVH.mViewUpdates.setText("ADD");
 
             itemVH.jobType.setText(mJobList.get(i).getJobType());
             itemVH.jobStatus.setText(mJobList.get(i).getJobStatus());
@@ -208,9 +213,10 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             itemVH.updateText.setText(mJobList.get(i).getUpdates());
             //viewHolder.passenger.setText(mJobList.get(i).getJobNo());
 
+
+
             final String jobNo = mJobList.get(i).getJobNo();
             final int index = i;
-
 
             itemVH.parent.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -356,11 +362,11 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 public void onClick(View view) {
 
                     SearchParams searchParams = new SearchParams(
-                            mPassenger.getText().toString(),
-                            mFromDate.getText().toString(),
-                            mToDate.getText().toString(),
+                            mPassenger.getText().toString().trim(),
+                            mFromDate.getText().toString().trim(),
+                            mToDate.getText().toString().trim(),
                             sort,
-                            mUpdates.getText().toString()
+                            mUpdates.getText().toString().trim()
                             );
 
                   //  App.mHistorySearch = searchParams;
@@ -619,7 +625,7 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                updateJobRemark(jobno, updates.getText().toString());
+                updateJobRemark(jobno, updates.getText().toString().trim());
                 dialog.hide();
                 dialog.dismiss();
             }

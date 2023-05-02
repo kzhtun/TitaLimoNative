@@ -87,6 +87,10 @@ public class Job {
 	@SerializedName("Updates")
 	private String updates;
 
+	@SerializedName("UAEType")
+	private String uaeType ;
+
+
 	public void setCustomerTel(String customerTel){
 		this.customerTel = customerTel;
 	}
@@ -317,6 +321,14 @@ public class Job {
 
 	public void setUpdates(String updates) {
 		this.updates = updates;
+	}
+
+	public String getUaeType() {
+		return uaeType;
+	}
+
+	public void setUaeType(String uaeType) {
+		this.uaeType = uaeType;
 	}
 
 	@Override

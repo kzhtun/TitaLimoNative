@@ -95,7 +95,7 @@ public class ContactAdapter extends BaseAdapter {
                 String phNo = "";
 
                 if(phoneNo.length() > 8)
-                    phNo = "+";
+                    phNo = "+" + phoneNo;
                 else
                     phNo = "+65" + phoneNo;
 
