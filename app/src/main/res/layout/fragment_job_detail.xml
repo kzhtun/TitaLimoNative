@@ -215,7 +215,7 @@
                         style="@style/cell_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="FILE NO." />
+                        android:text="HRN" />
 
                     <TextView
                         android:id="@+id/file_no"

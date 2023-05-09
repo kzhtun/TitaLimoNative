@@ -65,8 +65,8 @@ public class App extends Application {
    // http://118.200.45.215/IOPS%20PORTAL%20WS%20Dev/QWS.asmx
     // TitaLimo Live 1
     public static String CONST_REST_API_URL = "http://118.200.45.215/RestApiTitanium/MyLimoService.svc/";
-    public static String CONST_PDF_URL = "http://118.200.45.215/iops/uploads/";
-    public static String CONST_PHOTO_URL = "http://118.200.45.215/iops/images/limopics/";
+    public static String CONST_PDF_URL = "http://118.200.45.215/iopsdev/uploads/";
+    public static String CONST_PHOTO_URL = "http://118.200.45.215/iopsdev/images/limopics/";
 
     // TitaLimo Live
 //    public static String CONST_REST_API_URL = "http://titaniumlimos.com/RestApiTitanium/MyLimoService.svc/";
@@ -74,9 +74,15 @@ public class App extends Application {
 //    public static String CONST_PHOTO_URL = "http://titaniumlimos.com/iops/images/limopics/";
 
     // V1 FTP
-    public static final String FTP_URL = "103.7.10.184";
-    public static final String FTP_USER = "titalimo";
-    public static final String FTP_PASSWORD = "ja8mt988$$-Info121@sa";
+//    public static final String FTP_URL = "103.7.10.184";
+//    public static final String FTP_USER = "titalimo";
+//    public static final String FTP_PASSWORD = "ja8mt988$$-Info121@sa";
+//    public static String FTP_DIR = "limopics";
+
+    // Cypress FTP
+    public static final String FTP_URL = "118.200.45.215";
+    public static final String FTP_USER = "ipos";
+    public static final String FTP_PASSWORD = "iposftp";
     public static String FTP_DIR = "limopics";
 
 

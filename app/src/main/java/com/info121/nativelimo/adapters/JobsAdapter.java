@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -191,15 +192,20 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
             if (mCurrentTab.equalsIgnoreCase("HISTORY") && mJobList.get(i).getUaeType().equalsIgnoreCase("Translation Job"))
-                itemVH.updateLayout.setVisibility(View.VISIBLE);
+                if (mCurrentTab.equalsIgnoreCase("HISTORY"))
+
+                    itemVH.updateLayout.setVisibility(View.VISIBLE);
             else
                 itemVH.updateLayout.setVisibility(GONE);
 
 
-            if(mJobList.get(i).getUpdates().length() > 0 )
+            if(mJobList.get(i).getUpdates().length() > 0 ) {
                 itemVH.mViewUpdates.setText("VIEW");
-            else
+                itemVH.mViewUpdates.setBackground (ContextCompat.getDrawable (mContext, R.drawable.rounded_button_orange));
+            }else {
                 itemVH.mViewUpdates.setText("ADD");
+                itemVH.mViewUpdates.setBackground (ContextCompat.getDrawable (mContext, R.drawable.rounded_button));
+            }
 
             itemVH.jobType.setText(mJobList.get(i).getJobType());
             itemVH.jobStatus.setText(mJobList.get(i).getJobStatus());

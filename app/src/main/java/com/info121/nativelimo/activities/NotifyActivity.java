@@ -62,8 +62,11 @@ public class NotifyActivity extends AbstractActivity {
 //    @BindView(R.id.job_type)
 //    TextView mJobType;
 //
-//    @BindView(R.id.job_date)
-//    TextView mJobDate;
+    @BindView(R.id.date)
+    TextView mJobDate;
+
+    @BindView(R.id.name)
+    TextView mCustName;
 
     @BindView(R.id.pickup_time)
     TextView mPickupTime;
@@ -106,7 +109,6 @@ public class NotifyActivity extends AbstractActivity {
 
     Boolean getHeightAlready = false;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,7 +132,7 @@ public class NotifyActivity extends AbstractActivity {
 
         jobNo = intent.getExtras().getString("JOB_NO");
         //    final String jobType = intent.getExtras().getString("JOB_TYPE");
-        //   final String jobDate = intent.getExtras().getString("JOB_DATE");
+        final String jobDate = intent.getExtras().getString("JOB_DATE");
         final String jobTime = intent.getExtras().getString("JOB_TIME");
         final String pickup = intent.getExtras().getString("PICKUP");
         final String dropoff = intent.getExtras().getString("DROPOFF");
@@ -140,12 +142,13 @@ public class NotifyActivity extends AbstractActivity {
 
 
 //        mJobType.setText(jobType);
-//        mJobDate.setText(jobDate);
+        mJobDate.setText(jobDate);
+        mCustName.setText(custName);
         mVehicleType.setText(vehicleType);
         mPickupTime.setText(jobTime);
         mPickup.setText(pickup);
         mDropOff.setText(dropoff);
-        // mVehicleType.setText(custName);
+        mVehicleType.setText(vehicleType);
 
 
         ButterKnife.bind(this);

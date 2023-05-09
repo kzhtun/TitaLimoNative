@@ -28,8 +28,8 @@
 
             <com.app.adprogressbarlib.AdCircleProgress
                 android:id="@+id/pgb_progress"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
+                android:layout_width="170dp"
+                android:layout_height="170dp"
                 android:layout_alignParentTop="true"
                 android:layout_margin="50dp"
                 android:backgroundTintMode="add"
@@ -40,7 +40,7 @@
                 custom:adpgb_show_text="true"
                 custom:adpgb_text="ACCEPT"
                 custom:adpgb_text_color="@color/orange"
-                custom:adpgb_text_size="30sp"
+                custom:adpgb_text_size="20sp"
                 custom:adpgb_unfinished_stroke_width="15dp" />
 
             <LinearLayout
@@ -64,6 +64,35 @@
                         android:src="@mipmap/ic_start_48" />
 
                     <TextView
+                        android:id="@+id/date"
+                        style="@style/cell_label_bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:text="DD MMM YYYY"
+                        android:textColor="@color/white"
+                        android:textSize="25sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@mipmap/ic_start_48" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@mipmap/ic_start_48" />
+
+                    <TextView
                         android:id="@+id/pickup_time"
                         style="@style/cell_label_bold"
                         android:layout_width="wrap_content"
@@ -72,7 +101,7 @@
                         android:layout_marginRight="16dp"
                         android:text="00:00:00"
                         android:textColor="@color/white"
-                        android:textSize="50sp"
+                        android:textSize="30sp"
                         android:textStyle="bold" />
 
                     <ImageView
@@ -81,6 +110,16 @@
                         android:src="@mipmap/ic_start_48" />
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/name"
+                    style="@style/cell_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:gravity="center_horizontal"
+                    android:text="Name"
+                    android:textAllCaps="true"
+                    android:textSize="26sp" />
 
                 <TextView
                     android:id="@+id/pickup"
