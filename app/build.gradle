@@ -31,7 +31,9 @@ dependencies {
     implementation 'com.github.gcacace:signature-pad:1.2.1'
 
     // runtime permission helper
- //   implementation 'com.karumi:dexter:6.2.3'
+    implementation 'pub.devrel:easypermissions:2.0.1'
+   // implementation 'com.github.logansdk:logan-permission:0.9.26'
+
 
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'

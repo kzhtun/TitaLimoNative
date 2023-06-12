@@ -68,6 +68,8 @@ public class App extends Application {
     //---------------------------------------------------------------------//
 
 
+    public static boolean PERMISSION_POST_NOTIFICATION = false;
+
     public static String CONST_SELECTED_TAB_INDEX = "0";
     public static String CONST_USER_NAME = "USER_NAME";
     public static String CONST_ALREADY_LOGIN = "ALREADY_LOGIN";

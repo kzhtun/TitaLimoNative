@@ -1,5 +1,6 @@
 package com.info121.nativelimo.activities;
 
+import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -7,6 +8,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
@@ -71,6 +73,10 @@ public class LoginActivity extends AbstractActivity {
     @BindView(R.id.ui_version)
     TextView mUiVersion;
 
+
+    String[] permissions = {Manifest.permission.POST_NOTIFICATIONS};
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,6 +138,24 @@ public class LoginActivity extends AbstractActivity {
         mProgressBar.setVisibility(View.VISIBLE);
         callValidateDriver();
 //        showNotification("test", "blal ala alal a");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(permissions, 80);
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if(requestCode == 80){
+            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                Toast.makeText(mContext, "Permission Granted", Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(mContext, "Permission Denied", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void callValidateDriver(){

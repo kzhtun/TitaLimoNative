@@ -40,7 +40,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
         Intent intent = new Intent(this, JobOverviewActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
         Uri soundUri = App.getNotificationSoundUri();
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NEW_CH)
@@ -149,8 +149,10 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         //   intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
+//        PendingIntent pendingIntent = PendingIntent.getService(this, 0 /* Request code */, intent,
+//                PendingIntent.FLAG_ONE_SHOT);
         PendingIntent pendingIntent = PendingIntent.getService(this, 0 /* Request code */, intent,
-                PendingIntent.FLAG_ONE_SHOT);
+                PendingIntent.FLAG_IMMUTABLE);
 
         Uri soundUri = App.getProminentSoundUri();
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NEW_CH)
@@ -231,8 +233,11 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         //   intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
+//        PendingIntent pendingIntent = PendingIntent.getService(this, 0 /* Request code */, intent,
+//                PendingIntent.FLAG_ONE_SHOT);
+
         PendingIntent pendingIntent = PendingIntent.getService(this, 0 /* Request code */, intent,
-                PendingIntent.FLAG_ONE_SHOT);
+                PendingIntent.FLAG_IMMUTABLE);
 
         Uri soundUri = App.getProminentSoundUri();
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NEW_CH)
