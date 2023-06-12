@@ -2,14 +2,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion "29.0.0"
+    compileSdkVersion 33
     defaultConfig {
         applicationId "com.info121.nativelimo"
         minSdkVersion 18
-        targetSdkVersion 28
-        versionCode 16
-        versionName "1.12"
+        targetSdkVersion 33
+        versionCode 21
+        versionName "2.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -18,24 +17,30 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    namespace 'com.info121.nativelimo'
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation  'com.skyfishjy.ripplebackground:library:1.0.1'
-
+  //  implementation  'com.skyfishjy.ripplebackground:library:1.0.1'
 
     implementation 'com.github.dmytrodanylyk.shadow-layout:library:1.0.3'
 
     implementation 'com.github.Adilhusen:circle-progress-ad-android-:1.0'
     implementation 'com.github.gcacace:signature-pad:1.2.1'
 
+    // runtime permission helper
+ //   implementation 'com.karumi:dexter:6.2.3'
+
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation 'uk.co.chrisjenx:calligraphy:2.3.0'
+
+//    implementation 'io.github.inflationx:calligraphy3:3.1.1'
+//    implementation 'io.github.inflationx:viewpump:2.0.3'
 
     implementation 'com.google.firebase:firebase-messaging:17.3.4'
     implementation 'com.google.firebase:firebase-core:16.0.6'

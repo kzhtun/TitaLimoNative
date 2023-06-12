@@ -14,9 +14,11 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,9 +27,11 @@ import com.info121.nativelimo.AbstractActivity;
 import com.info121.nativelimo.App;
 import com.info121.nativelimo.adapters.OverviewPageAdapter;
 import com.info121.nativelimo.api.RestClient;
+import com.info121.nativelimo.fragments.JobListFragment;
 import com.info121.nativelimo.models.JobCount;
 import com.info121.nativelimo.models.JobRes;
 import com.info121.nativelimo.services.SmartLocationService;
+import com.info121.nativelimo.utils.PrefDB;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -41,7 +45,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class JobOverviewActivity extends AbstractActivity {
-
+    PrefDB prefDB;
     Context mContext = JobOverviewActivity.this;
 
     @BindView(R.id.view_pager)
@@ -69,6 +73,8 @@ public class JobOverviewActivity extends AbstractActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        prefDB = new PrefDB(getApplicationContext());
+
 
 //        TabLayout.Tab tab = mTabLayout.getTabAt(0);
 //        TextView textView = new TextView(mContext);
@@ -92,6 +98,8 @@ public class JobOverviewActivity extends AbstractActivity {
             @Override
             public void onPageSelected(int i) {
                 //App.test = i + "";
+//                Toast.makeText(mContext, "Index : " + i, Toast.LENGTH_SHORT).show();
+//                prefDB.putString(App.CONST_SELECTED_TAB_INDEX, i + "");
 
             }
 
@@ -137,12 +145,23 @@ public class JobOverviewActivity extends AbstractActivity {
 
             //  TabLayout.Tab tabitem = mTabLayout.newTab();
 
+            float scale = getResources().getConfiguration().fontScale;
+
+
+
+
             tabitem = mTabLayout.getTabAt(0);
             v = View.inflate(mContext, R.layout.tab_header, null);
             header = v.findViewById(R.id.title);
             badge = v.findViewById(R.id.job_count);
             header.setText("TODAY");
             badge.setText(jobCount.getTodayjobcount());
+            if(scale > 1) {
+                header.setTextAppearance(mContext, R.style.tab_header_small);
+            }
+            else{
+                header.setTextAppearance(mContext, R.style.tab_header);
+            }
             tabitem.setCustomView(v);
 
             tabitem = mTabLayout.getTabAt(1);
@@ -151,8 +170,13 @@ public class JobOverviewActivity extends AbstractActivity {
             badge = v.findViewById(R.id.job_count);
             header.setText("TMR");
             badge.setText(jobCount.getTomorrowjobcount());
+            if(scale > 1) {
+                header.setTextAppearance(mContext, R.style.tab_header_small);
+            }
+            else{
+                header.setTextAppearance(mContext, R.style.tab_header);
+            }
             tabitem.setCustomView(v);
-
 
             tabitem = mTabLayout.getTabAt(2);
             v = View.inflate(mContext, R.layout.tab_header, null);
@@ -160,6 +184,12 @@ public class JobOverviewActivity extends AbstractActivity {
             badge = v.findViewById(R.id.job_count);
             header.setText("FUTURE");
             badge.setText(jobCount.getFuturejobcount());
+            if(scale > 1) {
+                header.setTextAppearance(mContext, R.style.tab_header_small);
+            }
+            else{
+                header.setTextAppearance(mContext, R.style.tab_header);
+            }
             tabitem.setCustomView(v);
 
 
@@ -168,9 +198,20 @@ public class JobOverviewActivity extends AbstractActivity {
             header = v.findViewById(R.id.title);
             badge = v.findViewById(R.id.job_count);
             header.setText("HISTORY");
-            badge.setVisibility(View.INVISIBLE);
+            badge.setVisibility(View.GONE);
             badge.setText("0");
+
+            if(scale > 1) {
+                header.setTextAppearance(mContext, R.style.tab_header_small);
+            }
+            else{
+                header.setTextAppearance(mContext, R.style.tab_header);
+            }
+
             tabitem.setCustomView(v);
+
+
+
 
         }catch(Exception e){
             return;

@@ -19,6 +19,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.info121.nativelimo.activities.JobOverviewActivity;
+import com.info121.nativelimo.activities.LoginActivity;
 import com.info121.nativelimo.models.Job;
 import com.info121.nativelimo.models.SearchParams;
 import com.info121.nativelimo.utils.PrefDB;
@@ -35,57 +37,38 @@ public class App extends Application {
     public static String DEVICE_TYPE = "ANDROID";
     String TAG = "Application";
 
-    // DEV
-//    public static String CONST_REST_API_URL = "http://alexisinfo121.noip.me:83/RestAPITitanium/MyLimoService.svc/";
-//    public static String CONST_PDF_URL = "http://alexisinfo121.noip.me:83/iops/uploads/";
-//    public static String CONST_PHOTO_URL = "http://103.7.10.47/iops/images/limopics/";
+    //---------------------------------------------------------------------//
 
-
-    // Playstore
-//    public static String CONST_REST_API_URL = "http://103.7.10.47/RestApiTitanium/MyLimoService.svc/";
-//    public static String CONST_PDF_URL = "http://103.7.10.47/iops/uploads/";
-//    public static String CONST_PHOTO_URL = "http://103.7.10.47/iops/images/limopics/";
-
-    // V2 FTP
-//    public static final String FTP_URL = "103.7.10.47";
-//    public static final String FTP_USER = "info121";
-//    public static final String FTP_PASSWORD = "ja8mt988$$";
+    // iOPS DEV Cypress API
+//    public static String CONST_REST_API_URL = "http://128.106.129.15/RestApiTitanium/MyLimoService.svc/";
+//    public static String CONST_PDF_URL = "http://128.106.129.15/iopsdev/uploads/";
+//    public static String CONST_PHOTO_URL = "http://128.106.129.15/iopsdev/images/limopics/";
+//
+//
+//    // iOPS DEV Cypress FTP
+//    public static final String FTP_URL = "128.106.129.15";
+//    public static final String FTP_USER = "ipos";
+//    public static final String FTP_PASSWORD = "iposftp";
 //    public static String FTP_DIR = "limopics";
 
-    // new server
-//    public static String CONST_REST_API_URL = "http://103.7.10.184/RestApiTitanium/MyLimoService.svc/";
-//    public static String CONST_PDF_URL = "http://103.7.10.184/iops/uploads/";
-//    public static String CONST_PHOTO_URL = "http://103.7.10.184/iops/images/limopics/";
-
-    // demo
-//    public static String CONST_REST_API_URL = "http://info121.sytes.net/RestApiTitanium/MyLimoService.svc/";
-//    public static String CONST_PDF_URL = "http://info121.sytes.net/iops/uploads/";
-//    public static String CONST_PHOTO_URL = "http://info121.sytes.net/iops/images/limopics/";
-
-   // http://118.200.45.215/IOPS%20PORTAL%20WS%20Dev/QWS.asmx
-    // TitaLimo Live 1
-    public static String CONST_REST_API_URL = "http://118.200.45.215/RestApiTitanium/MyLimoService.svc/";
-    public static String CONST_PDF_URL = "http://118.200.45.215/iopsdev/uploads/";
-    public static String CONST_PHOTO_URL = "http://118.200.45.215/iopsdev/images/limopics/";
+    //---------------------------------------------------------------------//
 
     // TitaLimo Live
-//    public static String CONST_REST_API_URL = "http://titaniumlimos.com/RestApiTitanium/MyLimoService.svc/";
-//    public static String CONST_PDF_URL = "http://titaniumlimos.com/iops/uploads/";
-//    public static String CONST_PHOTO_URL = "http://titaniumlimos.com/iops/images/limopics/";
+    public static String CONST_REST_API_URL = "http://97.74.89.233/RestApiTitanium/MyLimoService.svc/";
+    public static String CONST_PDF_URL = "http://97.74.89.233/iopsdev/uploads/";
+    public static String CONST_PHOTO_URL = "http://97.74.89.233/iopsdev/images/limopics/";
 
-    // V1 FTP
-//    public static final String FTP_URL = "103.7.10.184";
-//    public static final String FTP_USER = "titalimo";
-//    public static final String FTP_PASSWORD = "ja8mt988$$-Info121@sa";
-//    public static String FTP_DIR = "limopics";
-
-    // Cypress FTP
-    public static final String FTP_URL = "118.200.45.215";
+    //LIVE FTP
+    public static final String FTP_URL = "97.74.89.233";
     public static final String FTP_USER = "ipos";
-    public static final String FTP_PASSWORD = "iposftp";
-    public static String FTP_DIR = "limopics";
+    public static final String FTP_PASSWORD = "$$1posftp%%";
+    public static String FTP_DIR = "";
 
 
+    //---------------------------------------------------------------------//
+
+
+    public static String CONST_SELECTED_TAB_INDEX = "0";
     public static String CONST_USER_NAME = "USER_NAME";
     public static String CONST_ALREADY_LOGIN = "ALREADY_LOGIN";
     public static String CONST_NOTIFICATION_TONE = "NOTIFICATION_TONE";
@@ -155,6 +138,16 @@ public class App extends Application {
                 .build());
 
 
+//        ViewPump.init(ViewPump.builder()
+//                .addInterceptor(new CalligraphyInterceptor(
+//                        new CalligraphyConfig.Builder()
+//                                .setDefaultFontPath("1.ttf")
+//                                .setFontAttrId(R.attr.fontPath)
+//                                .build()))
+//                .build());
+
+     //   super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
+
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                     @Override
@@ -176,6 +169,9 @@ public class App extends Application {
 //        if (!f.exists()) {
 //            f.mkdirs();
 //        }
+
+
+       // startActivity(new Intent(getApplicationContext(), JobOverviewActivity.class));
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());

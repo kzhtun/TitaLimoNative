@@ -10,7 +10,7 @@
     android:background="@drawable/rounded_layout"
     android:baselineAligned="false"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="32dp">
 
 
     <LinearLayout
@@ -19,9 +19,9 @@
         android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
@@ -29,16 +29,15 @@
                 style="@style/cell_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/orange"
                 android:layout_marginBottom="20dp"
-                android:visibility="gone"
-                android:text="JOB DATE" />
+                android:layout_weight="1"
+                android:text="JOB DATE"
+                android:textColor="@color/orange"
+                android:visibility="gone" />
 
         </LinearLayout>
 
     </LinearLayout>
-
 
 
     <!-- 1st Row -->
@@ -48,16 +47,16 @@
         android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
                 style="@style/cell_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="JOB TYPE" />
+                android:text="JOB TYPE : " />
 
             <TextView
                 android:id="@+id/job_type"
@@ -69,18 +68,55 @@
 
         </LinearLayout>
 
-
         <LinearLayout
-            android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
                 style="@style/cell_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TYPE" />
+                android:text="STAFF : " />
+
+            <TextView
+                android:id="@+id/staff"
+                style="@style/cell_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="DHABIAH AWWAD ISMAIL IBRAHIM AL-AL" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!--    <View-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="1dp"-->
+    <!--        android:layout_marginTop="20dp"-->
+    <!--        android:layout_marginBottom="20dp"-->
+    <!--        android:background="@color/divider" />-->
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:layout_marginBottom="18dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/cell_label"
+                android:layout_width="@dimen/item_label_width"
+                android:layout_height="wrap_content"
+
+                android:text="TYPE : " />
 
             <TextView
                 android:id="@+id/vehicle_type"
@@ -88,21 +124,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="JOB TYPE" />
+                android:text="TYPE" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginTop="@dimen/item_label_margin"
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/cell_label"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/item_label_width"
                 android:layout_height="wrap_content"
-                android:text="JOB STATUS" />
+                android:text="STATUS : " />
 
             <TextView
                 android:id="@+id/job_status"
@@ -110,36 +146,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textColor="@color/green"
-                android:text="JOB STATUS" />
+                android:text="JOB STATUS"
+                android:textColor="@color/green" />
 
         </LinearLayout>
 
-
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"/>
-
-    <!-- 2nd Row -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
         <LinearLayout
-            android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginTop="@dimen/item_label_margin"
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/cell_label"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/item_label_width"
                 android:layout_height="wrap_content"
-                android:text="PICKUP TIME" />
+                android:text="TIME : " />
 
             <TextView
                 android:id="@+id/pickup_time"
@@ -147,21 +169,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="JOB TYPE" />
+                android:text="Time" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginTop="@dimen/item_label_margin"
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/cell_label"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/item_label_width"
                 android:layout_height="wrap_content"
-                android:text="PICKUP" />
+                android:text="PICKUP : " />
 
             <TextView
                 android:id="@+id/pickup"
@@ -169,22 +191,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="JOB TYPE" />
+                android:text="Pickup" />
 
         </LinearLayout>
 
 
         <LinearLayout
-            android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginTop="@dimen/item_label_margin"
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/cell_label"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/item_label_width"
                 android:layout_height="wrap_content"
-                android:text="DROP OFF" />
+                android:text="DROP OFF : " />
 
             <TextView
                 android:id="@+id/dropoff"
@@ -192,56 +214,44 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="JOB TYPE" />
+                android:text="Drop off" />
 
         </LinearLayout>
 
-    </LinearLayout>
-
-    <View
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"/>
-
-    <!-- 3rd Row -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginTop="@dimen/item_label_margin"
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/cell_label"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/item_label_width"
                 android:layout_height="wrap_content"
-                android:text="PASSENGER" />
+                android:text="NAME : " />
 
             <TextView
                 android:id="@+id/passenger"
                 style="@style/cell_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="16dp"
                 android:layout_weight="1"
                 android:text="PASSENGER NAME" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_weight="2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginTop="@dimen/item_label_margin"
+            android:orientation="horizontal">
 
             <TextView
                 style="@style/cell_label"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/item_label_width"
                 android:layout_height="wrap_content"
-                android:text="MOBILE" />
+                android:text="MOBILE : " />
 
             <TextView
                 android:id="@+id/mobile"
@@ -253,11 +263,17 @@
 
         </LinearLayout>
 
-    </LinearLayout>
+    </android.support.v7.widget.LinearLayoutCompat>
 
-    <View
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"/>
+
+
+
+    <!--    <View-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="1dp"-->
+    <!--        android:layout_marginTop="20dp"-->
+    <!--        android:layout_marginBottom="20dp"-->
+    <!--        android:background="@color/divider" />-->
 
     <!-- 4th Row -->
     <LinearLayout
@@ -275,7 +291,7 @@
                 style="@style/cell_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="UPDATES" />
+                android:text="UPDATES : " />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -287,9 +303,9 @@
                     style="@style/cell_text"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:gravity="top|start"
                     android:layout_marginRight="16dp"
                     android:layout_weight="2"
+                    android:gravity="top|start"
                     android:text="" />
 
                 <Button

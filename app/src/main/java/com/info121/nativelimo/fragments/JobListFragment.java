@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.info121.nativelimo.App;
 import com.info121.nativelimo.R;
 import com.info121.nativelimo.AbstractFragment;
 import com.info121.nativelimo.adapters.JobsAdapter;
@@ -23,8 +24,10 @@ import com.info121.nativelimo.api.RestClient;
 import com.info121.nativelimo.models.Action;
 import com.info121.nativelimo.models.Job;
 import com.info121.nativelimo.models.JobRes;
+import com.info121.nativelimo.utils.PrefDB;
 
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -47,7 +50,7 @@ import retrofit2.Response;
  * create an instance of this fragment.
  */
 public class JobListFragment extends AbstractFragment {
-
+    PrefDB prefDB;
     List<Job> mJobList = new ArrayList<>();
 
     @BindView(R.id.list_date)
@@ -67,7 +70,7 @@ public class JobListFragment extends AbstractFragment {
 
     Context mContext = getActivity();
 
-    String mCurrentTab = "";
+    public String mCurrentTab = "";
 
     String todayDate, tomorrowDate;
 
@@ -80,6 +83,8 @@ public class JobListFragment extends AbstractFragment {
 
         fragment.mCurrentTab = param1;
 
+
+
         return fragment;
     }
 
@@ -88,7 +93,6 @@ public class JobListFragment extends AbstractFragment {
         super.onCreate(savedInstanceState);
 
     }
-
 
     @Override
     public void onResume() {
@@ -111,6 +115,8 @@ public class JobListFragment extends AbstractFragment {
 
         if (isVisibleToUser) {
             //getRelatedTabData();
+
+        //    prefDB.putBoolean(App.CONST_REMEMBER_ME, true);
         }
     }
 
@@ -119,10 +125,12 @@ public class JobListFragment extends AbstractFragment {
         super.setMenuVisibility(menuVisible);
         if (menuVisible) {
             getRelatedTabData();
+
         }
     }
 
     private void getRelatedTabData() {
+
         switch (mCurrentTab) {
             case "TODAY":
                 getTodayJobs();
@@ -131,6 +139,8 @@ public class JobListFragment extends AbstractFragment {
             case "TOMORROW":
                 getTomorrowJobs();
                 break;
+
+
         }
     }
 
@@ -280,7 +290,7 @@ public class JobListFragment extends AbstractFragment {
     }
 
 
-    @Subscribe(sticky = false)
+    @Subscribe(sticky = false )
     public void onEvent(Action action) {
         //  Toast.makeText(getContext(), "Action Done", Toast.LENGTH_SHORT).show();
         getRelatedTabData();
@@ -295,6 +305,9 @@ public class JobListFragment extends AbstractFragment {
         if (action.equalsIgnoreCase("GET_TOMORROW_JOBS")) {
             getTomorrowJobs();
         }
+
+
+
     }
 
 }

@@ -2,28 +2,32 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="center"
-    android:layout_marginTop="16dp"
     android:gravity="center"
     android:orientation="horizontal">
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         style="@style/tab_header"
         android:textColor="@color/white"
+
         android:text="Header" />
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/job_count"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:gravity="center"
         android:background="@drawable/badge_circle"
         android:textColor="@color/white"
-        android:textSize="10sp"
+        style="@style/tab_header"
+        android:textSize="9sp"
         android:text="0" />
 
 </LinearLayout>

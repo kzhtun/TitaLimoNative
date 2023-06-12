@@ -26,29 +26,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
 
-                    <TextView
-                        style="@style/cell_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="JOB NO" />
-
-                    <TextView
-                        android:id="@+id/job_no"
-                        style="@style/cell_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="000000"
-                        android:textColor="@color/orange"
-                        android:textSize="16sp" />
-
-                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -72,7 +50,6 @@
 
                 </LinearLayout>
 
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -83,20 +60,20 @@
                         style="@style/cell_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="4dp"
-                        android:text="JOB STATUS" />
+                        android:text="STAFF" />
 
                     <TextView
-                        android:id="@+id/job_status"
+                        android:id="@+id/staff"
                         style="@style/cell_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="4dp"
                         android:layout_weight="1"
-                        android:text="ASSIGNED"
-                        android:textColor="@color/green" />
+                        android:text="STAFF"
+                        />
 
                 </LinearLayout>
+
+
 
 
             </LinearLayout>
@@ -109,7 +86,31 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/cell_label"
+                        android:layout_width="@dimen/item_label_width"
+                        android:layout_height="wrap_content"
+                        android:text="STATUS : " />
+
+                    <TextView
+                        android:id="@+id/job_status"
+                        style="@style/cell_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="ASSIGNED"
+                        android:textColor="@color/green" />
+
+                </LinearLayout>
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -123,13 +124,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:layout_marginTop="@dimen/item_label_margin"
+                    android:orientation="horizontal">
 
                     <TextView
                         style="@style/cell_label"
-                        android:layout_width="wrap_content"
+                        android:layout_width="@dimen/item_label_width"
                         android:layout_height="wrap_content"
-                        android:text="DATE" />
+                        android:text="DATE : " />
 
                     <TextView
                         android:id="@+id/date"
@@ -145,21 +147,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:layout_marginTop="@dimen/item_label_margin"
+                    android:orientation="horizontal">
 
                     <TextView
                         style="@style/cell_label"
-                        android:layout_width="wrap_content"
+                        android:layout_width="@dimen/item_label_width"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="4dp"
-                        android:text="TIME" />
+                        android:text="TIME : " />
 
                     <TextView
                         android:id="@+id/time"
                         style="@style/cell_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="4dp"
                         android:layout_weight="1"
                         android:text="00:00 AM" />
 
@@ -191,7 +192,7 @@
                         style="@style/cell_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="PASSENGER" />
+                        android:text="NAME : " />
 
                     <TextView
                         android:id="@+id/passenger"
@@ -215,7 +216,7 @@
                         style="@style/cell_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="HRN" />
+                        android:text="HRN : " />
 
                     <TextView
                         android:id="@+id/file_no"
@@ -331,87 +332,52 @@
                 android:id="@+id/layout_flight"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
-                android:orientation="horizontal">
+                android:layout_marginTop="20dp"
+                android:orientation="vertical">
 
                 <LinearLayout
+                    android:id="@+id/layout_vehicle_type"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/label_flight_no"
                         style="@style/cell_label"
-                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:text="FLIGHT NO." />
+                        android:layout_width="@dimen/item_label_width"
+                        android:text="TYPE : " />
 
                     <TextView
-                        android:id="@+id/flight_no"
+                        android:id="@+id/vehicle_type"
                         style="@style/cell_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="DL8779" />
-
-                </LinearLayout>
-
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/label_eta"
-                        style="@style/cell_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:text="ETA" />
-
-                    <TextView
-                        android:id="@+id/eta"
-                        style="@style/cell_text"
-                        android:layout_width="wrap_content"
+                        android:layout_width="@dimen/item_label_width"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="12:00 PM"
-                        android:textColor="@color/green" />
+                        android:text="VEHICLE TYPE" />
 
                 </LinearLayout>
-            </LinearLayout>
-
-            <View
-                android:layout_width="wrap_content"
-                android:layout_height="20dp" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
 
                 <LinearLayout
                     android:id="@+id/layout_pickup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/item_label_margin"
                     android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
 
                     <TextView
                         style="@style/cell_label"
-                        android:layout_width="wrap_content"
+                        android:layout_width="@dimen/item_label_width"
                         android:layout_height="wrap_content"
-                        android:text="PICK UP" />
+                        android:text="PICK UP : " />
 
                     <TextView
                         android:id="@+id/pickup"
                         style="@style/cell_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="PICK UP" />
+                        android:text="PICK UP " />
 
                 </LinearLayout>
 
@@ -419,14 +385,15 @@
                     android:id="@+id/layout_dropoff"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/item_label_margin"
                     android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
 
                     <TextView
                         style="@style/cell_label"
-                        android:layout_width="wrap_content"
+                        android:layout_width="@dimen/item_label_width"
                         android:layout_height="wrap_content"
-                        android:text="DROP OFF" />
+                        android:text="DROP OFF : " />
 
                     <TextView
                         android:id="@+id/dropoff"
@@ -437,38 +404,9 @@
                         android:text="DROP OFF" />
 
                 </LinearLayout>
-            </LinearLayout>
 
-            <View
-                android:layout_width="wrap_content"
-                android:layout_height="20dp" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
 
-                <LinearLayout
-                    android:id="@+id/layout_vehicle_type"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        style="@style/cell_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="VEHICLE TYPE" />
-
-                    <TextView
-                        android:id="@+id/vehicle_type"
-                        style="@style/cell_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="VEHICLE TYPE" />
-
-                </LinearLayout>
 
             </LinearLayout>
 
@@ -524,7 +462,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Remarks" />
+                    android:text="Remarks : " />
 
             </LinearLayout>
 
@@ -740,7 +678,91 @@
             android:layout_width="match_parent"
             android:layout_height="50dp" />
 
+
+<!--        unnecessary fields hidding in layout-->
+        <android.support.v7.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/cell_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="JOB NO" />
+
+            <TextView
+                android:id="@+id/job_no"
+                style="@style/cell_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="000000"
+                android:textColor="@color/orange"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/label_flight_no"
+                style="@style/cell_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="FLIGHT NO." />
+
+            <TextView
+                android:id="@+id/flight_no"
+                style="@style/cell_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DL8779" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/label_eta"
+                style="@style/cell_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ETA" />
+
+            <TextView
+                android:id="@+id/eta"
+                style="@style/cell_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="12:00 PM"
+                android:textColor="@color/green" />
+
+        </LinearLayout>
+
+        </android.support.v7.widget.LinearLayoutCompat>
+
     </LinearLayout>
+
+
 
 </ScrollView>
 

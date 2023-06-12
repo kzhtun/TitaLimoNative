@@ -193,6 +193,9 @@ public class JobDetailFragment extends AbstractFragment {
     @BindView(R.id.vehicle_type)
     TextView mVehicleType;
 
+    @BindView(R.id.staff)
+    TextView mStaff;
+
     @BindView(R.id.layout_flight)
     LinearLayout mLayoutFlight;
 
@@ -1360,6 +1363,7 @@ public class JobDetailFragment extends AbstractFragment {
 //                mLabelFileNo.setVisibility(View.GONE);
 //                mFileNo.setVisibility(View.GONE);
 //            }
+
             mFileNo.setText(job.getFileNo());
             mLabelFileNo.setVisibility(VISIBLE);
             mFileNo.setVisibility(VISIBLE);
@@ -1367,7 +1371,7 @@ public class JobDetailFragment extends AbstractFragment {
             mLayoutPax.setVisibility(View.GONE);
             mDividerPax.setVisibility(View.GONE);
 
-            mLayoutFlight.setVisibility(GONE);
+          //  mLayoutFlight.setVisibility(GONE);
             mLabelFlightNo.setVisibility(GONE);
             mFlightNo.setVisibility(GONE);
 
@@ -1384,7 +1388,6 @@ public class JobDetailFragment extends AbstractFragment {
 
             mLabelETA.setVisibility(VISIBLE);
             mETA.setVisibility(VISIBLE);
-
 
             // PAX
             int adult = Integer.parseInt(job.getNoOfAdult());
@@ -1434,7 +1437,7 @@ public class JobDetailFragment extends AbstractFragment {
         if (job.getRemarks() == null || job.getRemarks().length() == 0) {
             mRemarks.setVisibility(GONE);
             mLayoutRemarks.setVisibility(GONE);
-           // mLineRemarks.setVisibility(GONE);
+            mLineRemarks.setVisibility(GONE);
         }
 
         // Set Mobile Numbers
@@ -1454,18 +1457,19 @@ public class JobDetailFragment extends AbstractFragment {
             mETA.setVisibility(GONE);
         }
 
-
         mJobNo.setText(job.getJobNo());
-        mJobType.setText(job.getJobType());
+        mJobType.setText(Util.capitalize(job.getJobType()));
         mJobStatus.setText(job.getJobStatus());
         mDate.setText(job.getUsageDate());
         mTime.setText(job.getPickUpTime());
-        mPassenger.setText(job.getCustomer());
 
+        mStaff.setText(job.getStaff());
+
+        mPassenger.setText(job.getCustomer());
         mPassenger.setVisibility(VISIBLE);
 
-
         mETA.setText(job.getETA());
+      //  mType.setText(job.getVehicleType());
         mPickup.setText(job.getPickUp());
         mDropOff.setText(job.getDestination());
         mRemarks.setText(job.getRemarks());

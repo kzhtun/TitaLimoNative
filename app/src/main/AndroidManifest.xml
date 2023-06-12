@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.info121.nativelimo">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -14,6 +13,7 @@
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.REORDER_TASKS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <uses-feature
         android:name="android.hardware.camera.any"
@@ -23,6 +23,7 @@
         android:required="false" />
 
     <application
+        android:requestLegacyExternalStorage="true"
         android:name=".App"
         android:allowBackup="false"
         android:icon="@mipmap/my_limo_launcher"
@@ -31,9 +32,9 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
+        android:theme="@style/Theme.AppCompat"
         tools:replace="android:allowBackup">
-        <activity android:name=".activities.NotifyActivity" android:configChanges="orientation|screenSize"></activity>
+
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
@@ -48,21 +49,22 @@
             android:theme="@style/Theme.Transparent" />
 
         <service android:name=".services.ShowDialogService" />
-        <service android:name=".services.FirebaseMessagingService">
+        <service android:name=".services.FirebaseMessagingService"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         <service android:name=".services.SmartLocationService" />
-
-        <activity android:name=".activities.ToneSelection" android:configChanges="orientation|screenSize"/>
-        <activity android:name=".activities.JobDetailActivity" android:configChanges="orientation|screenSize"/>
-        <activity android:name=".activities.JobOverviewActivity" android:configChanges="orientation|screenSize" />
-        <activity android:name=".activities.LoginActivity" android:configChanges="orientation|screenSize"/>
-        <activity android:name=".activities.MainActivity">
+        <activity android:name=".activities.NotifyActivity" android:configChanges="orientation|screenSize"></activity>
+        <activity android:name=".activities.ToneSelection" android:configChanges="orientation|screenSize" android:theme="@style/AppTheme"/>
+        <activity android:name=".activities.JobDetailActivity" android:configChanges="orientation|screenSize" android:theme="@style/AppTheme"/>
+        <activity android:name=".activities.JobOverviewActivity" android:configChanges="orientation|screenSize"  android:theme="@style/AppTheme"/>
+        <activity android:name=".activities.LoginActivity" android:configChanges="orientation|screenSize" android:theme="@style/AppTheme"/>
+        <activity android:name=".activities.MainActivity" android:theme="@style/AppTheme"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

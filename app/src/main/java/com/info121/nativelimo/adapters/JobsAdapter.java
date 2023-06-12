@@ -207,7 +207,8 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 itemVH.mViewUpdates.setBackground (ContextCompat.getDrawable (mContext, R.drawable.rounded_button));
             }
 
-            itemVH.jobType.setText(mJobList.get(i).getJobType());
+
+            itemVH.jobType.setText(Util.capitalize(mJobList.get(i).getJobType()));
             itemVH.jobStatus.setText(mJobList.get(i).getJobStatus());
             itemVH.vehicleType.setText(mJobList.get(i).getVehicleType());
             itemVH.pickupTime.setText(mJobList.get(i).getPickUpTime());
@@ -216,7 +217,9 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             itemVH.passenger.setText(mJobList.get(i).getCustomer());
             itemVH.mobile.setText(mJobList.get(i).getCustomerTel());
             itemVH.jobDate.setText(mJobList.get(i).getUsageDate());
-            itemVH.updateText.setText(mJobList.get(i).getUpdates());
+
+            itemVH.staff.setText(mJobList.get(i).getStaff());
+            itemVH.updateText.setText(mJobList.get(i).getUpdates().toString().replaceAll("##-##", "\n"));
             //viewHolder.passenger.setText(mJobList.get(i).getJobNo());
 
 
@@ -235,6 +238,13 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     if (mCurrentTab.equalsIgnoreCase("TOMORROW")) {
                         getTomorrowJobs(jobNo, index);
                     }
+
+
+//                    App.jobList = mJobList;
+//                    Intent intent = new Intent(mContext, JobDetailActivity.class);
+//                    intent.putExtra("jobNo", jobNo);
+//                    intent.putExtra("index", index);
+//                    mContext.startActivity(intent);
 
                 }
             });
@@ -471,6 +481,9 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         @BindView(R.id.update_layout)
         LinearLayout updateLayout;
 
+        @BindView(R.id.staff)
+        TextView staff;
+
 
         public ItemViewHolder(@NonNull final View itemView) {
             super(itemView);
@@ -509,7 +522,7 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // daily updates
     private void updateJobRemark(final String jobNo, final String message) {
-        Call<JobRes> call = RestClient.COACH().getApiService().UpdateJobRemark(jobNo, message);
+        Call<JobRes> call = RestClient.COACH().getApiService().UpdateJobRemark(jobNo, message.replaceAll("\n", "##-##"));
 
         call.enqueue(new Callback<JobRes>() {
             @Override

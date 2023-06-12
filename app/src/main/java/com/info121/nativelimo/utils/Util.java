@@ -37,7 +37,9 @@ public class Util {
         }
     }
 
-    private static String capitalize(String s) {
+    public static String capitalize(String s) {
+        s = s.toLowerCase(Locale.ROOT);
+
         if (s == null || s.length() == 0) {
             return "";
         }
@@ -161,6 +163,9 @@ public class Util {
     public static float convertPixelsToDp(float px, Context context){
         return px / ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
     }
+
+
+
 
 
 }

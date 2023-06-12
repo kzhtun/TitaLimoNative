@@ -38,8 +38,6 @@ public class OverviewPageAdapter extends FragmentStatePagerAdapter {
     public CharSequence getPageTitle(int position) {
         Log.e("PageTitle", position + "");
 
-
-
         switch (position){
             case 0: return "TODAY";
             case 1: return "TOMORROW";

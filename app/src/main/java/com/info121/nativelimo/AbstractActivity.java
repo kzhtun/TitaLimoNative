@@ -1,6 +1,7 @@
 package com.info121.nativelimo;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -39,7 +40,16 @@ public class AbstractActivity extends AppCompatActivity {
 
     @Override
     protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+       // super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+
+        //Implement this for api 28 and below
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q){
+            super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+        }
+        //Or implement this for api 29 and above
+        else {
+            super.attachBaseContext(newBase);
+        }
     }
 
     @Subscribe
