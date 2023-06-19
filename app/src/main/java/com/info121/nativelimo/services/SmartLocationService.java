@@ -180,6 +180,9 @@ public class SmartLocationService extends Service implements OnLocationUpdatedLi
             e.printStackTrace();
 
         }
-        return strAdd;
+
+       // strAdd = strAdd.replaceAll("\\+", "-");
+
+        return strAdd.replaceAll("\\+", "-");
     }
 }

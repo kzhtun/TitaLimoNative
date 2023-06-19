@@ -190,14 +190,14 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ItemViewHolder itemVH = (ItemViewHolder) viewHolder;
             setAnimation(viewHolder.itemView, i);
 
+//              show/ hide updates textbox and button depend on the which tabs
+//            if (mCurrentTab.equalsIgnoreCase("HISTORY") && mJobList.get(i).getUaeType().equalsIgnoreCase("Translation Job"))
+//                if (mCurrentTab.equalsIgnoreCase("HISTORY"))
+//                    itemVH.updateLayout.setVisibility(View.VISIBLE);
+//                else
+//                    itemVH.updateLayout.setVisibility(GONE);
 
-            if (mCurrentTab.equalsIgnoreCase("HISTORY") && mJobList.get(i).getUaeType().equalsIgnoreCase("Translation Job"))
-                if (mCurrentTab.equalsIgnoreCase("HISTORY"))
-
-                    itemVH.updateLayout.setVisibility(View.VISIBLE);
-            else
-                itemVH.updateLayout.setVisibility(GONE);
-
+            itemVH.updateLayout.setVisibility(View.VISIBLE);
 
             if(mJobList.get(i).getUpdates().length() > 0 ) {
                 itemVH.mViewUpdates.setText("VIEW");
@@ -528,7 +528,7 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
                 if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
-                   Toast.makeText(mContext, jobNo + " Successfully Updated", Toast.LENGTH_SHORT).show();
+                   Toast.makeText(mContext,  "Successfully Updated", Toast.LENGTH_SHORT).show();
 
                    // refresh the adapter
                    mJobList.get(adapterPosition).setUpdates(message);

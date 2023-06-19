@@ -1,6 +1,7 @@
 package com.info121.nativelimo.activities;
 
 import android.Manifest;
+import android.app.job.JobInfo;
 import android.content.Context;
 
 import android.content.Intent;
@@ -8,6 +9,8 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -19,10 +22,9 @@ import com.info121.nativelimo.App;
 import com.info121.nativelimo.R;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import pub.devrel.easypermissions.AppSettingsDialog;
-import pub.devrel.easypermissions.EasyPermissions;
 
 
 public class MainActivity extends AppCompatActivity  {
@@ -41,15 +43,16 @@ public class MainActivity extends AppCompatActivity  {
 //    Manifest.permission.READ_EXTERNAL_STORAGE,
 //    Manifest.permission.WRITE_EXTERNAL_STORAGE,
 
-    String[] permissions = {Manifest.permission.ACCESS_COARSE_LOCATION,
+    public String[] permissions = {Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.CAMERA,
             Manifest.permission.CALL_PHONE,
-            Manifest.permission.POST_NOTIFICATIONS
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+           // Manifest.permission.POST_NOTIFICATIONS
     };
 
     private static final String TAG = LoginActivity.class.getSimpleName();
-
 
     public static boolean hasPermissions(Context context, String... permissions) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
@@ -58,6 +61,7 @@ public class MainActivity extends AppCompatActivity  {
                     return false;
                 }
             }
+
         }
 
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -80,20 +84,32 @@ public class MainActivity extends AppCompatActivity  {
         setContentView(R.layout.activity_main);
 
 
-        if (hasPermissions(this, permissions))
-            startActivity(new Intent(MainActivity.this, LoginActivity.class));
-        else
-            ActivityCompat.requestPermissions(this, permissions, PERMISSION_ALL);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            startActivity(new Intent(MainActivity.this, TiramisuPermissionActivity.class));
+        }else {
 
-
+            if (hasPermissions(this, permissions))
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            else {
+                ActivityCompat.requestPermissions(this, permissions, PERMISSION_ALL);
+            }
+        }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if(hasPermissions(this, permissions))
-            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+        if(hasPermissions(this, permissions)) {
+            final Handler handler = new Handler(Looper.getMainLooper());
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                }
+            }, 20);
+
+        }
 
     }
 

@@ -45,7 +45,8 @@ public class App extends Application {
 //    public static String CONST_PHOTO_URL = "http://128.106.129.15/iopsdev/images/limopics/";
 //
 //
-//    // iOPS DEV Cypress FTP
+
+    // iOPS DEV Cypress FTP
 //    public static final String FTP_URL = "128.106.129.15";
 //    public static final String FTP_USER = "ipos";
 //    public static final String FTP_PASSWORD = "iposftp";
@@ -62,7 +63,7 @@ public class App extends Application {
     public static final String FTP_URL = "97.74.89.233";
     public static final String FTP_USER = "ipos";
     public static final String FTP_PASSWORD = "$$1posftp%%";
-    public static String FTP_DIR = "";
+    public static String FTP_DIR = "limopics";
 
 
     //---------------------------------------------------------------------//

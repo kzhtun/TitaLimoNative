@@ -5,10 +5,10 @@ android {
     compileSdkVersion 33
     defaultConfig {
         applicationId "com.info121.nativelimo"
-        minSdkVersion 18
+        minSdkVersion 23
         targetSdkVersion 33
-        versionCode 21
-        versionName "2.0"
+        versionCode 24
+        versionName "2.21"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

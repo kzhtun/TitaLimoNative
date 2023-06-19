@@ -5,6 +5,8 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,6 +20,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
@@ -74,7 +77,10 @@ public class LoginActivity extends AbstractActivity {
     TextView mUiVersion;
 
 
-    String[] permissions = {Manifest.permission.POST_NOTIFICATIONS};
+    String[] permissions = {
+            Manifest.permission.POST_NOTIFICATIONS
+
+    };
 
 
     @Override
@@ -97,50 +103,23 @@ public class LoginActivity extends AbstractActivity {
 
         callCheckVersion();
 
-
-
-
-//     //   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            View decor = getWindow().getDecorView();
-//
-//                // We want to change tint color to white again.
-//                // You can also record the flags in advance so that you can turn UI back completely if
-//                // you have set other flags before, such as translucent or full screen.
-//                decor.setSystemUiVisibility(decor.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-//
-//      //  }
-
-//        finish();
-//
-//        Intent intent = new Intent(LoginActivity.this, NotifyActivity.class);
-//        Bundle bundle = new Bundle();
-//
-//        bundle.putString("JOB_NO", "79498");
-//        bundle.putString("JOB_TYPE", "jobType");
-//        bundle.putString("JOB_DATE", "jobDate");
-//        bundle.putString("JOB_TIME", "jobTime");
-//        bundle.putString("PICKUP", "pickup");
-//        bundle.putString("DROPOFF", "dropoff");
-//        bundle.putString("CUST_NAME", "clientName");
-//        bundle.putString("VEHICLE_TYPE", "vehicleType");
-//        bundle.putString("DRIVER", "BOSS");
-//
-//        intent.putExtras(bundle);
-//        startActivity(intent );
-
     }
 
 
-
-
     @OnClick(R.id.login)
-    public void loginOnClick(){
+    public void loginOnClick() {
         mProgressBar.setVisibility(View.VISIBLE);
-        callValidateDriver();
-//        showNotification("test", "blal ala alal a");
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(permissions, 80);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // check notification permissions after login success
+            if (hasPermissions(mContext, permissions)) {
+                callValidateDriver();
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                    requestPermissions(permissions, 80);
+            }
+        }else{
+            callValidateDriver();
         }
     }
 
@@ -149,27 +128,42 @@ public class LoginActivity extends AbstractActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if(requestCode == 80){
-            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                Toast.makeText(mContext, "Permission Granted", Toast.LENGTH_SHORT).show();
-            }else{
-                Toast.makeText(mContext, "Permission Denied", Toast.LENGTH_SHORT).show();
+        if (requestCode == 80) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Toast.makeText(mContext, "Permission Granted", Toast.LENGTH_SHORT).show();
+
+            } else {
+                // Toast.makeText(mContext, "Permission Denied", Toast.LENGTH_SHORT).show();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this).create();
+                    alertDialog.setTitle("Warning");
+                    alertDialog.setMessage("Notification permission is not allow.\n" +
+                            "To allow notification again, go to Setting-> Apps-> Tita Limo-> Permissions-> Notifications-> Allow Notifications. ");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
             }
         }
+        callValidateDriver();
     }
 
-    private void callValidateDriver(){
+    private void callValidateDriver() {
         Call<ObjectRes> call = RestClient.COACH().getApiService().ValidateDriver(mUserName.getText().toString().trim());
 
         call.enqueue(new Callback<ObjectRes>() {
             @Override
             public void onResponse(Call<ObjectRes> call, Response<ObjectRes> response) {
 
-                if(response.body() == null){
+                if (response.body() == null) {
                     showRefreshDialog();
                 }
 
-                if(response.body().getResponsemessage().equalsIgnoreCase("VALID")){
+                if (response.body().getResponsemessage().equalsIgnoreCase("VALID")) {
                     App.userName = mUserName.getText().toString();
                     App.deviceID = Util.getDeviceID(getApplicationContext());
                     App.authToken = response.body().getToken();
@@ -177,7 +171,7 @@ public class LoginActivity extends AbstractActivity {
 
                     callUpdateDevice();
 
-                }else{
+                } else {
                     mUserName.setError("Wrong user name");
                     mUserName.requestFocus();
                     mProgressBar.setVisibility(View.GONE);
@@ -194,13 +188,25 @@ public class LoginActivity extends AbstractActivity {
         });
     }
 
-    private void callCheckVersion(){
+    public static boolean hasPermissions(Context context, String... permissions) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private void callCheckVersion() {
         Call<ObjectRes> call = RestClient.COACH().getApiService().CheckVersion(String.valueOf(Util.getVersionCode(mContext)));
 
         call.enqueue(new Callback<ObjectRes>() {
             @Override
             public void onResponse(Call<ObjectRes> call, Response<ObjectRes> response) {
-                if(response.body().getResponsemessage().equalsIgnoreCase("OUTDATED")) {
+                if (response.body().getResponsemessage().equalsIgnoreCase("OUTDATED")) {
                     showOutdatedDialog();
                 }
             }
@@ -212,12 +218,12 @@ public class LoginActivity extends AbstractActivity {
         });
     }
 
-    private void callUpdateDevice(){
-        Log.e("====" , "=========================================");
-        Log.e("DEVICE ID: " , Util.getDeviceID(getApplicationContext()));
-        Log.e("DEVICE TYPE " , App.DEVICE_TYPE);
-        Log.e("FCM TOKEN" , App.FCM_TOKEN);
-        Log.e("====" , "=========================================");
+    private void callUpdateDevice() {
+        Log.e("====", "=========================================");
+        Log.e("DEVICE ID: ", Util.getDeviceID(getApplicationContext()));
+        Log.e("DEVICE TYPE ", App.DEVICE_TYPE);
+        Log.e("FCM TOKEN", App.FCM_TOKEN);
+        Log.e("====", "=========================================");
 
 
         Call<ObjectRes> call = RestClient.COACH().getApiService().UpdateDevice(Util.getDeviceID(getApplicationContext()),
@@ -240,7 +246,7 @@ public class LoginActivity extends AbstractActivity {
         });
     }
 
-    private void loginSuccessful(){
+    private void loginSuccessful() {
         mProgressBar.setVisibility(View.GONE);
 
 
@@ -272,7 +278,7 @@ public class LoginActivity extends AbstractActivity {
 
                         // Get new Instance ID token
                         App.FCM_TOKEN = task.getResult().getToken();
-                        Log.e("TOKEN : " , App.FCM_TOKEN);
+                        Log.e("TOKEN : ", App.FCM_TOKEN);
                     }
                 });
 
@@ -286,6 +292,7 @@ public class LoginActivity extends AbstractActivity {
             Intent serviceIntent = new Intent(LoginActivity.this, SmartLocationService.class);
             LoginActivity.this.startService(serviceIntent);
         }
+
     }
 
     private boolean isGPSEnabled() {
@@ -325,7 +332,7 @@ public class LoginActivity extends AbstractActivity {
 
 
     private void showOutdatedDialog() {
-        if(App.CONST_REST_API_URL.indexOf(":83")>0) return;
+        if (App.CONST_REST_API_URL.indexOf(":83") > 0) return;
 
         AlertDialog dialog = new AlertDialog.Builder(mContext)
                 .setTitle(R.string.AppName)
@@ -359,7 +366,7 @@ public class LoginActivity extends AbstractActivity {
 
 
     private void showNotification(String title, String body) {
-       String OLD_CH  = App.getOldChannelId();
+        String OLD_CH = App.getOldChannelId();
         String NEW_CH = App.getNewChannelId();
 
         Intent intent = new Intent(this, JobOverviewActivity.class);
@@ -374,7 +381,6 @@ public class LoginActivity extends AbstractActivity {
                 .setAutoCancel(true)
                 .setSound(soundUri)
                 .setContentIntent(pendingIntent);
-
 
 
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -421,7 +427,6 @@ public class LoginActivity extends AbstractActivity {
                 })
 
                 .create();
-
 
 
         dialog.show();

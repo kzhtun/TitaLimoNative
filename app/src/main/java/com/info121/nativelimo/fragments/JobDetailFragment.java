@@ -1539,8 +1539,26 @@ public class JobDetailFragment extends AbstractFragment {
     private void updateJobStatus(final String status) {
         App.fullAddress = (App.fullAddress.isEmpty()) ? " " : App.fullAddress;
 
-        Log.e("Address Update", App.fullAddress);
 
+
+//        Util.copyToClipboard(getActivity().getBaseContext(), App.fullAddress);
+//        Toast.makeText(getActivity().getBaseContext(), "Address Copied", Toast.LENGTH_SHORT).show();
+
+//        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+//        alertDialog.setTitle("Your Full Address #33");
+//        alertDialog.setMessage(App.fullAddress);
+//        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+//                new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.dismiss();
+//                    }
+//                });
+//        alertDialog.show();
+
+
+       //  App.fullAddress = "FullAddress";
+
+      //  Log.e("Address Update", App.fullAddress);
 
         Call<JobRes> call = RestClient.COACH().getApiService().UpdateJobStatus(
                 job.getJobNo(),
