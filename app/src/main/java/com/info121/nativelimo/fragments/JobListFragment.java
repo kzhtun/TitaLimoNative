@@ -114,7 +114,7 @@ public class JobListFragment extends AbstractFragment {
         super.setUserVisibleHint(isVisibleToUser);
 
         if (isVisibleToUser) {
-            //getRelatedTabData();
+           // getRelatedTabData();
 
         //    prefDB.putBoolean(App.CONST_REMEMBER_ME, true);
         }
@@ -181,7 +181,6 @@ public class JobListFragment extends AbstractFragment {
 
 
     private void getTodayJobs() {
-
         Call<JobRes> call = RestClient.COACH().getApiService().GetTodayJobs();
 
         call.enqueue(new Callback<JobRes>() {

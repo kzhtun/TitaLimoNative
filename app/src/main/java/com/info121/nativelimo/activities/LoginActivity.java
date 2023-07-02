@@ -38,6 +38,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.info121.nativelimo.AbstractActivity;
 import com.info121.nativelimo.App;
+import com.info121.nativelimo.BuildConfig;
 import com.info121.nativelimo.R;
 import com.info121.nativelimo.api.RestClient;
 import com.info121.nativelimo.models.ObjectRes;
@@ -100,11 +101,24 @@ public class LoginActivity extends AbstractActivity {
         mApiVersion.setText("Api " + Util.getVersionCode(mContext));
         mUiVersion.setText("Ver " + Util.getVersionName(mContext));
 
+        //callCheckVersion();
 
-        callCheckVersion();
 
     }
 
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        Bundle extras = getIntent().getExtras();
+
+        if(extras != null){
+            String jobNo = getIntent().getStringExtra("JOB_NO");
+            if (jobNo != null)
+                Log.e("JOB_NO", jobNo);
+        }
+    }
 
     @OnClick(R.id.login)
     public void loginOnClick() {
@@ -113,13 +127,13 @@ public class LoginActivity extends AbstractActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // check notification permissions after login success
             if (hasPermissions(mContext, permissions)) {
-                callValidateDriver();
+                callValidateDriver(mUserName.getText().toString());
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                     requestPermissions(permissions, 80);
             }
         }else{
-            callValidateDriver();
+            callValidateDriver(mUserName.getText().toString());
         }
     }
 
@@ -149,11 +163,11 @@ public class LoginActivity extends AbstractActivity {
                 }
             }
         }
-        callValidateDriver();
+        callValidateDriver(mUserName.getText().toString());
     }
 
-    private void callValidateDriver() {
-        Call<ObjectRes> call = RestClient.COACH().getApiService().ValidateDriver(mUserName.getText().toString().trim());
+    public void callValidateDriver(String userName) {
+        Call<ObjectRes> call = RestClient.COACH().getApiService().ValidateDriver(userName.trim());
 
         call.enqueue(new Callback<ObjectRes>() {
             @Override
@@ -164,7 +178,7 @@ public class LoginActivity extends AbstractActivity {
                 }
 
                 if (response.body().getResponsemessage().equalsIgnoreCase("VALID")) {
-                    App.userName = mUserName.getText().toString();
+                    App.userName = userName;
                     App.deviceID = Util.getDeviceID(getApplicationContext());
                     App.authToken = response.body().getToken();
                     App.timerDelay = 6000;

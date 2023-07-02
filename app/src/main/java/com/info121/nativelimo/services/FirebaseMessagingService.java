@@ -1,5 +1,6 @@
 package com.info121.nativelimo.services;
 
+import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -11,6 +12,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.view.View;
 
@@ -19,10 +21,14 @@ import com.info121.nativelimo.R;
 import com.info121.nativelimo.App;
 import com.info121.nativelimo.activities.DialogActivity;
 import com.info121.nativelimo.activities.JobOverviewActivity;
+import com.info121.nativelimo.activities.LoginActivity;
+import com.info121.nativelimo.activities.MainActivity;
 import com.info121.nativelimo.activities.NotifyActivity;
 import com.info121.nativelimo.models.Action;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.Map;
 
 
 public class FirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService {
@@ -34,13 +40,38 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     String OLD_CH = "";
     String NEW_CH = "";
 
-    private void showNotification(String title, String body) {
+    private void showNotification(Map<String, String> payloadData){ //} String title, String body) {
         OLD_CH = App.getOldChannelId();
         NEW_CH = App.getNewChannelId();
 
-        Intent intent = new Intent(this, JobOverviewActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+        String title = payloadData.get("title");
+        String body = payloadData.get("message");
+
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|
+                Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+//        remoteMessage.getData().get("jobno"),
+//        remoteMessage.getData().get("jobtype"),
+//                remoteMessage.getData().get("jobdate"),
+//                remoteMessage.getData().get("pickuptime"),
+//                remoteMessage.getData().get("pickuppoint"),
+//                remoteMessage.getData().get("alightpoint"),
+//                remoteMessage.getData().get("clientname"),
+//                remoteMessage.getData().get("vehicletype"),
+//                remoteMessage.getData().get("driver")
+
+        Bundle bundle = new Bundle();
+        bundle.putString("ACTION", payloadData.get("action"));
+        bundle.putString("JOB_NO", payloadData.get("jobno"));
+        bundle.putString("JOB_TYPE", payloadData.get("jobtype"));
+
+        intent.putExtras(bundle);
+        App.intents.add(intent);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 , intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
 
         Uri soundUri = App.getNotificationSoundUri();
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NEW_CH)
@@ -86,7 +117,6 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
-
         //        Key .title = title, _
 //        Key .message = body, _
 //        Key .action = action, _
@@ -122,7 +152,8 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                             remoteMessage.getData().get("driver")
                     );
                 }else{
-                    showNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("message"));
+                   // showNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("message"));
+                    showNotification(remoteMessage.getData());
                     //----------------------------------------------------------------------------------//
                     EventBus.getDefault().post(new Action(remoteMessage.getData().get("action"),
                             remoteMessage.getData().get("jobno")

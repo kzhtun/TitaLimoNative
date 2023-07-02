@@ -27,6 +27,9 @@
                 android:background="@drawable/rounded_button_green"
                 android:text="PASSENGER ON BOARD"
                 android:layout_marginBottom="16dp"
+                android:textSize="@dimen/button_text_size"
+                android:fontFamily="@font/lato_regular"
+                android:letterSpacing="0.05"
                 android:textColor="@color/white" />
 
             <Button
@@ -38,6 +41,9 @@
                 android:background="@drawable/rounded_button_green"
                 android:text= "NO SHOW"
                 android:layout_marginBottom="16dp"
+                android:textSize="@dimen/button_text_size"
+                android:fontFamily="@font/lato_regular"
+                android:letterSpacing="0.05"
                 android:textColor="@color/white" />
 
             <Button
@@ -49,6 +55,9 @@
                 android:background="@drawable/rounded_button_red"
                 android:text="BACK"
                 android:layout_marginBottom="16dp"
+                android:textSize="@dimen/button_text_size"
+                android:fontFamily="@font/lato_regular"
+                android:letterSpacing="0.05"
                 android:textColor="@color/white" />
         </LinearLayout>
 

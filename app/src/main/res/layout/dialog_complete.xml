@@ -58,6 +58,7 @@
                 <TextView
                     android:id="@+id/date"
                     style="@style/cell_text"
+                    android:layout_marginTop="4dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -81,6 +82,7 @@
                     android:id="@+id/time"
                     style="@style/cell_text"
                     android:layout_width="wrap_content"
+                    android:layout_marginTop="4dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="12:12 PM" />
@@ -111,6 +113,7 @@
                     android:id="@+id/location"
                     style="@style/cell_text"
                     android:layout_width="wrap_content"
+                    android:layout_marginTop="4dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="123 abc YGN" />
@@ -161,6 +164,9 @@
                 android:layout_weight="1"
                 android:background="@drawable/rounded_button"
                 android:textColor="@color/white"
+                android:textSize="@dimen/button_text_size"
+                android:fontFamily="@font/lato_regular"
+                android:letterSpacing="0.05"
                 android:text="COMPLETE" />
 
         </LinearLayout>

@@ -15,21 +15,32 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 
 import com.info121.nativelimo.App;
 import com.info121.nativelimo.R;
+import com.info121.nativelimo.api.RestClient;
+import com.info121.nativelimo.models.ObjectRes;
+import com.info121.nativelimo.utils.PrefDB;
+import com.info121.nativelimo.utils.Util;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity {
 
     Context mContext = MainActivity.this;
+    PrefDB prefDB;
 
     int PERMISSION_ALL = 1;
     private static final int RC_PRE_PERMISSION = 111;
@@ -49,7 +60,7 @@ public class MainActivity extends AppCompatActivity  {
             Manifest.permission.CALL_PHONE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
-           // Manifest.permission.POST_NOTIFICATIONS
+            // Manifest.permission.POST_NOTIFICATIONS
     };
 
     private static final String TAG = LoginActivity.class.getSimpleName();
@@ -83,15 +94,58 @@ public class MainActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        prefDB = new PrefDB(getApplicationContext());
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             startActivity(new Intent(MainActivity.this, TiramisuPermissionActivity.class));
-        }else {
+        } else {
 
             if (hasPermissions(this, permissions))
                 startActivity(new Intent(MainActivity.this, LoginActivity.class));
             else {
                 ActivityCompat.requestPermissions(this, permissions, PERMISSION_ALL);
+            }
+        }
+
+
+    }
+
+
+    public void callValidateDriver(String userName) {
+        Call<ObjectRes> call = RestClient.COACH().getApiService().ValidateDriver(userName.trim());
+
+        call.enqueue(new Callback<ObjectRes>() {
+            @Override
+            public void onResponse(Call<ObjectRes> call, Response<ObjectRes> response) {
+
+                if (response.body().getResponsemessage().equalsIgnoreCase("VALID")) {
+                    App.userName = userName;
+                    App.deviceID = Util.getDeviceID(getApplicationContext());
+                    App.authToken = response.body().getToken();
+                    //  EventBus.getDefault().post("GET_TODAY_JOBS");
+                    startActivity(new Intent(MainActivity.this, JobOverviewActivity.class));
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ObjectRes> call, Throwable t) {
+            }
+        });
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        Bundle bundle = intent.getExtras();
+
+        String userName = prefDB.getString(App.CONST_USER_NAME);
+
+        if (bundle != null) {
+            if (userName.length() > 0) {
+                callValidateDriver(userName);
             }
         }
     }
@@ -100,7 +154,7 @@ public class MainActivity extends AppCompatActivity  {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if(hasPermissions(this, permissions)) {
+        if (hasPermissions(this, permissions)) {
             final Handler handler = new Handler(Looper.getMainLooper());
             handler.postDelayed(new Runnable() {
                 @Override
@@ -112,8 +166,6 @@ public class MainActivity extends AppCompatActivity  {
         }
 
     }
-
-
 
 
 }

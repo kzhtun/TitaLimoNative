@@ -7,8 +7,8 @@ android {
         applicationId "com.info121.nativelimo"
         minSdkVersion 23
         targetSdkVersion 33
-        versionCode 24
-        versionName "2.21"
+        versionCode 25
+        versionName "2.22"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

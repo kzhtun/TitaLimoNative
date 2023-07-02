@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
@@ -109,9 +110,14 @@ public class JobOverviewActivity extends AbstractActivity {
             }
         });
 
+
     }
 
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
 
+    }
 
     private void callJobsCount(final Boolean update) {
         Call<JobRes> call = RestClient.COACH().getApiService().GetJobsCount();
@@ -349,7 +355,6 @@ public class JobOverviewActivity extends AbstractActivity {
     @Subscribe(sticky = true)
     public void onEvent(String event) {
         EventBus.getDefault().removeStickyEvent("UPDATE_JOB_COUNT");
-
         callJobsCount(true);
     }
 

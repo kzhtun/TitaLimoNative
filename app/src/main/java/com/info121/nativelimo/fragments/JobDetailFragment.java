@@ -1459,7 +1459,7 @@ public class JobDetailFragment extends AbstractFragment {
 
         mJobNo.setText(job.getJobNo());
         mJobType.setText(Util.capitalize(job.getJobType()));
-        mJobStatus.setText(job.getJobStatus());
+        mJobStatus.setText(job.getJobStatus().toUpperCase());
         mDate.setText(job.getUsageDate());
         mTime.setText(job.getPickUpTime());
 

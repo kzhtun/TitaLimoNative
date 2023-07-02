@@ -199,17 +199,18 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             itemVH.updateLayout.setVisibility(View.VISIBLE);
 
-            if(mJobList.get(i).getUpdates().length() > 0 ) {
-                itemVH.mViewUpdates.setText("VIEW");
-                itemVH.mViewUpdates.setBackground (ContextCompat.getDrawable (mContext, R.drawable.rounded_button_orange));
-            }else {
+            if(mJobList.get(i).getUpdates().length() == 0 || mJobList.get(i).getUpdates().equals("##-##") ) {
                 itemVH.mViewUpdates.setText("ADD");
                 itemVH.mViewUpdates.setBackground (ContextCompat.getDrawable (mContext, R.drawable.rounded_button));
+            }else {
+                itemVH.mViewUpdates.setText("VIEW");
+                itemVH.mViewUpdates.setBackground (ContextCompat.getDrawable (mContext, R.drawable.rounded_button_orange));
+
             }
 
 
             itemVH.jobType.setText(Util.capitalize(mJobList.get(i).getJobType()));
-            itemVH.jobStatus.setText(mJobList.get(i).getJobStatus());
+            itemVH.jobStatus.setText( mJobList.get(i).getJobStatus().toUpperCase());
             itemVH.vehicleType.setText(mJobList.get(i).getVehicleType());
             itemVH.pickupTime.setText(mJobList.get(i).getPickUpTime());
             itemVH.pickup.setText(mJobList.get(i).getPickUp());
@@ -637,16 +638,17 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         final EditText updates = dialog.findViewById(R.id.updates);
 
-        updates.setText(message);
+        updates.setText((message.equals("##-##"))? "" : message);
 
         Button save = dialog.findViewById(R.id.save);
 
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                updateJobRemark(jobno, updates.getText().toString().trim());
+                updateJobRemark(jobno, (updates.getText().toString().trim().length() == 0) ? "\n" : updates.getText().toString().trim());
                 dialog.hide();
                 dialog.dismiss();
+                notifyDataSetChanged();
             }
         });
 

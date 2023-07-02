@@ -194,6 +194,9 @@
                     android:layout_marginLeft="5dp"
                     android:layout_marginTop="16dp"
                     android:background="@drawable/rounded_button"
+                    android:textSize="@dimen/button_text_size"
+                    android:fontFamily="@font/lato_regular"
+                    android:letterSpacing="0.06"
                     android:text="SEARCH"
                     android:textColor="@color/white" />
 

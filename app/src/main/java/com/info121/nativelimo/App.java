@@ -38,32 +38,30 @@ public class App extends Application {
     String TAG = "Application";
 
     //---------------------------------------------------------------------//
-
     // iOPS DEV Cypress API
-//    public static String CONST_REST_API_URL = "http://128.106.129.15/RestApiTitanium/MyLimoService.svc/";
-//    public static String CONST_PDF_URL = "http://128.106.129.15/iopsdev/uploads/";
-//    public static String CONST_PHOTO_URL = "http://128.106.129.15/iopsdev/images/limopics/";
-//
-//
+    public static String CONST_REST_API_URL = "http://128.106.129.15/RestApiTitanium/MyLimoService.svc/";
+    public static String CONST_PDF_URL = "http://128.106.129.15/iopsdev/uploads/";
+    public static String CONST_PHOTO_URL = "http://128.106.129.15/iopsdev/images/limopics/";
 
-    // iOPS DEV Cypress FTP
-//    public static final String FTP_URL = "128.106.129.15";
-//    public static final String FTP_USER = "ipos";
-//    public static final String FTP_PASSWORD = "iposftp";
-//    public static String FTP_DIR = "limopics";
+
+    //  iOPS DEV Cypress FTP
+    public static final String FTP_URL = "128.106.129.15";
+    public static final String FTP_USER = "ipos";
+    public static final String FTP_PASSWORD = "iposftp";
+    public static String FTP_DIR = "limopics";
 
     //---------------------------------------------------------------------//
 
     // TitaLimo Live
-    public static String CONST_REST_API_URL = "http://97.74.89.233/RestApiTitanium/MyLimoService.svc/";
-    public static String CONST_PDF_URL = "http://97.74.89.233/iopsdev/uploads/";
-    public static String CONST_PHOTO_URL = "http://97.74.89.233/iopsdev/images/limopics/";
-
-    //LIVE FTP
-    public static final String FTP_URL = "97.74.89.233";
-    public static final String FTP_USER = "ipos";
-    public static final String FTP_PASSWORD = "$$1posftp%%";
-    public static String FTP_DIR = "limopics";
+//    public static String CONST_REST_API_URL = "http://97.74.89.233/RestApiTitanium/MyLimoService.svc/";
+//    public static String CONST_PDF_URL = "http://97.74.89.233/iopsdev/uploads/";
+//    public static String CONST_PHOTO_URL = "http://97.74.89.233/iopsdev/images/limopics/";
+//
+//    //LIVE FTP
+//    public static final String FTP_URL = "97.74.89.233";
+//    public static final String FTP_USER = "ipos";
+//    public static final String FTP_PASSWORD = "$$1posftp%%";
+//    public static String FTP_DIR = "limopics";
 
 
     //---------------------------------------------------------------------//

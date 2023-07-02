@@ -173,6 +173,9 @@
                 android:layout_weight="1"
                 android:background="@drawable/rounded_button"
                 android:text="SUBMIT"
+                android:textSize="@dimen/button_text_size"
+                android:fontFamily="@font/lato_regular"
+                android:letterSpacing="0.05"
                 android:textColor="@color/white" />
 
         </LinearLayout>

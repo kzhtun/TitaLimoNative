@@ -61,6 +61,7 @@
             <TextView
                 android:id="@+id/job_type"
                 style="@style/cell_text"
+                android:layout_marginTop="6dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -84,6 +85,7 @@
                 android:id="@+id/staff"
                 style="@style/cell_text"
                 android:layout_width="wrap_content"
+                android:layout_marginTop="6dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="DHABIAH AWWAD ISMAIL IBRAHIM AL-AL" />
@@ -102,8 +104,8 @@
     <android.support.v7.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
-        android:layout_marginBottom="18dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="32dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -115,7 +117,6 @@
                 style="@style/cell_label"
                 android:layout_width="@dimen/item_label_width"
                 android:layout_height="wrap_content"
-
                 android:text="TYPE : " />
 
             <TextView
@@ -280,7 +281,7 @@
         android:id="@+id/update_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:visibility="visible"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -304,6 +305,7 @@
                     style="@style/cell_text"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
+                    android:layout_marginTop="6dp"
                     android:layout_marginRight="16dp"
                     android:layout_weight="2"
                     android:gravity="top|start"
@@ -317,6 +319,9 @@
                     android:layout_marginTop="8dp"
                     android:background="@drawable/rounded_button"
                     android:text="VIEW"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/lato_regular"
+                    android:letterSpacing="0.05"
                     android:textColor="@color/white" />
             </LinearLayout>
 

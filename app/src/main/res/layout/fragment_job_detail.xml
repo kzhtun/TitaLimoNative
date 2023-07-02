@@ -43,6 +43,7 @@
                     <TextView
                         android:id="@+id/job_type"
                         style="@style/cell_text"
+                        android:layout_marginTop="4dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -65,6 +66,7 @@
                     <TextView
                         android:id="@+id/staff"
                         style="@style/cell_text"
+                        android:layout_marginTop="4dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -197,6 +199,7 @@
                     <TextView
                         android:id="@+id/passenger"
                         style="@style/cell_text"
+                        android:layout_marginTop="4dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -269,6 +272,7 @@
                     <TextView
                         android:id="@+id/no_adult"
                         style="@style/cell_text"
+                        android:layout_marginTop="4dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="20sp"
@@ -291,6 +295,7 @@
                     <TextView
                         android:id="@+id/no_child"
                         style="@style/cell_text"
+                        android:layout_marginTop="4dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="18sp"
@@ -313,6 +318,7 @@
                     <TextView
                         android:id="@+id/no_infant"
                         style="@style/cell_text"
+                        android:layout_marginTop="4dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="20sp"
@@ -352,6 +358,7 @@
                         android:id="@+id/vehicle_type"
                         style="@style/cell_text"
                         android:layout_width="@dimen/item_label_width"
+
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="VEHICLE TYPE" />
@@ -621,6 +628,9 @@
                 android:drawableLeft="@mipmap/ic_prev_arrow"
                 android:paddingLeft="16dp"
                 android:paddingRight="32dp"
+                android:textSize="@dimen/button_text_size"
+                android:fontFamily="@font/lato_regular"
+                android:letterSpacing="0.05"
                 android:text="BACK"
                 android:textColor="@color/red" />
 
@@ -638,6 +648,9 @@
                 android:drawableRight="@mipmap/ic_next_arrow"
                 android:paddingLeft="32dp"
                 android:paddingRight="16dp"
+                android:textSize="@dimen/button_text_size"
+                android:fontFamily="@font/lato_regular"
+                android:letterSpacing="0.05"
                 android:text="NEXT"
                 android:textColor="@color/white" />
         </LinearLayout>
@@ -657,6 +670,9 @@
                 android:layout_weight="1"
                 android:background="@drawable/rounded_button_green"
                 android:text="ACCEPT"
+                android:textSize="@dimen/button_text_size"
+                android:fontFamily="@font/lato_regular"
+                android:letterSpacing="0.05"
                 android:textColor="@color/white" />
 
             <View
@@ -671,6 +687,9 @@
                 android:layout_weight="1"
                 android:background="@drawable/rounded_button_red"
                 android:text="REJECT"
+                android:textSize="@dimen/button_text_size"
+                android:fontFamily="@font/lato_regular"
+                android:letterSpacing="0.05"
                 android:textColor="@color/white" />
         </LinearLayout>
 
