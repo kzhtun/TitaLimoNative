@@ -10,10 +10,12 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
+
 import android.util.Log;
 import android.view.View;
 
+
+import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -39,29 +41,29 @@ public class App extends Application {
 
     //---------------------------------------------------------------------//
     // iOPS DEV Cypress API
-    public static String CONST_REST_API_URL = "http://128.106.129.15/RestApiTitanium/MyLimoService.svc/";
-    public static String CONST_PDF_URL = "http://128.106.129.15/iopsdev/uploads/";
-    public static String CONST_PHOTO_URL = "http://128.106.129.15/iopsdev/images/limopics/";
-
-
-    //  iOPS DEV Cypress FTP
-    public static final String FTP_URL = "128.106.129.15";
-    public static final String FTP_USER = "ipos";
-    public static final String FTP_PASSWORD = "iposftp";
-    public static String FTP_DIR = "limopics";
+//    public static String CONST_REST_API_URL = "http://128.106.129.15/RestApiTitanium/MyLimoService.svc/";
+//    public static String CONST_PDF_URL = "http://128.106.129.15/iopsdev/uploads/";
+//    public static String CONST_PHOTO_URL = "http://128.106.129.15/iopsdev/images/limopics/";
+//
+//
+//    //  iOPS DEV Cypress FTP
+//    public static final String FTP_URL = "128.106.129.15";
+//    public static final String FTP_USER = "ipos";
+//    public static final String FTP_PASSWORD = "iposftp";
+//    public static String FTP_DIR = "limopics";
 
     //---------------------------------------------------------------------//
 
     // TitaLimo Live
-//    public static String CONST_REST_API_URL = "http://97.74.89.233/RestApiTitanium/MyLimoService.svc/";
-//    public static String CONST_PDF_URL = "http://97.74.89.233/iopsdev/uploads/";
-//    public static String CONST_PHOTO_URL = "http://97.74.89.233/iopsdev/images/limopics/";
-//
-//    //LIVE FTP
-//    public static final String FTP_URL = "97.74.89.233";
-//    public static final String FTP_USER = "ipos";
-//    public static final String FTP_PASSWORD = "$$1posftp%%";
-//    public static String FTP_DIR = "limopics";
+    public static String CONST_REST_API_URL = "http://97.74.89.233/RestApiTitanium/MyLimoService.svc/";
+    public static String CONST_PDF_URL = "http://97.74.89.233/iopsdev/uploads/";
+    public static String CONST_PHOTO_URL = "http://97.74.89.233/iopsdev/images/limopics/";
+
+    //LIVE FTP
+    public static final String FTP_URL = "97.74.89.233";
+    public static final String FTP_USER = "ipos";
+    public static final String FTP_PASSWORD = "$$1posftp%%";
+    public static String FTP_DIR = "limopics";
 
 
     //---------------------------------------------------------------------//
@@ -180,17 +182,17 @@ public class App extends Application {
         // for notification tone
         prefDB = new PrefDB(getApplicationContext());
 
-        if (prefDB.getString("OLD_CH_ID").length() == 0)
-            prefDB.putString("OLD_CH_ID", "DEFAULT_OLD");
-
-        if (prefDB.getString("NEW_CH_ID").length() == 0)
-            prefDB.putString("NEW_CH_ID", "DEFAULT_NEW");
-
-        if (prefDB.getString("OLD_CH_ID_P").length() == 0)
-            prefDB.putString("OLD_CH_ID_P", "DEFAULT_OLD_P");
-
-        if (prefDB.getString("NEW_CH_ID_P").length() == 0)
-            prefDB.putString("NEW_CH_ID_P", "DEFAULT_NEW_P");
+//        if (prefDB.getString("OLD_CH_ID").length() == 0)
+//            prefDB.putString("OLD_CH_ID", "DEFAULT_OLD");
+//
+//        if (prefDB.getString("NEW_CH_ID").length() == 0)
+//            prefDB.putString("NEW_CH_ID", "DEFAULT_NEW");
+//
+//        if (prefDB.getString("OLD_CH_ID_P").length() == 0)
+//            prefDB.putString("OLD_CH_ID_P", "DEFAULT_OLD_P");
+//
+//        if (prefDB.getString("NEW_CH_ID_P").length() == 0)
+//            prefDB.putString("NEW_CH_ID_P", "DEFAULT_NEW_P");
 
     }
 
@@ -210,20 +212,20 @@ public class App extends Application {
 
 
     public static String getNewChannelId() {
-        return prefDB.getString("NEW_CH_ID");
+        return "TITA_NOTI";
     }
-
-    public static String getOldChannelId() {
-        return prefDB.getString("OLD_CH_ID");
-    }
-
+//
+//    public static String getOldChannelId() {
+//        return prefDB.getString("OLD_CH_ID");
+//    }
+//
     public static String getNewChannelIdP() {
-        return prefDB.getString("NEW_CH_ID_P");
+        return "TITA_NOTI_P";
     }
-
-    public static String getOldChannelIdP() {
-        return prefDB.getString("OLD_CH_ID_P");
-    }
+//
+//    public static String getOldChannelIdP() {
+//        return prefDB.getString("OLD_CH_ID_P");
+//    }
 
 
     @Override

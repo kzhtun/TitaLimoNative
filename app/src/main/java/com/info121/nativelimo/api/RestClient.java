@@ -1,8 +1,9 @@
 package com.info121.nativelimo.api;
 
 import android.content.DialogInterface;
-import android.support.v7.app.AlertDialog;
-import android.util.Log;
+
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;

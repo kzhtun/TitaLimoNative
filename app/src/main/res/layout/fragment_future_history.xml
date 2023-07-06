@@ -234,12 +234,12 @@
             android:text="There is no jobs."
             android:textColor="@color/colorAccent" />
 
-        <android.support.v4.widget.SwipeRefreshLayout
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/pullToRefresh"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_jobs"
                 android:layout_width="match_parent"
                 android:layout_height="500dp"
@@ -250,7 +250,7 @@
                 android:paddingBottom="16dp"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-        </android.support.v4.widget.SwipeRefreshLayout>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </FrameLayout>
 </LinearLayout>
 

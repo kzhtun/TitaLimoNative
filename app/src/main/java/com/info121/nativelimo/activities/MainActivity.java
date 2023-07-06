@@ -11,13 +11,11 @@ import android.os.Bundle;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.info121.nativelimo.App;
 import com.info121.nativelimo.R;
@@ -97,6 +95,16 @@ public class MainActivity extends AppCompatActivity {
         prefDB = new PrefDB(getApplicationContext());
 
 
+//        Bundle bundle = getIntent().getExtras();
+//
+//        String userName = prefDB.getString(App.CONST_USER_NAME);
+//
+//        if (bundle != null) {
+//            if (userName.length() > 0) {
+//                callValidateDriver(userName);
+//            }
+//        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             startActivity(new Intent(MainActivity.this, TiramisuPermissionActivity.class));
         } else {
@@ -108,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-
+        finish();
     }
 
 
@@ -139,15 +147,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        Bundle bundle = intent.getExtras();
+ //       Bundle bundle = intent.getExtras();
 
-        String userName = prefDB.getString(App.CONST_USER_NAME);
-
-        if (bundle != null) {
-            if (userName.length() > 0) {
-                callValidateDriver(userName);
-            }
-        }
+//        String userName = prefDB.getString(App.CONST_USER_NAME);
+//
+//        if (bundle != null) {
+//            if (userName.length() > 0) {
+//                callValidateDriver(userName);
+//            }
+//        }
     }
 
     @Override

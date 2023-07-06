@@ -9,9 +9,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
+
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -56,7 +54,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.view.View.GONE;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     Calendar myCalendar;
@@ -208,9 +209,10 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             }
 
+            String jobStatus = (mJobList.get(i).getJobStatus().equalsIgnoreCase("JOB NEW") ? "JOB ASSIGNED" : mJobList.get(i).getJobStatus().toUpperCase());
 
             itemVH.jobType.setText(Util.capitalize(mJobList.get(i).getJobType()));
-            itemVH.jobStatus.setText( mJobList.get(i).getJobStatus().toUpperCase());
+            itemVH.jobStatus.setText(jobStatus);
             itemVH.vehicleType.setText(mJobList.get(i).getVehicleType());
             itemVH.pickupTime.setText(mJobList.get(i).getPickUpTime());
             itemVH.pickup.setText(mJobList.get(i).getPickUp());

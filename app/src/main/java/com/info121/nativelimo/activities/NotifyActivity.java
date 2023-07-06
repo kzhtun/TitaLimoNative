@@ -10,7 +10,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.support.v7.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -32,6 +32,7 @@ import com.info121.nativelimo.api.RestClient;
 import com.info121.nativelimo.models.Action;
 import com.info121.nativelimo.models.JobRes;
 import com.info121.nativelimo.models.ObjectRes;
+import com.info121.nativelimo.utils.Util;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -48,6 +49,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static android.view.View.GONE;
+import static com.info121.nativelimo.App.prefDB;
 
 public class NotifyActivity extends AbstractActivity {
     int i = 0;
@@ -400,8 +402,18 @@ public class NotifyActivity extends AbstractActivity {
 
                     playAcceptBeep();
                     finish();
+
                     Toast.makeText(mContext, "Update Successful", Toast.LENGTH_SHORT).show();
                     Log.e("Update Job Successful", response.toString());
+
+                 //   startActivity(new Intent(NotifyActivity.this, JobOverviewActivity.class));
+
+//                    String userName = prefDB.getString(App.CONST_USER_NAME);
+//
+//                    if (userName.length() > 0) {
+//                        callValidateDriver(userName);
+//                    }
+
                 }
 
                 if (response.body().getResponsemessage().equalsIgnoreCase("BAD TOKEN")) {
@@ -412,6 +424,30 @@ public class NotifyActivity extends AbstractActivity {
             @Override
             public void onFailure(Call<JobRes> call, Throwable t) {
                 Log.e("Update Job Failed ", t.getMessage());
+            }
+        });
+    }
+
+
+    public void callValidateDriver(String userName) {
+        Call<ObjectRes> call = RestClient.COACH().getApiService().ValidateDriver(userName.trim());
+
+        call.enqueue(new Callback<ObjectRes>() {
+            @Override
+            public void onResponse(Call<ObjectRes> call, Response<ObjectRes> response) {
+
+                if (response.body().getResponsemessage().equalsIgnoreCase("VALID")) {
+                    App.userName = userName;
+                    App.deviceID = Util.getDeviceID(getApplicationContext());
+                    App.authToken = response.body().getToken();
+                    //  EventBus.getDefault().post("GET_TODAY_JOBS");
+                    startActivity(new Intent(NotifyActivity.this, JobOverviewActivity.class));
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ObjectRes> call, Throwable t) {
             }
         });
     }

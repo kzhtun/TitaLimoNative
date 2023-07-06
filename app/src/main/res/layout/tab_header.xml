@@ -7,7 +7,7 @@
     android:gravity="center"
     android:orientation="horizontal">
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,7 +19,7 @@
 
         android:text="Header" />
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:id="@+id/job_count"
         android:layout_width="20dp"
         android:layout_height="20dp"

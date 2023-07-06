@@ -19,10 +19,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationCompat;
-import android.support.v7.app.AlertDialog;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -31,6 +28,10 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -80,7 +81,6 @@ public class LoginActivity extends AbstractActivity {
 
     String[] permissions = {
             Manifest.permission.POST_NOTIFICATIONS
-
     };
 
 
@@ -96,12 +96,14 @@ public class LoginActivity extends AbstractActivity {
         if (prefDB.getBoolean(App.CONST_REMEMBER_ME)) {
             mUserName.setText(prefDB.getString(App.CONST_USER_NAME));
             mRemember.setChecked(true);
+
+            loginOnClick();
         }
 
         mApiVersion.setText("Api " + Util.getVersionCode(mContext));
         mUiVersion.setText("Ver " + Util.getVersionName(mContext));
 
-        //callCheckVersion();
+      //  callCheckVersion();
 
 
     }
@@ -379,53 +381,53 @@ public class LoginActivity extends AbstractActivity {
     }
 
 
-    private void showNotification(String title, String body) {
-        String OLD_CH = App.getOldChannelId();
-        String NEW_CH = App.getNewChannelId();
-
-        Intent intent = new Intent(this, JobOverviewActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
-
-        Uri soundUri = App.getNotificationSoundUri();
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NEW_CH)
-                .setSmallIcon(R.mipmap.my_limo_launcher)
-                .setContentTitle(title)
-                .setContentText(body)
-                .setAutoCancel(true)
-                .setSound(soundUri)
-                .setContentIntent(pendingIntent);
-
-
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            if (soundUri != null) {
-                // Changing Default mode of notification
-                notificationBuilder.setDefaults(Notification.DEFAULT_VIBRATE);
-                // Creating an Audio Attribute
-                AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                        .setUsage(AudioAttributes.USAGE_ALARM)
-                        .build();
-
-
-//                //it will delete existing channel if it exists
-                if (mNotificationManager.getNotificationChannel(OLD_CH) != null) {
-                    mNotificationManager.deleteNotificationChannel(OLD_CH);
-                }
-
-                // Creating Channel
-                NotificationChannel notificationChannel = new NotificationChannel(NEW_CH, NEW_CH, NotificationManager.IMPORTANCE_HIGH);
-
-                notificationChannel.enableLights(true);
-                notificationChannel.enableVibration(true);
-                notificationChannel.setSound(soundUri, audioAttributes);
-                mNotificationManager.createNotificationChannel(notificationChannel);
-            }
-        }
-
-        mNotificationManager.notify(0, notificationBuilder.build());
-    }
+//    private void showNotification(String title, String body) {
+//        String OLD_CH = App.getOldChannelId();
+//        String NEW_CH = App.getNewChannelId();
+//
+//        Intent intent = new Intent(this, JobOverviewActivity.class);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+//
+//        Uri soundUri = App.getNotificationSoundUri();
+//        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NEW_CH)
+//                .setSmallIcon(R.mipmap.my_limo_launcher)
+//                .setContentTitle(title)
+//                .setContentText(body)
+//                .setAutoCancel(true)
+//                .setSound(soundUri)
+//                .setContentIntent(pendingIntent);
+//
+//
+//        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+//            if (soundUri != null) {
+//                // Changing Default mode of notification
+//                notificationBuilder.setDefaults(Notification.DEFAULT_VIBRATE);
+//                // Creating an Audio Attribute
+//                AudioAttributes audioAttributes = new AudioAttributes.Builder()
+//                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+//                        .setUsage(AudioAttributes.USAGE_ALARM)
+//                        .build();
+//
+//
+////                //it will delete existing channel if it exists
+//                if (mNotificationManager.getNotificationChannel(OLD_CH) != null) {
+//                    mNotificationManager.deleteNotificationChannel(OLD_CH);
+//                }
+//
+//                // Creating Channel
+//                NotificationChannel notificationChannel = new NotificationChannel(NEW_CH, NEW_CH, NotificationManager.IMPORTANCE_HIGH);
+//
+//                notificationChannel.enableLights(true);
+//                notificationChannel.enableVibration(true);
+//                notificationChannel.setSound(soundUri, audioAttributes);
+//                mNotificationManager.createNotificationChannel(notificationChannel);
+//            }
+//        }
+//
+//        mNotificationManager.notify(0, notificationBuilder.build());
+//    }
 
 
     private static void showRefreshDialog() {

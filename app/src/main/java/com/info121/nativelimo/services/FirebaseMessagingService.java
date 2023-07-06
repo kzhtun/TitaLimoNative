@@ -1,6 +1,7 @@
 package com.info121.nativelimo.services;
 
 import android.Manifest;
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -11,10 +12,11 @@ import android.media.AudioAttributes;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
+
 import android.util.Log;
 import android.view.View;
+
+import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.messaging.RemoteMessage;
 import com.info121.nativelimo.R;
@@ -41,7 +43,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     String NEW_CH = "";
 
     private void showNotification(Map<String, String> payloadData){ //} String title, String body) {
-        OLD_CH = App.getOldChannelId();
+        // OLD_CH = App.getOldChannelId();
         NEW_CH = App.getNewChannelId();
 
 
@@ -49,8 +51,8 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         String body = payloadData.get("message");
 
         Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|
-                Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+
 
 //        remoteMessage.getData().get("jobno"),
 //        remoteMessage.getData().get("jobtype"),
@@ -71,7 +73,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         App.intents.add(intent);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 , intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.FLAG_MUTABLE);
 
         Uri soundUri = App.getNotificationSoundUri();
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NEW_CH)
@@ -96,9 +98,9 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
 
 //                //it will delete existing channel if it exists
-                if (mNotificationManager.getNotificationChannel(OLD_CH) != null) {
-                    mNotificationManager.deleteNotificationChannel(OLD_CH);
-                }
+//                if (mNotificationManager.getNotificationChannel(OLD_CH) != null) {
+//                    mNotificationManager.deleteNotificationChannel(OLD_CH);
+//                }
 
                 // Creating Channel
                 NotificationChannel notificationChannel = new NotificationChannel(NEW_CH, NEW_CH, NotificationManager.IMPORTANCE_HIGH);
@@ -116,43 +118,39 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
+        ActivityManager.RunningAppProcessInfo myProcess = new ActivityManager.RunningAppProcessInfo();
+        ActivityManager.getMyMemoryState(myProcess);
+        Boolean isInBackground = (myProcess.importance != ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND);
 
-        //        Key .title = title, _
-//        Key .message = body, _
-//        Key .action = action, _
-//        Key .jobno = jobno, _
-//        Key .jobtype = jobtype, _
-//        Key .vehicletype = vehicletype, _
-//        Key .jobdate = jobdate, _
-//        Key .pickuptime = pickuptime, _
-//        Key .endtime = endtime, _
-//        Key .pickuppoint = pickuppoint, _
-//        Key .alightpoint = alightpoint, _
-//        Key .clientname = clientname, _
-//        Key .phone = phone _
+
+
+        Log.e("Action ", remoteMessage.getData().get("action"));
 
         if (remoteMessage.getData() != null) {
-          if (remoteMessage.getData().get("action") == null) {
+            if (remoteMessage.getData().get("action") == null) {
                 showDialog(remoteMessage.getData().get("jobNo"),
                         remoteMessage.getData().get("Name"),
                         remoteMessage.getData().get("phone"),
                         remoteMessage.getData().get("displayMsg")
                 );
             } else {
-
                 if (remoteMessage.getData().get("action").equalsIgnoreCase("Assign") || remoteMessage.getData().get("action").equalsIgnoreCase("Reassign")) {
-                    showNotifyJob(remoteMessage.getData().get("jobno"),
-                            remoteMessage.getData().get("jobtype"),
-                            remoteMessage.getData().get("jobdate"),
-                            remoteMessage.getData().get("pickuptime"),
-                            remoteMessage.getData().get("pickuppoint"),
-                            remoteMessage.getData().get("alightpoint"),
-                            remoteMessage.getData().get("clientname"),
-                            remoteMessage.getData().get("vehicletype"),
-                            remoteMessage.getData().get("driver")
-                    );
+                   if(isInBackground){
+                       showNotification(remoteMessage.getData());
+                   }else {
+                       showNotifyJob(remoteMessage.getData().get("jobno"),
+                               remoteMessage.getData().get("jobtype"),
+                               remoteMessage.getData().get("jobdate"),
+                               remoteMessage.getData().get("pickuptime"),
+                               remoteMessage.getData().get("pickuppoint"),
+                               remoteMessage.getData().get("alightpoint"),
+                               remoteMessage.getData().get("clientname"),
+                               remoteMessage.getData().get("vehicletype"),
+                               remoteMessage.getData().get("driver")
+                       );
+                   }
                 }else{
-                   // showNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("message"));
+                    // showNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("message"));
                     showNotification(remoteMessage.getData());
                     //----------------------------------------------------------------------------------//
                     EventBus.getDefault().post(new Action(remoteMessage.getData().get("action"),
@@ -172,13 +170,14 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     }
 
 
+
     public void showDialog(String jobNo, String name, String phone, String displayMessage) {
-        OLD_CH = App.getOldChannelIdP();
+        //  OLD_CH = App.getOldChannelIdP();
         NEW_CH = App.getNewChannelIdP();
 
         Intent intent = new Intent(this, DialogActivity.class);
-        //   intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|
+                Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
 //        PendingIntent pendingIntent = PendingIntent.getService(this, 0 /* Request code */, intent,
 //                PendingIntent.FLAG_ONE_SHOT);
@@ -208,9 +207,9 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
 
 //                //it will delete existing channel if it exists
-                if (mNotificationManager.getNotificationChannel(OLD_CH) != null) {
-                    mNotificationManager.deleteNotificationChannel(OLD_CH);
-                }
+//                if (mNotificationManager.getNotificationChannel(OLD_CH) != null) {
+//                    mNotificationManager.deleteNotificationChannel(OLD_CH);
+//                }
 
                 // Creating Channel
                 NotificationChannel notificationChannel = new NotificationChannel(NEW_CH, NEW_CH, NotificationManager.IMPORTANCE_HIGH);
@@ -242,6 +241,9 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
     public void showNotifyJob(String jobNo, String jobType, String jobDate, String jobTime, String pickup, String dropoff, String clientName, String vehicleType, String driver) {
 
+
+        Log.e("Noti", "Notify Job");
+
         // bundle
         Bundle bundle = new Bundle();
 
@@ -257,12 +259,11 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
 
         // -----------------------------------
-        OLD_CH = App.getOldChannelIdP();
+        //   OLD_CH = App.getOldChannelIdP();
         NEW_CH = App.getNewChannelIdP();
 
         Intent intent = new Intent(this, NotifyActivity.class);
-        //   intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 
 //        PendingIntent pendingIntent = PendingIntent.getService(this, 0 /* Request code */, intent,
 //                PendingIntent.FLAG_ONE_SHOT);

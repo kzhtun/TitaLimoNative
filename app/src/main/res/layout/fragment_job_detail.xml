@@ -699,7 +699,7 @@
 
 
 <!--        unnecessary fields hidding in layout-->
-        <android.support.v7.widget.LinearLayoutCompat
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone">
@@ -777,7 +777,7 @@
 
         </LinearLayout>
 
-        </android.support.v7.widget.LinearLayoutCompat>
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
     </LinearLayout>
 

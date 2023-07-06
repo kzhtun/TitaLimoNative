@@ -3,18 +3,18 @@ package com.info121.nativelimo.fragments;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.info121.nativelimo.App;
 import com.info121.nativelimo.R;
@@ -68,7 +68,7 @@ public class JobListFragment extends AbstractFragment {
 
     JobsAdapter jobsAdapter;
 
-    Context mContext = getActivity();
+    Context mContext;
 
     public String mCurrentTab = "";
 
@@ -78,6 +78,7 @@ public class JobListFragment extends AbstractFragment {
     public static JobListFragment newInstance(String param1) {
         JobListFragment fragment = new JobListFragment();
         Bundle args = new Bundle();
+
 
         fragment.setArguments(args);
 

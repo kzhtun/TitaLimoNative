@@ -6,11 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
+
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +19,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
+
+
+import com.google.android.material.tabs.TabLayout;
 import com.info121.nativelimo.R;
 import com.info121.nativelimo.AbstractActivity;
 import com.info121.nativelimo.App;
@@ -154,8 +157,6 @@ public class JobOverviewActivity extends AbstractActivity {
             float scale = getResources().getConfiguration().fontScale;
 
 
-
-
             tabitem = mTabLayout.getTabAt(0);
             v = View.inflate(mContext, R.layout.tab_header, null);
             header = v.findViewById(R.id.title);
@@ -229,23 +230,26 @@ public class JobOverviewActivity extends AbstractActivity {
         View v;
         TextView header, badge;
 
-        JobCount jobCount = jobCountList.get(0);
+        if (jobCountList != null) {
 
-        tabitem = mTabLayout.getTabAt(0);
-        badge = tabitem.getCustomView().findViewById(R.id.job_count);
-        badge.setText(jobCount.getTodayjobcount());
+            JobCount jobCount = jobCountList.get(0);
 
-        tabitem = mTabLayout.getTabAt(1);
-        badge = tabitem.getCustomView().findViewById(R.id.job_count);
-        badge.setText(jobCount.getTomorrowjobcount());
+            tabitem = mTabLayout.getTabAt(0);
+            badge = tabitem.getCustomView().findViewById(R.id.job_count);
+            badge.setText(jobCount.getTodayjobcount());
 
-        tabitem = mTabLayout.getTabAt(2);
-        badge = tabitem.getCustomView().findViewById(R.id.job_count);
-        badge.setText(jobCount.getFuturejobcount());
+            tabitem = mTabLayout.getTabAt(1);
+            badge = tabitem.getCustomView().findViewById(R.id.job_count);
+            badge.setText(jobCount.getTomorrowjobcount());
 
-        tabitem = mTabLayout.getTabAt(3);
-        badge = tabitem.getCustomView().findViewById(R.id.job_count);
-        badge.setText("0");
+            tabitem = mTabLayout.getTabAt(2);
+            badge = tabitem.getCustomView().findViewById(R.id.job_count);
+            badge.setText(jobCount.getFuturejobcount());
+
+            tabitem = mTabLayout.getTabAt(3);
+            badge = tabitem.getCustomView().findViewById(R.id.job_count);
+            badge.setText("0");
+        }
     }
 
     @Override
