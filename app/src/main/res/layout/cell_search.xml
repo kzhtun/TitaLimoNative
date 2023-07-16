@@ -39,6 +39,7 @@
                 style="@style/cell_text"
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
+                android:layout_marginTop="2dp"
                 android:background="@drawable/rounded_edittext"
                 android:drawableRight="@mipmap/ic_calendar"
                 android:focusable="false"
@@ -69,6 +70,7 @@
                 style="@style/cell_text"
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
+                android:layout_marginTop="2dp"
                 android:background="@drawable/rounded_edittext"
                 android:drawableRight="@mipmap/ic_calendar"
                 android:focusable="false"
@@ -84,7 +86,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="12dp"
             android:orientation="vertical">
 
             <TextView
@@ -97,6 +99,7 @@
 
             <EditText
                 android:id="@+id/passenger"
+                android:layout_marginTop="2dp"
                 style="@style/cell_text"
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
@@ -106,10 +109,10 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <LinearLayout android:id="@+id/search_update_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="12dp"
         android:orientation="vertical">
 
         <TextView
@@ -122,6 +125,7 @@
 
         <EditText
             android:id="@+id/updates"
+            android:layout_marginTop="2dp"
             style="@style/cell_text"
             android:layout_width="match_parent"
             android:layout_height="32dp"
@@ -136,7 +140,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="16dp"
             android:orientation="horizontal">
 
 
@@ -188,7 +192,7 @@
                 <Button
                     android:id="@+id/search"
                     android:layout_width="match_parent"
-                    android:layout_height="32dp"
+                    android:layout_height="38dp"
                     android:layout_gravity="center"
                     android:layout_marginRight="3dp"
                     android:layout_marginLeft="5dp"

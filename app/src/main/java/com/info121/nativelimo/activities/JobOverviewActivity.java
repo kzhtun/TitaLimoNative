@@ -358,8 +358,9 @@ public class JobOverviewActivity extends AbstractActivity {
 
     @Subscribe(sticky = true)
     public void onEvent(String event) {
-        EventBus.getDefault().removeStickyEvent("UPDATE_JOB_COUNT");
         callJobsCount(true);
+        EventBus.getDefault().removeStickyEvent("UPDATE_JOB_COUNT");
+
     }
 
 

@@ -67,6 +67,8 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
 
+    private String mobileNoSapce = "";
+
     private String sort = "0";
 
     private int lastPosition = -1;
@@ -147,19 +149,20 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 headerVH.mPassenger.setText(App.futureSearchParams.getCustomer());
                 headerVH.mUpdates.setText(App.futureSearchParams.getUpdates());
 
-                if(App.historySearchParams.getFromDate().trim().length() == 0)
+                if(App.futureSearchParams.getFromDate().trim().length() == 0)
                     headerVH.mFromDate.setText(sdf.format(myCalendar.getTime()));
                 else
-                    headerVH.mFromDate.setText(App.historySearchParams.getFromDate());
+                    headerVH.mFromDate.setText(App.futureSearchParams.getFromDate());
 
-                if(App.historySearchParams.getToDate().trim().length() == 0)
+                if(App.futureSearchParams.getToDate().trim().length() == 0)
                     headerVH.mToDate.setText(sdf.format(myCalendar.getTime()));
                 else
-                    headerVH.mToDate.setText(App.historySearchParams.getToDate());
+                    headerVH.mToDate.setText(App.futureSearchParams.getToDate());
             }
 
             if (mCurrentTab.equalsIgnoreCase("HISTORY")) {
                 headerVH.mSortLayout.setVisibility(View.INVISIBLE);
+                headerVH.mSearchUpdateLayout.setVisibility(View.VISIBLE);
 
                 headerVH.mPassenger.setText(App.historySearchParams.getCustomer());
                 headerVH.mUpdates.setText(App.historySearchParams.getUpdates());
@@ -176,6 +179,7 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             } else {
                 headerVH.mSortLayout.setVisibility(View.VISIBLE);
+                headerVH.mSearchUpdateLayout.setVisibility(View.GONE);
             }
 
             if (mJobList == null)
@@ -218,7 +222,9 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             itemVH.pickup.setText(mJobList.get(i).getPickUp());
             itemVH.dropoff.setText(mJobList.get(i).getDestination());
             itemVH.passenger.setText(mJobList.get(i).getCustomer());
-            itemVH.mobile.setText(mJobList.get(i).getCustomerTel());
+
+            mobileNoSapce = mJobList.get(i).getCustomerTel().toString().replaceAll(" ", "");
+            itemVH.mobile.setText(mobileNoSapce.replaceAll("/", "\n"));
             itemVH.jobDate.setText(mJobList.get(i).getUsageDate());
 
             itemVH.staff.setText(mJobList.get(i).getStaff());
@@ -305,6 +311,9 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         @BindView(R.id.updates)
         EditText mUpdates;
+
+        @BindView(R.id.search_update_layout)
+        LinearLayout mSearchUpdateLayout;
 
         @BindView(R.id.sort_layout)
         LinearLayout mSortLayout;

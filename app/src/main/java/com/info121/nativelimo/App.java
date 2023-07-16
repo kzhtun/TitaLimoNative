@@ -68,6 +68,7 @@ public class App extends Application {
 
     //---------------------------------------------------------------------//
 
+    public static Boolean isVersionUpdated =  true;
 
     public static boolean PERMISSION_POST_NOTIFICATION = false;
 
@@ -107,8 +108,6 @@ public class App extends Application {
     public static List<Intent> intents = new ArrayList<>();
     public static boolean notiActivityIsShowing = false;
 
-
-    public static String test = "";
 
 
     public static List<Job> jobList = new ArrayList<>();

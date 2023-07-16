@@ -28,8 +28,8 @@
 
             <com.app.adprogressbarlib.AdCircleProgress
                 android:id="@+id/pgb_progress"
-                android:layout_width="170dp"
-                android:layout_height="170dp"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
                 android:layout_alignParentTop="true"
                 android:layout_margin="50dp"
                 android:backgroundTintMode="add"
@@ -40,7 +40,7 @@
                 custom:adpgb_show_text="true"
                 custom:adpgb_text="ACCEPT"
                 custom:adpgb_text_color="@color/orange"
-                custom:adpgb_text_size="20sp"
+                custom:adpgb_text_size="26sp"
                 custom:adpgb_unfinished_stroke_width="15dp" />
 
             <LinearLayout

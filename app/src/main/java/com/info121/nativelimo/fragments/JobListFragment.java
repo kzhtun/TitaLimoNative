@@ -85,7 +85,6 @@ public class JobListFragment extends AbstractFragment {
         fragment.mCurrentTab = param1;
 
 
-
         return fragment;
     }
 

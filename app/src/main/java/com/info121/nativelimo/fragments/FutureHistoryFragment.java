@@ -440,7 +440,7 @@ public class FutureHistoryFragment extends AbstractFragment {
 
     @Subscribe(sticky = false)
     public void onEvent(SearchParams params) {
-        mSearchParams = params;
+        //mSearchParams = params;
         mSwipeLayout.setRefreshing(true);
 
         switch (mCurrentTab) {
@@ -458,11 +458,11 @@ public class FutureHistoryFragment extends AbstractFragment {
     @Subscribe(sticky = true)
     public void onEvent(String action) {
         if (action.equalsIgnoreCase("GET_FUTURE_JOBS")) {
-            getFutureJobs(mSearchParams);
+            getFutureJobs(App.futureSearchParams);
         }
 
         if (action.equalsIgnoreCase("GET_HISTORY_JOBS")) {
-            getHistoryJobs(mSearchParams);
+            getHistoryJobs(App.historySearchParams);
         }
     }
 

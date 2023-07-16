@@ -93,18 +93,22 @@ public class LoginActivity extends AbstractActivity {
 
         prefDB = new PrefDB(getApplicationContext());
 
-        if (prefDB.getBoolean(App.CONST_REMEMBER_ME)) {
-            mUserName.setText(prefDB.getString(App.CONST_USER_NAME));
-            mRemember.setChecked(true);
 
-            loginOnClick();
-        }
+
+        // Release
+     callCheckVersion();
+
+
+        // Debug
+//        if (prefDB.getBoolean(App.CONST_REMEMBER_ME)) {
+//            mUserName.setText(prefDB.getString(App.CONST_USER_NAME));
+//            mRemember.setChecked(true);
+//
+//            loginOnClick();
+//        }
 
         mApiVersion.setText("Api " + Util.getVersionCode(mContext));
         mUiVersion.setText("Ver " + Util.getVersionName(mContext));
-
-      //  callCheckVersion();
-
 
     }
 
@@ -224,6 +228,13 @@ public class LoginActivity extends AbstractActivity {
             public void onResponse(Call<ObjectRes> call, Response<ObjectRes> response) {
                 if (response.body().getResponsemessage().equalsIgnoreCase("OUTDATED")) {
                     showOutdatedDialog();
+                }else{
+                    if (prefDB.getBoolean(App.CONST_REMEMBER_ME)) {
+                        mUserName.setText(prefDB.getString(App.CONST_USER_NAME));
+                        mRemember.setChecked(true);
+
+                        loginOnClick();
+                    }
                 }
             }
 

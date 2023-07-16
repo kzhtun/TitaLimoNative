@@ -456,7 +456,8 @@ public class NotifyActivity extends AbstractActivity {
     public void onEvent(Action action) {
         //  Toast.makeText(getContext(), "Action Done", Toast.LENGTH_SHORT).show();
 
-        if (action.getAction().equalsIgnoreCase("Cancel Full Notification"))
+       // if (action.getAction().equalsIgnoreCase("Cancel Full Notification"))
+        if (action.getAction().equalsIgnoreCase("Unassign") || action.getAction().equalsIgnoreCase("Cancel Full Notification"))
             if (action.getJobNo().equalsIgnoreCase(jobNo)) {
                 finish();
             } else {
@@ -488,4 +489,13 @@ public class NotifyActivity extends AbstractActivity {
             }
         });
     }
+
+//    @Subscribe(sticky = true)
+//    public void onEvent(String event) {
+//       // Toast.makeText(mContext,  "Job is unassigned!", Toast.LENGTH_SHORT).show();
+//        EventBus.getDefault().removeStickyEvent("CANCEL_FULL_SCREEN_NOTI");
+//        finish();
+//
+//    }
+
 }

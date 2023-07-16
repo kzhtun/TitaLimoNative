@@ -418,35 +418,35 @@ public class JobDetailFragment extends AbstractFragment {
                 mAssignLayout.setVisibility(GONE);
                 mActionLayout.setVisibility(VISIBLE);
 
-                mJobStatus.setText("Confirm");
+               // mJobStatus.setText("CONFIRM");
 
                 mActionPrev.setVisibility(View.INVISIBLE);
                 mActionNext.setText("ON THE WAY");
                 break;
 
             case "ON THE WAY":
-                mJobStatus.setText("On The Way");
+           //     mJobStatus.setText("On The Way");
 
                 mActionPrev.setVisibility(VISIBLE);
                 mActionNext.setText("ON SITE");
                 break;
 
             case "ON SITE":
-                mJobStatus.setText("On Site");
+            //    mJobStatus.setText("On Site");
 
                 mActionPrev.setVisibility(VISIBLE);
                 mActionNext.setText("POB");
                 break;
 
             case "PASSENGER ON BOARD":
-                mJobStatus.setText("Passenger On Board");
+             //   mJobStatus.setText("Passenger On Board");
 
                 mActionPrev.setVisibility(VISIBLE);
                 mActionNext.setText("COMPLETE");
                 break;
 
             case "PASSENGER NO SHOW":
-                mJobStatus.setText("Passenger No Show");
+            //    mJobStatus.setText("Passenger No Show");
 
                 mActionPrev.setVisibility(VISIBLE);
                 mActionNext.setText("NEXT");
@@ -1462,7 +1462,8 @@ public class JobDetailFragment extends AbstractFragment {
 
         mJobNo.setText(job.getJobNo());
         mJobType.setText(Util.capitalize(job.getJobType()));
-        mJobStatus.setText(job.getJobStatus().toUpperCase());
+
+        mJobStatus.setText(job.getJobStatus().equalsIgnoreCase("JOB NEW") ? "JOB ASSIGNED" : job.getJobStatus().toUpperCase());
         mDate.setText(job.getUsageDate());
         mTime.setText(job.getPickUpTime());
 

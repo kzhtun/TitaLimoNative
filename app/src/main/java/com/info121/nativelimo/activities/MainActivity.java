@@ -87,12 +87,32 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    private void callCheckVersion() {
+        Call<ObjectRes> call = RestClient.COACH().getApiService().CheckVersion(String.valueOf(Util.getVersionCode(mContext)));
+
+        call.enqueue(new Callback<ObjectRes>() {
+            @Override
+            public void onResponse(Call<ObjectRes> call, Response<ObjectRes> response) {
+                if (response.body().getResponsemessage().equalsIgnoreCase("OUTDATED")) {
+                   // showOutdatedDialog();
+                    App.isVersionUpdated = false;
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ObjectRes> call, Throwable t) {
+
+            }
+        });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         prefDB = new PrefDB(getApplicationContext());
+
 
 
 //        Bundle bundle = getIntent().getExtras();
@@ -111,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (hasPermissions(this, permissions))
                 startActivity(new Intent(MainActivity.this, LoginActivity.class));
+
             else {
                 ActivityCompat.requestPermissions(this, permissions, PERMISSION_ALL);
             }

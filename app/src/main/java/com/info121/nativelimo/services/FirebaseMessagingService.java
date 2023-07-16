@@ -150,20 +150,20 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                        );
                    }
                 }else{
-                    // showNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("message"));
-                    showNotification(remoteMessage.getData());
-                    //----------------------------------------------------------------------------------//
-                    EventBus.getDefault().post(new Action(remoteMessage.getData().get("action"),
-                            remoteMessage.getData().get("jobno")
-                    ));
+//                    if(remoteMessage.getData().get("action").equalsIgnoreCase("Unassign")) {
+//                        EventBus.getDefault().post("CANCEL_FULL_SCREEN_NOTI");
+//                    }
+                        showNotification(remoteMessage.getData());
+                        EventBus.getDefault().post(new Action(remoteMessage.getData().get("action"),
+                                remoteMessage.getData().get("jobno")
+                        ));
 
-                    Log.e("FB Msg : " , remoteMessage.getData().toString());
-
+                        Log.e("FB Msg : ", remoteMessage.getData().toString());
+                    }
                 }
 
                 EventBus.getDefault().postSticky("UPDATE_JOB_COUNT");
             }
-        }
 
         super.onMessageReceived(remoteMessage);
 
