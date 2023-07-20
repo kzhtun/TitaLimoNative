@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -143,10 +144,98 @@ public class JobOverviewActivity extends AbstractActivity {
         });
     }
 
+
+    // tab header with text
+//    private void initializeTabs(List<JobCount> jobCountList) {
+//        TabLayout.Tab tabitem;
+//        View v;
+//        TextView header, badge;
+//
+//        try {
+//
+//            JobCount jobCount = jobCountList.get(0);
+//
+//            //  TabLayout.Tab tabitem = mTabLayout.newTab();
+//
+//            float scale = getResources().getConfiguration().fontScale;
+//
+//
+//            tabitem = mTabLayout.getTabAt(0);
+//            v = View.inflate(mContext, R.layout.tab_header, null);
+//            header = v.findViewById(R.id.title);
+//            badge = v.findViewById(R.id.job_count);
+//            header.setText("TODAY");
+//            badge.setText(jobCount.getTodayjobcount());
+//
+////            if(scale > 1) {
+////                header.setTextAppearance(mContext, R.style.tab_header_small);
+////            }
+////            else{
+////                header.setTextAppearance(mContext, R.style.tab_header);
+////            }
+//
+//          tabitem.setCustomView(v);
+//
+//            tabitem = mTabLayout.getTabAt(1);
+//            v = View.inflate(mContext, R.layout.tab_header, null);
+//            header = v.findViewById(R.id.title);
+//            badge = v.findViewById(R.id.job_count);
+//            header.setText("TMR");
+//            badge.setText(jobCount.getTomorrowjobcount());
+////            if(scale > 1) {
+////                header.setTextAppearance(mContext, R.style.tab_header_small);
+////            }
+////            else{
+////                header.setTextAppearance(mContext, R.style.tab_header);
+////            }
+//            tabitem.setCustomView(v);
+//
+//            tabitem = mTabLayout.getTabAt(2);
+//            v = View.inflate(mContext, R.layout.tab_header, null);
+//            header = v.findViewById(R.id.title);
+//            badge = v.findViewById(R.id.job_count);
+//            header.setText("FUTURE");
+//            badge.setText(jobCount.getFuturejobcount());
+////            if(scale > 1) {
+////                header.setTextAppearance(mContext, R.style.tab_header_small);
+////            }
+////            else{
+////                header.setTextAppearance(mContext, R.style.tab_header);
+////            }
+//            tabitem.setCustomView(v);
+//
+//
+//            tabitem = mTabLayout.getTabAt(3);
+//            v = View.inflate(mContext, R.layout.tab_header, null);
+//            header = v.findViewById(R.id.title);
+//            badge = v.findViewById(R.id.job_count);
+//            header.setText("HISTORY");
+//            badge.setVisibility(View.GONE);
+//            badge.setText("0");
+//
+////            if(scale > 1) {
+////                header.setTextAppearance(mContext, R.style.tab_header_small);
+////            }
+////            else{
+////                header.setTextAppearance(mContext, R.style.tab_header);
+////            }
+//
+//            tabitem.setCustomView(v);
+//
+//
+//
+//
+//        }catch(Exception e){
+//            return;
+//        }
+//    }
+
+    // tab header with graphic
     private void initializeTabs(List<JobCount> jobCountList) {
         TabLayout.Tab tabitem;
         View v;
-        TextView header, badge;
+        ImageView header;
+        TextView badge;
 
         try {
 
@@ -156,69 +245,39 @@ public class JobOverviewActivity extends AbstractActivity {
 
             float scale = getResources().getConfiguration().fontScale;
 
-
             tabitem = mTabLayout.getTabAt(0);
-            v = View.inflate(mContext, R.layout.tab_header, null);
-            header = v.findViewById(R.id.title);
+            v = View.inflate(mContext, R.layout.tab_header_graphic, null);
+             header = v.findViewById(R.id.title);
             badge = v.findViewById(R.id.job_count);
-            header.setText("TODAY");
+            header.setImageResource(R.mipmap.tab_today);
             badge.setText(jobCount.getTodayjobcount());
-            if(scale > 1) {
-                header.setTextAppearance(mContext, R.style.tab_header_small);
-            }
-            else{
-                header.setTextAppearance(mContext, R.style.tab_header);
-            }
             tabitem.setCustomView(v);
 
             tabitem = mTabLayout.getTabAt(1);
-            v = View.inflate(mContext, R.layout.tab_header, null);
+            v = View.inflate(mContext, R.layout.tab_header_graphic, null);
             header = v.findViewById(R.id.title);
             badge = v.findViewById(R.id.job_count);
-            header.setText("TMR");
+            header.setImageResource(R.mipmap.tab_tomorrow);
             badge.setText(jobCount.getTomorrowjobcount());
-            if(scale > 1) {
-                header.setTextAppearance(mContext, R.style.tab_header_small);
-            }
-            else{
-                header.setTextAppearance(mContext, R.style.tab_header);
-            }
             tabitem.setCustomView(v);
 
             tabitem = mTabLayout.getTabAt(2);
-            v = View.inflate(mContext, R.layout.tab_header, null);
+            v = View.inflate(mContext, R.layout.tab_header_graphic, null);
             header = v.findViewById(R.id.title);
             badge = v.findViewById(R.id.job_count);
-            header.setText("FUTURE");
+            header.setImageResource(R.mipmap.tab_future);
             badge.setText(jobCount.getFuturejobcount());
-            if(scale > 1) {
-                header.setTextAppearance(mContext, R.style.tab_header_small);
-            }
-            else{
-                header.setTextAppearance(mContext, R.style.tab_header);
-            }
             tabitem.setCustomView(v);
 
 
             tabitem = mTabLayout.getTabAt(3);
-            v = View.inflate(mContext, R.layout.tab_header, null);
+            v = View.inflate(mContext, R.layout.tab_header_graphic, null);
             header = v.findViewById(R.id.title);
             badge = v.findViewById(R.id.job_count);
-            header.setText("HISTORY");
+            header.setImageResource(R.mipmap.tab_history);
             badge.setVisibility(View.GONE);
             badge.setText("0");
-
-            if(scale > 1) {
-                header.setTextAppearance(mContext, R.style.tab_header_small);
-            }
-            else{
-                header.setTextAppearance(mContext, R.style.tab_header);
-            }
-
             tabitem.setCustomView(v);
-
-
-
 
         }catch(Exception e){
             return;

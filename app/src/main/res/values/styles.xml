@@ -71,14 +71,14 @@
     <style name="tab_header" parent="AppTheme">
         <item name="fontPath">fonts/Lato-Reqular.ttf</item>
         <item name="android:textColor">@color/cell_text</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">12sp</item>
         <item name="fontFamily">@font/lato_regular</item>
     </style>
 
     <style name="tab_header_small" parent="AppTheme">
         <item name="fontPath">fonts/Lato-Reqular.ttf</item>
         <item name="android:textColor">@color/cell_text</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">10sp</item>
         <item name="fontFamily">@font/lato_regular</item>
     </style>
 

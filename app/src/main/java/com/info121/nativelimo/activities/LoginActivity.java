@@ -23,6 +23,7 @@ import android.provider.Settings;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -78,6 +79,9 @@ public class LoginActivity extends AbstractActivity {
     @BindView(R.id.ui_version)
     TextView mUiVersion;
 
+    @BindView(R.id.login)
+    Button btnLogin;
+
 
     String[] permissions = {
             Manifest.permission.POST_NOTIFICATIONS
@@ -93,19 +97,22 @@ public class LoginActivity extends AbstractActivity {
 
         prefDB = new PrefDB(getApplicationContext());
 
-
+        btnLogin.setEnabled(false);
 
         // Release
-     callCheckVersion();
+     //   callCheckVersion();
 
 
         // Debug
-//        if (prefDB.getBoolean(App.CONST_REMEMBER_ME)) {
-//            mUserName.setText(prefDB.getString(App.CONST_USER_NAME));
-//            mRemember.setChecked(true);
-//
-//            loginOnClick();
-//        }
+        if (prefDB.getBoolean(App.CONST_REMEMBER_ME)) {
+            mUserName.setText(prefDB.getString(App.CONST_USER_NAME));
+            mRemember.setChecked(true);
+
+            loginOnClick();
+        }else{
+            btnLogin.setEnabled(true);
+        }
+
 
         mApiVersion.setText("Api " + Util.getVersionCode(mContext));
         mUiVersion.setText("Ver " + Util.getVersionName(mContext));
@@ -141,6 +148,8 @@ public class LoginActivity extends AbstractActivity {
         }else{
             callValidateDriver(mUserName.getText().toString());
         }
+
+
     }
 
 
@@ -206,6 +215,8 @@ public class LoginActivity extends AbstractActivity {
                 mProgressBar.setVisibility(View.GONE);
             }
         });
+
+        btnLogin.setEnabled(true);
     }
 
     public static boolean hasPermissions(Context context, String... permissions) {
@@ -234,15 +245,18 @@ public class LoginActivity extends AbstractActivity {
                         mRemember.setChecked(true);
 
                         loginOnClick();
+                    }else{
+                        btnLogin.setEnabled(true);
                     }
                 }
             }
 
             @Override
             public void onFailure(Call<ObjectRes> call, Throwable t) {
-
+                btnLogin.setEnabled(true);
             }
         });
+
     }
 
     private void callUpdateDevice() {
