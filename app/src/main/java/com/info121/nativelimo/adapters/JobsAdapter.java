@@ -10,6 +10,8 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -45,6 +47,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -76,11 +79,26 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
     List<Job> mJobList = new ArrayList<>();
+    List<Job> mJobListAsc = new ArrayList<>();
+    List<Job> mJobListDesc = new ArrayList<>();
     private String mCurrentTab = "";
 
     public void updateJobList(List<Job> jobList, String currentTab) {
         mJobList = jobList;
+        mJobListAsc = mJobList;
+        mJobListDesc = new ArrayList<>(mJobList);
+        Collections.reverse(mJobListDesc);
+
         mCurrentTab = currentTab;
+
+        if (mCurrentTab.equalsIgnoreCase("FUTURE")) {
+            mJobList = (App.futureSearchParams.getSort() == "0") ? mJobListAsc : mJobListDesc;
+        }
+
+        if (mCurrentTab.equalsIgnoreCase("HISTORY")) {
+            mJobList = (App.historySearchParams.getSort() == "0") ? mJobListAsc : mJobListDesc;
+        }
+
         notifyDataSetChanged();
     }
 
@@ -131,11 +149,11 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             if (mCurrentTab.equalsIgnoreCase("FUTURE") || mCurrentTab.equalsIgnoreCase("HISTORY")) {
                 headerVH.itemView.setVisibility(View.VISIBLE);
 
-                int margin =(int) Util.convertDpToPixel(16, mContext);
+                int margin = (int) Util.convertDpToPixel(16, mContext);
                 RecyclerView.LayoutParams llm = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                llm.setMargins( margin,0, margin, margin);
+                llm.setMargins(margin, 0, margin, margin);
                 headerVH.itemView.setLayoutParams(llm);
-            }else {
+            } else {
                 headerVH.itemView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
             }
 
@@ -149,36 +167,48 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 headerVH.mPassenger.setText(App.futureSearchParams.getCustomer());
                 headerVH.mUpdates.setText(App.futureSearchParams.getUpdates());
 
-                if(App.futureSearchParams.getFromDate().trim().length() == 0)
-                    headerVH.mFromDate.setText(sdf.format(myCalendar.getTime()));
+                if (App.futureSearchParams.getFromDate().trim().length() == 0)
+                    headerVH.mFromDate.setText("");
                 else
                     headerVH.mFromDate.setText(App.futureSearchParams.getFromDate());
 
-                if(App.futureSearchParams.getToDate().trim().length() == 0)
-                    headerVH.mToDate.setText(sdf.format(myCalendar.getTime()));
+                if (App.futureSearchParams.getToDate().trim().length() == 0)
+                    headerVH.mToDate.setText("");
                 else
                     headerVH.mToDate.setText(App.futureSearchParams.getToDate());
+
+                if (App.futureSearchParams.getSort() == "0") {
+                    headerVH.sortAsc.setChecked(true);
+                } else {
+                    headerVH.sortDesc.setChecked(true);
+                }
             }
 
             if (mCurrentTab.equalsIgnoreCase("HISTORY")) {
-                headerVH.mSortLayout.setVisibility(View.INVISIBLE);
+//                headerVH.mSortLayout.setVisibility(View.INVISIBLE);
                 headerVH.mSearchUpdateLayout.setVisibility(View.VISIBLE);
 
                 headerVH.mPassenger.setText(App.historySearchParams.getCustomer());
                 headerVH.mUpdates.setText(App.historySearchParams.getUpdates());
 
-                if(App.historySearchParams.getFromDate().trim().length() == 0)
-                    headerVH.mFromDate.setText(sdf.format(myCalendar.getTime()));
+                if (App.historySearchParams.getFromDate().trim().length() == 0)
+                    headerVH.mFromDate.setText("");
                 else
                     headerVH.mFromDate.setText(App.historySearchParams.getFromDate());
 
-                if(App.historySearchParams.getToDate().trim().length() == 0)
-                    headerVH.mToDate.setText(sdf.format(myCalendar.getTime()));
+                if (App.historySearchParams.getToDate().trim().length() == 0)
+                    headerVH.mToDate.setText("");
                 else
                     headerVH.mToDate.setText(App.historySearchParams.getToDate());
 
+                if (App.historySearchParams.getSort() == "0") {
+                    headerVH.sortAsc.setChecked(true);
+                } else {
+                    headerVH.sortDesc.setChecked(true);
+                }
+
             } else {
-                headerVH.mSortLayout.setVisibility(View.VISIBLE);
+//                headerVH.mSortLayout.setVisibility(View.VISIBLE);
                 headerVH.mSearchUpdateLayout.setVisibility(View.GONE);
             }
 
@@ -204,13 +234,15 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             itemVH.updateLayout.setVisibility(View.VISIBLE);
 
-            if(mJobList.get(i).getUpdates().length() == 0 || mJobList.get(i).getUpdates().equals("##-##") ) {
-                itemVH.mViewUpdates.setText("ADD");
-                itemVH.mViewUpdates.setBackground (ContextCompat.getDrawable (mContext, R.drawable.rounded_button));
-            }else {
-                itemVH.mViewUpdates.setText("VIEW");
-                itemVH.mViewUpdates.setBackground (ContextCompat.getDrawable (mContext, R.drawable.rounded_button_orange));
+            if(Util.isNullOrEmpty(mJobList.get(i).getUpdates()))
+                mJobList.get(i).setUpdates("");
 
+            if (mJobList.get(i).getUpdates().length() == 0 || mJobList.get(i).getUpdates().equals("##-##")) {
+                itemVH.mViewUpdates.setText("ADD");
+                itemVH.mViewUpdates.setBackground(ContextCompat.getDrawable(mContext, R.drawable.rounded_button));
+            } else {
+                itemVH.mViewUpdates.setText("VIEW");
+                itemVH.mViewUpdates.setBackground(ContextCompat.getDrawable(mContext, R.drawable.rounded_button_orange));
             }
 
             String jobStatus = (mJobList.get(i).getJobStatus().equalsIgnoreCase("JOB NEW") ? "JOB ASSIGNED" : mJobList.get(i).getJobStatus().toUpperCase());
@@ -230,7 +262,6 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             itemVH.staff.setText(mJobList.get(i).getStaff());
             itemVH.updateText.setText(mJobList.get(i).getUpdates().toString().replaceAll("##-##", "\n"));
             //viewHolder.passenger.setText(mJobList.get(i).getJobNo());
-
 
 
             final String jobNo = mJobList.get(i).getJobNo();
@@ -359,11 +390,31 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         switch (compoundButton.getId()) {
                             case R.id.sort_asc:
                                 sort = "0";
+                                mJobList = mJobListAsc;
+
                                 break;
                             case R.id.sort_desc:
                                 sort = "1";
+                                mJobList = mJobListDesc;
+
                                 break;
                         }
+
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                notifyDataSetChanged();
+                            }
+                        });
+
+                    }
+
+
+                    if (mCurrentTab.equalsIgnoreCase("HISTORY")) {
+                        App.historySearchParams.setSort(sort);
+                    }
+                    if (mCurrentTab.equalsIgnoreCase("FUTURE")) {
+                        App.futureSearchParams.setSort(sort);
                     }
                 }
             });
@@ -375,11 +426,30 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         switch (compoundButton.getId()) {
                             case R.id.sort_asc:
                                 sort = "0";
+                                mJobList = mJobListAsc;
+
                                 break;
                             case R.id.sort_desc:
                                 sort = "1";
+                                mJobList = mJobListDesc;
+
                                 break;
                         }
+
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                notifyDataSetChanged();
+                            }
+                        });
+                    }
+
+
+                    if (mCurrentTab.equalsIgnoreCase("HISTORY")) {
+                        App.historySearchParams.setSort(sort);
+                    }
+                    if (mCurrentTab.equalsIgnoreCase("FUTURE")) {
+                        App.futureSearchParams.setSort(sort);
                     }
                 }
             });
@@ -395,9 +465,9 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             mToDate.getText().toString().trim(),
                             sort,
                             mUpdates.getText().toString().trim()
-                            );
+                    );
 
-                  //  App.mHistorySearch = searchParams;
+                    //  App.mHistorySearch = searchParams;
 
                     if (mCurrentTab.equalsIgnoreCase("HISTORY"))
                         App.historySearchParams = searchParams;
@@ -408,7 +478,6 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     EventBus.getDefault().post(searchParams);
                 }
             });
-
 
 
         }
@@ -524,7 +593,7 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             mViewUpdates.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    adapterPosition = getAdapterPosition() -1;
+                    adapterPosition = getAdapterPosition() - 1;
                     showUpdatesDialog(mJobList.get(adapterPosition).getJobNo(), mJobList.get(adapterPosition).getUpdates());
                 }
             });
@@ -540,11 +609,11 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
                 if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
-                   Toast.makeText(mContext,  "Successfully Updated", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Successfully Updated", Toast.LENGTH_SHORT).show();
 
-                   // refresh the adapter
-                   mJobList.get(adapterPosition).setUpdates(message);
-                   notifyDataSetChanged();
+                    // refresh the adapter
+                    mJobList.get(adapterPosition).setUpdates(message);
+                    notifyDataSetChanged();
 
                 }
 
@@ -649,7 +718,7 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         final EditText updates = dialog.findViewById(R.id.updates);
 
-        updates.setText((message.equals("##-##"))? "" : message);
+        updates.setText((message.equals("##-##")) ? "" : message);
 
         Button save = dialog.findViewById(R.id.save);
 
@@ -672,7 +741,7 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         // resize dialog
         Rect displayRectangle = new Rect();
-        Window window =  ((Activity) mContext).getWindow();
+        Window window = ((Activity) mContext).getWindow();
         window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
 
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
@@ -682,6 +751,6 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         dialog.show();
         dialog.getWindow().setAttributes(lp);
 
-       // updateJobRemark( mJobList.get(getAdapterPosition()).getJobNo(),  mJobList.get(getAdapterPosition()).getRemark());
+        // updateJobRemark( mJobList.get(getAdapterPosition()).getJobNo(),  mJobList.get(getAdapterPosition()).getRemark());
     }
 }

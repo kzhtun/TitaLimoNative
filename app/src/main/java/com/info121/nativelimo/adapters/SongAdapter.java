@@ -104,7 +104,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
 
 
                     if(MODE.equalsIgnoreCase("PROMINENT")){
-                        prefDB.putString(App.CONST_PROMINENT_TONE,   mSongs.get(lastIndex).getSongUri().toString());
+                        prefDB.putString(App.CONST_PROMINENT_TONE,  mSongs.get(lastIndex).getSongUri().toString());
                     }
 
                     if(MODE.equalsIgnoreCase("NOTIFICATION")){

@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="8dp"
         android:layout_weight="1"
         android:orientation="vertical">
 
@@ -25,7 +25,6 @@
             android:id="@+id/mobile_no"
             style="@style/cell_text"
             android:layout_width="wrap_content"
-            android:layout_marginTop="4dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="0000000" />
@@ -34,22 +33,25 @@
 
     <ImageView
         android:id="@+id/call"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginTop="4dp"
         android:layout_marginRight="8dp"
         android:src="@mipmap/ic_phone" />
 
     <ImageView
         android:id="@+id/sms"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginTop="4dp"
         android:layout_marginRight="8dp"
         android:src="@mipmap/ic_sms" />
 
     <ImageView
         android:id="@+id/whatsapp"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="27dp"
+        android:layout_height="27dp"
+        android:layout_marginTop="4dp"
         android:layout_marginRight="8dp"
         android:src="@mipmap/ic_whatsapp" />
 

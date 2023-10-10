@@ -5,11 +5,4 @@
     android:background="#000000"
     android:fitsSystemWindows="true"
     android:gravity="center"
-    android:orientation="vertical">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="This is Main"
-        />
-</LinearLayout>
+    android:orientation="vertical"/>

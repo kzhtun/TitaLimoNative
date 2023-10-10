@@ -31,13 +31,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
+
 import com.info121.nativelimo.AbstractActivity;
 import com.info121.nativelimo.App;
 import com.info121.nativelimo.BuildConfig;
@@ -60,6 +60,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class LoginActivity extends AbstractActivity {
+    private static final int REQUEST_OVERLAY_PERMISSION = 9007;
 
     Context mContext = LoginActivity.this;
     PrefDB prefDB;
@@ -88,6 +89,19 @@ public class LoginActivity extends AbstractActivity {
     };
 
 
+
+
+    private void askOverlayPermission(){
+        if(!Settings.canDrawOverlays(this)){
+            // ask for setting
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + getPackageName()));
+            startActivityForResult(intent, REQUEST_OVERLAY_PERMISSION);
+        }
+    }
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,20 +113,22 @@ public class LoginActivity extends AbstractActivity {
 
         btnLogin.setEnabled(false);
 
+
+        // location
+        startLocationService();
+
         // Release
-     //   callCheckVersion();
+        callCheckVersion();
 
 
-        // Debug
-        if (prefDB.getBoolean(App.CONST_REMEMBER_ME)) {
-            mUserName.setText(prefDB.getString(App.CONST_USER_NAME));
-            mRemember.setChecked(true);
-
-            loginOnClick();
-        }else{
-            btnLogin.setEnabled(true);
-        }
-
+//        // Debug
+//        if (prefDB.getBoolean(App.CONST_REMEMBER_ME)) {
+//            mUserName.setText(prefDB.getString(App.CONST_USER_NAME));
+//            mRemember.setChecked(true);
+//
+//        }else{
+//            btnLogin.setEnabled(true);
+//        }
 
         mApiVersion.setText("Api " + Util.getVersionCode(mContext));
         mUiVersion.setText("Ver " + Util.getVersionName(mContext));
@@ -120,23 +136,20 @@ public class LoginActivity extends AbstractActivity {
     }
 
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
+//    @Override
+//    protected void onNewIntent(Intent intent) {
+//        super.onNewIntent(intent);
+//
+//        Bundle extras = getIntent().getExtras();
+//
+//        if(extras != null){
+//            String jobNo = getIntent().getStringExtra("JOB_NO");
+//            if (jobNo != null)
+//                Log.e("JOB_NO", jobNo);
+//        }
+//    }
 
-        Bundle extras = getIntent().getExtras();
-
-        if(extras != null){
-            String jobNo = getIntent().getStringExtra("JOB_NO");
-            if (jobNo != null)
-                Log.e("JOB_NO", jobNo);
-        }
-    }
-
-    @OnClick(R.id.login)
-    public void loginOnClick() {
-        mProgressBar.setVisibility(View.VISIBLE);
-
+    private void performLogin(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // check notification permissions after login success
             if (hasPermissions(mContext, permissions)) {
@@ -145,8 +158,37 @@ public class LoginActivity extends AbstractActivity {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                     requestPermissions(permissions, 80);
             }
-        }else{
+        } else {
             callValidateDriver(mUserName.getText().toString());
+        }
+    }
+
+    @OnClick(R.id.login)
+    public void loginOnClick() {
+        mProgressBar.setVisibility(View.VISIBLE);
+
+        if (mRemember.isChecked()) {
+            performLogin();
+        }else{
+            AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this).create();
+            alertDialog.setTitle("Warning");
+            alertDialog.setMessage("By logging in without remember me checked, application will not automatically login whenever user touch the incomming job notifcations. You will need to login manually.\nAre you sure you want to login?");
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+
+                                performLogin();
+
+                        }
+                    });
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "CANCEL",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
         }
 
 
@@ -201,7 +243,7 @@ public class LoginActivity extends AbstractActivity {
                     callUpdateDevice();
 
                 } else {
-                    mUserName.setError("Wrong user name");
+                    mUserName.setError("Invalid user name");
                     mUserName.requestFocus();
                     mProgressBar.setVisibility(View.GONE);
                 }
@@ -232,7 +274,8 @@ public class LoginActivity extends AbstractActivity {
     }
 
     private void callCheckVersion() {
-        Call<ObjectRes> call = RestClient.COACH().getApiService().CheckVersion(String.valueOf(Util.getVersionCode(mContext)));
+
+        Call<ObjectRes> call = RestClient.COACH().getApiService().CheckVersion(String.valueOf(Util.getVersionName(mContext)));
 
         call.enqueue(new Callback<ObjectRes>() {
             @Override
@@ -244,10 +287,11 @@ public class LoginActivity extends AbstractActivity {
                         mUserName.setText(prefDB.getString(App.CONST_USER_NAME));
                         mRemember.setChecked(true);
 
-                        loginOnClick();
-                    }else{
+
+                        performLogin();
+                     }else{
                         btnLogin.setEnabled(true);
-                    }
+                     }
                 }
             }
 
@@ -256,6 +300,7 @@ public class LoginActivity extends AbstractActivity {
                 btnLogin.setEnabled(true);
             }
         });
+
 
     }
 
@@ -290,7 +335,6 @@ public class LoginActivity extends AbstractActivity {
     private void loginSuccessful() {
         mProgressBar.setVisibility(View.GONE);
 
-
         // instantiate wiht new Token
         //RestClient.Dismiss();
 
@@ -298,8 +342,7 @@ public class LoginActivity extends AbstractActivity {
         prefDB.putString(App.CONST_DEVICE_ID, App.deviceID);
         prefDB.putLong(App.CONST_TIMER_DELAY, App.timerDelay);
 
-        // location
-        startLocationService();
+
 
         if (mRemember.isChecked())
             prefDB.putBoolean(App.CONST_REMEMBER_ME, true);
@@ -307,21 +350,21 @@ public class LoginActivity extends AbstractActivity {
             prefDB.putBoolean(App.CONST_REMEMBER_ME, false);
 
 
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                        if (!task.isSuccessful()) {
-                            Log.e("FCM", "getInstanceId failed", task.getException());
-                            return;
-                        }
-
-
-                        // Get new Instance ID token
-                        App.FCM_TOKEN = task.getResult().getToken();
-                        Log.e("TOKEN : ", App.FCM_TOKEN);
-                    }
-                });
+//        FirebaseInstanceId.getInstance().getInstanceId()
+//                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+//                        if (!task.isSuccessful()) {
+//                            Log.e("FCM", "getInstanceId failed", task.getException());
+//                            return;
+//                        }
+//
+//
+//                        // Get new Instance ID token
+//                        App.FCM_TOKEN = task.getResult().getToken();
+//                        Log.e("TOKEN : ", App.FCM_TOKEN);
+//                    }
+//                });
 
 
         // login successful
@@ -459,7 +502,7 @@ public class LoginActivity extends AbstractActivity {
 
         AlertDialog dialog = new AlertDialog.Builder(App.targetContent)
                 .setTitle(R.string.AppName)
-                .setMessage("End pint can not reach")
+                .setMessage("End point can not reach")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

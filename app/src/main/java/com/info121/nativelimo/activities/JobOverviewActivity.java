@@ -1,12 +1,14 @@
 package com.info121.nativelimo.activities;
 
 import android.app.Dialog;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -62,6 +64,20 @@ public class JobOverviewActivity extends AbstractActivity {
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        resetBadgeCounterOfPushMessages();
+    }
+
+    private void resetBadgeCounterOfPushMessages() {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            if (notificationManager != null) {
+                notificationManager.cancelAll();
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +85,6 @@ public class JobOverviewActivity extends AbstractActivity {
         setContentView(R.layout.activity_job_overview);
 
         ButterKnife.bind(this);
-
 
         // set toolbar
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -129,6 +144,22 @@ public class JobOverviewActivity extends AbstractActivity {
         call.enqueue(new Callback<JobRes>() {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
+
+                JobCount jobCount = new JobCount();
+
+               try {
+                   jobCount = response.body().getJobcountlist().get(0);
+               }catch (Exception e){
+                   Log.e("call job count #getlist", e.getMessage());
+                   return;
+               }
+
+                try {
+                    App.BadgeCount = Integer.parseInt(jobCount.getTodayjobcount());
+                }catch (Exception e){
+                    Log.e("call job count #BadgeCount", e.getMessage());
+                }
+
                 if (update)
                     updateTabs(response.body().getJobcountlist());
                 else
@@ -146,96 +177,10 @@ public class JobOverviewActivity extends AbstractActivity {
 
 
     // tab header with text
-//    private void initializeTabs(List<JobCount> jobCountList) {
-//        TabLayout.Tab tabitem;
-//        View v;
-//        TextView header, badge;
-//
-//        try {
-//
-//            JobCount jobCount = jobCountList.get(0);
-//
-//            //  TabLayout.Tab tabitem = mTabLayout.newTab();
-//
-//            float scale = getResources().getConfiguration().fontScale;
-//
-//
-//            tabitem = mTabLayout.getTabAt(0);
-//            v = View.inflate(mContext, R.layout.tab_header, null);
-//            header = v.findViewById(R.id.title);
-//            badge = v.findViewById(R.id.job_count);
-//            header.setText("TODAY");
-//            badge.setText(jobCount.getTodayjobcount());
-//
-////            if(scale > 1) {
-////                header.setTextAppearance(mContext, R.style.tab_header_small);
-////            }
-////            else{
-////                header.setTextAppearance(mContext, R.style.tab_header);
-////            }
-//
-//          tabitem.setCustomView(v);
-//
-//            tabitem = mTabLayout.getTabAt(1);
-//            v = View.inflate(mContext, R.layout.tab_header, null);
-//            header = v.findViewById(R.id.title);
-//            badge = v.findViewById(R.id.job_count);
-//            header.setText("TMR");
-//            badge.setText(jobCount.getTomorrowjobcount());
-////            if(scale > 1) {
-////                header.setTextAppearance(mContext, R.style.tab_header_small);
-////            }
-////            else{
-////                header.setTextAppearance(mContext, R.style.tab_header);
-////            }
-//            tabitem.setCustomView(v);
-//
-//            tabitem = mTabLayout.getTabAt(2);
-//            v = View.inflate(mContext, R.layout.tab_header, null);
-//            header = v.findViewById(R.id.title);
-//            badge = v.findViewById(R.id.job_count);
-//            header.setText("FUTURE");
-//            badge.setText(jobCount.getFuturejobcount());
-////            if(scale > 1) {
-////                header.setTextAppearance(mContext, R.style.tab_header_small);
-////            }
-////            else{
-////                header.setTextAppearance(mContext, R.style.tab_header);
-////            }
-//            tabitem.setCustomView(v);
-//
-//
-//            tabitem = mTabLayout.getTabAt(3);
-//            v = View.inflate(mContext, R.layout.tab_header, null);
-//            header = v.findViewById(R.id.title);
-//            badge = v.findViewById(R.id.job_count);
-//            header.setText("HISTORY");
-//            badge.setVisibility(View.GONE);
-//            badge.setText("0");
-//
-////            if(scale > 1) {
-////                header.setTextAppearance(mContext, R.style.tab_header_small);
-////            }
-////            else{
-////                header.setTextAppearance(mContext, R.style.tab_header);
-////            }
-//
-//            tabitem.setCustomView(v);
-//
-//
-//
-//
-//        }catch(Exception e){
-//            return;
-//        }
-//    }
-
-    // tab header with graphic
     private void initializeTabs(List<JobCount> jobCountList) {
         TabLayout.Tab tabitem;
         View v;
-        ImageView header;
-        TextView badge;
+        TextView header, badge;
 
         try {
 
@@ -245,44 +190,98 @@ public class JobOverviewActivity extends AbstractActivity {
 
             float scale = getResources().getConfiguration().fontScale;
 
+
             tabitem = mTabLayout.getTabAt(0);
-            v = View.inflate(mContext, R.layout.tab_header_graphic, null);
-             header = v.findViewById(R.id.title);
+            v = View.inflate(mContext, R.layout.tab_header, null);
+            header = v.findViewById(R.id.title);
             badge = v.findViewById(R.id.job_count);
-            header.setImageResource(R.mipmap.tab_today);
+            header.setText("TODAY");
             badge.setText(jobCount.getTodayjobcount());
             tabitem.setCustomView(v);
 
             tabitem = mTabLayout.getTabAt(1);
-            v = View.inflate(mContext, R.layout.tab_header_graphic, null);
+            v = View.inflate(mContext, R.layout.tab_header, null);
             header = v.findViewById(R.id.title);
             badge = v.findViewById(R.id.job_count);
-            header.setImageResource(R.mipmap.tab_tomorrow);
+            header.setText("TMR");
             badge.setText(jobCount.getTomorrowjobcount());
             tabitem.setCustomView(v);
 
             tabitem = mTabLayout.getTabAt(2);
-            v = View.inflate(mContext, R.layout.tab_header_graphic, null);
+            v = View.inflate(mContext, R.layout.tab_header, null);
             header = v.findViewById(R.id.title);
             badge = v.findViewById(R.id.job_count);
-            header.setImageResource(R.mipmap.tab_future);
+            header.setText("FUTURE");
             badge.setText(jobCount.getFuturejobcount());
             tabitem.setCustomView(v);
 
 
             tabitem = mTabLayout.getTabAt(3);
-            v = View.inflate(mContext, R.layout.tab_header_graphic, null);
+            v = View.inflate(mContext, R.layout.tab_header, null);
             header = v.findViewById(R.id.title);
             badge = v.findViewById(R.id.job_count);
-            header.setImageResource(R.mipmap.tab_history);
+            header.setText("HISTORY");
             badge.setVisibility(View.GONE);
             badge.setText("0");
             tabitem.setCustomView(v);
-
         }catch(Exception e){
             return;
         }
     }
+
+    // tab header with graphic
+//    private void initializeTabs(List<JobCount> jobCountList) {
+//        TabLayout.Tab tabitem;
+//        View v;
+//        ImageView header;
+//        TextView badge;
+//
+//        try {
+//
+//            JobCount jobCount = jobCountList.get(0);
+//
+//            //  TabLayout.Tab tabitem = mTabLayout.newTab();
+//
+//            float scale = getResources().getConfiguration().fontScale;
+//
+//            tabitem = mTabLayout.getTabAt(0);
+//            v = View.inflate(mContext, R.layout.tab_header_graphic, null);
+//             header = v.findViewById(R.id.title);
+//            badge = v.findViewById(R.id.job_count);
+//            header.setImageResource(R.mipmap.tab_today);
+//            badge.setText(jobCount.getTodayjobcount());
+//            tabitem.setCustomView(v);
+//
+//            tabitem = mTabLayout.getTabAt(1);
+//            v = View.inflate(mContext, R.layout.tab_header_graphic, null);
+//            header = v.findViewById(R.id.title);
+//            badge = v.findViewById(R.id.job_count);
+//            header.setImageResource(R.mipmap.tab_tomorrow);
+//            badge.setText(jobCount.getTomorrowjobcount());
+//            tabitem.setCustomView(v);
+//
+//            tabitem = mTabLayout.getTabAt(2);
+//            v = View.inflate(mContext, R.layout.tab_header_graphic, null);
+//            header = v.findViewById(R.id.title);
+//            badge = v.findViewById(R.id.job_count);
+//            header.setImageResource(R.mipmap.tab_future);
+//            badge.setText(jobCount.getFuturejobcount());
+//            tabitem.setCustomView(v);
+//
+//
+//            tabitem = mTabLayout.getTabAt(3);
+//            v = View.inflate(mContext, R.layout.tab_header_graphic, null);
+//            header = v.findViewById(R.id.title);
+//            badge = v.findViewById(R.id.job_count);
+//            header.setImageResource(R.mipmap.tab_history);
+//            badge.setVisibility(View.GONE);
+//            badge.setText("0");
+//            tabitem.setCustomView(v);
+//
+//        }catch(Exception e){
+//            return;
+//        }
+//    }
 
     private void updateTabs(List<JobCount> jobCountList) {
         TabLayout.Tab tabitem;
@@ -291,23 +290,28 @@ public class JobOverviewActivity extends AbstractActivity {
 
         if (jobCountList != null) {
 
-            JobCount jobCount = jobCountList.get(0);
+            try {
+                JobCount jobCount = jobCountList.get(0);
 
-            tabitem = mTabLayout.getTabAt(0);
-            badge = tabitem.getCustomView().findViewById(R.id.job_count);
-            badge.setText(jobCount.getTodayjobcount());
+                tabitem = mTabLayout.getTabAt(0);
+                badge = tabitem.getCustomView().findViewById(R.id.job_count);
+                badge.setText(jobCount.getTodayjobcount());
 
-            tabitem = mTabLayout.getTabAt(1);
-            badge = tabitem.getCustomView().findViewById(R.id.job_count);
-            badge.setText(jobCount.getTomorrowjobcount());
+                tabitem = mTabLayout.getTabAt(1);
+                badge = tabitem.getCustomView().findViewById(R.id.job_count);
+                badge.setText(jobCount.getTomorrowjobcount());
 
-            tabitem = mTabLayout.getTabAt(2);
-            badge = tabitem.getCustomView().findViewById(R.id.job_count);
-            badge.setText(jobCount.getFuturejobcount());
+                tabitem = mTabLayout.getTabAt(2);
+                badge = tabitem.getCustomView().findViewById(R.id.job_count);
+                badge.setText(jobCount.getFuturejobcount());
 
-            tabitem = mTabLayout.getTabAt(3);
-            badge = tabitem.getCustomView().findViewById(R.id.job_count);
-            badge.setText("0");
+                tabitem = mTabLayout.getTabAt(3);
+                badge = tabitem.getCustomView().findViewById(R.id.job_count);
+                badge.setText("0");
+
+            }catch (NullPointerException e){
+                Log.e("NullPointerException : ", e.getMessage());
+            }
         }
     }
 
@@ -417,9 +421,10 @@ public class JobOverviewActivity extends AbstractActivity {
 
     @Subscribe(sticky = true)
     public void onEvent(String event) {
-        callJobsCount(true);
-        EventBus.getDefault().removeStickyEvent("UPDATE_JOB_COUNT");
-
+        if(event.equalsIgnoreCase("UPDATE_JOB_COUNT")){
+            callJobsCount(true);
+            EventBus.getDefault().removeStickyEvent("UPDATE_JOB_COUNT");
+        }
     }
 
 

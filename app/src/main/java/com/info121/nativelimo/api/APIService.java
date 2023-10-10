@@ -13,7 +13,7 @@ public interface APIService {
     @GET("checkSession")
     Call<ObjectRes> CheckSession();
 
-    @GET("getcurrentversion/AndriodV-{version}")
+    @GET("getcurrentversion/{version}")
     Call<ObjectRes> CheckVersion(@Path("version") String version);
 
     @GET("saveshowpic/{jobno},{filename}")

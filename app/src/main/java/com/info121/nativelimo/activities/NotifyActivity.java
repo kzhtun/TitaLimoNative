@@ -1,5 +1,10 @@
 package com.info121.nativelimo.activities;
 
+import android.app.ActivityManager;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -51,7 +56,9 @@ import retrofit2.Response;
 import static android.view.View.GONE;
 import static com.info121.nativelimo.App.prefDB;
 
-public class NotifyActivity extends AbstractActivity {
+import androidx.appcompat.app.AppCompatActivity;
+
+public class NotifyActivity  extends AbstractActivity {
     int i = 0;
 
     @BindView(R.id.pgb_progress)
@@ -61,9 +68,7 @@ public class NotifyActivity extends AbstractActivity {
     @BindView(R.id.root_layout)
     LinearLayout mRootLayout;
 
-//    @BindView(R.id.job_type)
-//    TextView mJobType;
-//
+
     @BindView(R.id.date)
     TextView mJobDate;
 
@@ -110,6 +115,8 @@ public class NotifyActivity extends AbstractActivity {
     Vibrator vibrator;
 
     Boolean getHeightAlready = false;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,7 +179,6 @@ public class NotifyActivity extends AbstractActivity {
             }
         }, 1000, 90);
 
-
         // toneGen.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD,50);
 
         mProgress.setOnClickListener(new View.OnClickListener() {
@@ -186,7 +192,6 @@ public class NotifyActivity extends AbstractActivity {
         App.notiActivityIsShowing = true;
         playBeep1();
         vibrate();
-
 
         displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -219,12 +224,6 @@ public class NotifyActivity extends AbstractActivity {
             startFromLandscape = true;
         else
             startFromLandscape = false;
-
-//        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//
-//        } else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-//
-//        }
 
     }
 
@@ -274,12 +273,15 @@ public class NotifyActivity extends AbstractActivity {
     @OnClick(R.id.root_layout)
     public void rootLayoutOnClick() {
         acceptJob();
+
+        Toast.makeText(mContext, "rootLayoutOnClick", Toast.LENGTH_SHORT).show();
+
     }
 
 
     private void acceptJob() {
-        updateJobStatus(jobNo, "Confirm");
-        callUpdateDriverLocation();
+        // before update the job call validate driver to get new token
+        callValidateDriver(prefDB.getString(App.CONST_USER_NAME).trim());
     }
 
 
@@ -339,6 +341,8 @@ public class NotifyActivity extends AbstractActivity {
             toneGen.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200);
     }
 
+
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -350,10 +354,6 @@ public class NotifyActivity extends AbstractActivity {
 
         App.notiActivityIsShowing = false;
 
-        if (App.intents.size() > 0) {
-            startActivity(App.intents.get(0));
-            App.intents.remove(App.intents.get(0));
-        }
     }
 
     private void callUpdateDriverLocation() {
@@ -385,6 +385,8 @@ public class NotifyActivity extends AbstractActivity {
     private void updateJobStatus(final String jobNo, final String status) {
         App.fullAddress = (App.fullAddress.isEmpty()) ? " " : App.fullAddress;
 
+       // Toast.makeText(mContext, "Update Job Called", Toast.LENGTH_SHORT).show();
+
         Call<JobRes> call = RestClient.COACH().getApiService().UpdateJobStatus(
                 jobNo,
                 App.fullAddress,
@@ -401,18 +403,31 @@ public class NotifyActivity extends AbstractActivity {
                     EventBus.getDefault().postSticky("UPDATE_JOB_COUNT");
 
                     playAcceptBeep();
-                    finish();
 
-                    Toast.makeText(mContext, "Update Successful", Toast.LENGTH_SHORT).show();
-                    Log.e("Update Job Successful", response.toString());
+                  Toast.makeText(mContext, "Update Job Successful", Toast.LENGTH_SHORT).show();
+//                    Log.e("Update Job Successful", response.toString());
 
-                 //   startActivity(new Intent(NotifyActivity.this, JobOverviewActivity.class));
+        //            Toast.makeText(mContext, "Accept On Click", Toast.LENGTH_SHORT).show();
 
-//                    String userName = prefDB.getString(App.CONST_USER_NAME);
-//
-//                    if (userName.length() > 0) {
-//                        callValidateDriver(userName);
+//                    // check app state
+//                    ActivityManager.RunningAppProcessInfo myProcess = new ActivityManager.RunningAppProcessInfo();
+//                    ActivityManager.getMyMemoryState(myProcess);
+//                    Boolean isInBackground = (myProcess.importance != ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND);
+
+//                    Toast.makeText(mContext, "Intents Size : "+ App.intents.size() + "", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(mContext, "Importance ForeGround" + ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND + "", Toast.LENGTH_SHORT).show();
+
+//                    if(ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND == 100) {
+//                        Toast.makeText(mContext, "Noti OnClick : Background ", Toast.LENGTH_SHORT).show();
+//                        startActivity(new Intent(NotifyActivity.this, JobOverviewActivity.class));
+//                    }else{
+//                        Intent intent = new Intent(NotifyActivity.this, LoginActivity.class);
+//                        //  intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK  | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        startActivity(intent);
+//                        Toast.makeText(mContext, "Noti OnClick : Killed ", Toast.LENGTH_SHORT).show();
 //                    }
+
 
                 }
 
@@ -424,8 +439,24 @@ public class NotifyActivity extends AbstractActivity {
             @Override
             public void onFailure(Call<JobRes> call, Throwable t) {
                 Log.e("Update Job Failed ", t.getMessage());
+                Toast.makeText(mContext, "Update Job Failed ", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+
+    private void callPendingIntent(){
+        Intent mStartActivity = new Intent(mContext, LoginActivity.class);
+        int mPendingIntentId = 123456;
+        PendingIntent mPendingIntent = PendingIntent.getActivity(mContext, mPendingIntentId,    mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager mgr = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+        System.exit(0);
+    }
+
+
+    public void updateJobWithNewToken(){
+
     }
 
 
@@ -440,8 +471,12 @@ public class NotifyActivity extends AbstractActivity {
                     App.userName = userName;
                     App.deviceID = Util.getDeviceID(getApplicationContext());
                     App.authToken = response.body().getToken();
-                    //  EventBus.getDefault().post("GET_TODAY_JOBS");
+
+                    finish();
+
                     startActivity(new Intent(NotifyActivity.this, JobOverviewActivity.class));
+                    updateJobStatus(jobNo, "Confirm");
+                    callUpdateDriverLocation();
                 }
 
             }
@@ -457,7 +492,7 @@ public class NotifyActivity extends AbstractActivity {
         //  Toast.makeText(getContext(), "Action Done", Toast.LENGTH_SHORT).show();
 
        // if (action.getAction().equalsIgnoreCase("Cancel Full Notification"))
-        if (action.getAction().equalsIgnoreCase("Unassign") || action.getAction().equalsIgnoreCase("Cancel Full Notification"))
+        if (action.getAction().equalsIgnoreCase("Unassign"))
             if (action.getJobNo().equalsIgnoreCase(jobNo)) {
                 finish();
             } else {
@@ -490,10 +525,10 @@ public class NotifyActivity extends AbstractActivity {
         });
     }
 
-//    @Subscribe(sticky = true)
+//    @Subscribe(sticky = false)
 //    public void onEvent(String event) {
 //       // Toast.makeText(mContext,  "Job is unassigned!", Toast.LENGTH_SHORT).show();
-//        EventBus.getDefault().removeStickyEvent("CANCEL_FULL_SCREEN_NOTI");
+//       // EventBus.getDefault().removeStickyEvent("CANCEL_FULL_SCREEN_NOTI");
 //        finish();
 //
 //    }

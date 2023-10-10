@@ -7,11 +7,12 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_*"/>
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
-    <uses-permission android:name="android.permission.REORDER_TASKS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
@@ -43,29 +44,37 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/black" />
 
-        <activity
-            android:name=".activities.DialogActivity"
-            android:excludeFromRecents="true"
-            android:theme="@style/Theme.Transparent" />
+
 
         <service android:name=".services.ShowDialogService" />
+
+
+
         <service
             android:name=".services.FirebaseMessagingService"
-            android:exported="true">
+            android:enabled="true"
+            android:exported="true"
+            android:stopWithTask="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         <service android:name=".services.SmartLocationService" />
-                <activity
-                    android:name=".activities.TiramisuPermissionActivity"
-                    android:exported="false"
-                    android:configChanges="orientation|screenSize"
-                    android:theme="@style/AppTheme"/>
 
         <activity
+            android:name=".activities.DialogActivity"
+            android:excludeFromRecents="true"
+            android:theme="@style/Theme.Transparent" />
+
+
+        <activity
+            android:name=".activities.TiramisuPermissionActivity"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".activities.NotifyActivity"
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="orientation|screenSize"
+            android:exported="true" />
         <activity
             android:name=".activities.ToneSelection"
             android:configChanges="orientation|screenSize"
@@ -83,18 +92,15 @@
             android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".activities.SplashActivity"
             android:exported="true"
-            android:theme="@style/AppTheme" >
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
-<!--    android:parentActivityName=".activities.MainActivity"-->
-<!--    android:launchMode="singleTask"-->
-<!--    android:taskAffinity=""-->
-<!--    android:excludeFromRecents="true"-->
+
 </manifest>

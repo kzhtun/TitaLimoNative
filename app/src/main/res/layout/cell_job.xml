@@ -10,7 +10,7 @@
     android:background="@drawable/rounded_layout"
     android:baselineAligned="false"
     android:orientation="vertical"
-    android:padding="32dp">
+    android:padding="24dp">
 
 
     <LinearLayout
@@ -56,12 +56,12 @@
                 style="@style/cell_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="JOB TYPE : " />
+                android:text="JOB TYPE" />
 
             <TextView
                 android:id="@+id/job_type"
                 style="@style/cell_text"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="2dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -79,13 +79,13 @@
                 style="@style/cell_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="STAFF : " />
+                android:text="STAFF" />
 
             <TextView
                 android:id="@+id/staff"
                 style="@style/cell_text"
                 android:layout_width="wrap_content"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="2dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="DHABIAH AWWAD ISMAIL IBRAHIM AL-AL" />
@@ -117,7 +117,7 @@
                 style="@style/cell_label"
                 android:layout_width="@dimen/item_label_width"
                 android:layout_height="wrap_content"
-                android:text="TYPE : " />
+                android:text="TYPE" />
 
             <TextView
                 android:id="@+id/vehicle_type"
@@ -139,7 +139,7 @@
                 style="@style/cell_label"
                 android:layout_width="@dimen/item_label_width"
                 android:layout_height="wrap_content"
-                android:text="STATUS : " />
+                android:text="STATUS" />
 
             <TextView
                 android:id="@+id/job_status"
@@ -162,7 +162,7 @@
                 style="@style/cell_label"
                 android:layout_width="@dimen/item_label_width"
                 android:layout_height="wrap_content"
-                android:text="TIME : " />
+                android:text="TIME" />
 
             <TextView
                 android:id="@+id/pickup_time"
@@ -184,7 +184,7 @@
                 style="@style/cell_label"
                 android:layout_width="@dimen/item_label_width"
                 android:layout_height="wrap_content"
-                android:text="PICKUP : " />
+                android:text="PICKUP" />
 
             <TextView
                 android:id="@+id/pickup"
@@ -207,7 +207,7 @@
                 style="@style/cell_label"
                 android:layout_width="@dimen/item_label_width"
                 android:layout_height="wrap_content"
-                android:text="DROP OFF : " />
+                android:text="DROP OFF" />
 
             <TextView
                 android:id="@+id/dropoff"
@@ -230,7 +230,7 @@
                 style="@style/cell_label"
                 android:layout_width="@dimen/item_label_width"
                 android:layout_height="wrap_content"
-                android:text="NAME : " />
+                android:text="NAME" />
 
             <TextView
                 android:id="@+id/passenger"
@@ -252,7 +252,7 @@
                 style="@style/cell_label"
                 android:layout_width="@dimen/item_label_width"
                 android:layout_height="wrap_content"
-                android:text="MOBILE : " />
+                android:text="MOBILE" />
 
             <TextView
                 android:id="@+id/mobile"
@@ -293,7 +293,7 @@
                 style="@style/cell_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="UPDATES : " />
+                android:text="UPDATES" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -305,7 +305,7 @@
                     style="@style/cell_text"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="2dp"
                     android:layout_marginRight="16dp"
                     android:layout_weight="2"
                     android:gravity="top|start"

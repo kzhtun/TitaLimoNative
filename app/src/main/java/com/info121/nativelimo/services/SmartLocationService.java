@@ -183,7 +183,7 @@ public class SmartLocationService extends Service implements OnLocationUpdatedLi
 
         }
 
-       // strAdd = strAdd.replaceAll("\\+", "-");
+        //strAdd = strAdd.replaceAll("+", "-");
 
         return strAdd.replaceAll("\\+", "-");
     }

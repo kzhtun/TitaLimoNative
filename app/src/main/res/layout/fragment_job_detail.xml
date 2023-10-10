@@ -18,15 +18,13 @@
             android:background="@drawable/rounded_layout"
             android:baselineAligned="false"
             android:orientation="vertical"
-            android:padding="32dp">
+            android:padding="24dp">
 
             <!-- 1st Row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
-
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -43,7 +41,7 @@
                     <TextView
                         android:id="@+id/job_type"
                         style="@style/cell_text"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginTop="2dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -66,7 +64,7 @@
                     <TextView
                         android:id="@+id/staff"
                         style="@style/cell_text"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginTop="2dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -100,7 +98,7 @@
                         style="@style/cell_label"
                         android:layout_width="@dimen/item_label_width"
                         android:layout_height="wrap_content"
-                        android:text="STATUS : " />
+                        android:text="STATUS" />
 
                     <TextView
                         android:id="@+id/job_status"
@@ -133,7 +131,7 @@
                         style="@style/cell_label"
                         android:layout_width="@dimen/item_label_width"
                         android:layout_height="wrap_content"
-                        android:text="DATE : " />
+                        android:text="DATE" />
 
                     <TextView
                         android:id="@+id/date"
@@ -156,7 +154,7 @@
                         style="@style/cell_label"
                         android:layout_width="@dimen/item_label_width"
                         android:layout_height="wrap_content"
-                        android:text="TIME : " />
+                        android:text="TIME" />
 
                     <TextView
                         android:id="@+id/time"
@@ -181,7 +179,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="top"
-
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -194,12 +191,12 @@
                         style="@style/cell_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="NAME : " />
+                        android:text="NAME" />
 
                     <TextView
                         android:id="@+id/passenger"
                         style="@style/cell_text"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginTop="2dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -211,7 +208,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="6dp"
-                    android:layout_weight="2"
+                    android:layout_weight="1"
                     android:orientation="vertical">
 
                     <TextView
@@ -219,7 +216,7 @@
                         style="@style/cell_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="HRN : " />
+                        android:text="HRN" />
 
                     <TextView
                         android:id="@+id/file_no"
@@ -255,6 +252,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -265,7 +263,8 @@
 
                     <TextView
                         style="@style/cell_label"
-                        android:layout_width="wrap_content"
+                        android:gravity="center"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="ADULT" />
 
@@ -273,9 +272,9 @@
                         android:id="@+id/no_adult"
                         style="@style/cell_text"
                         android:layout_marginTop="4dp"
-                        android:layout_width="wrap_content"
+                        android:gravity="center"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="20sp"
                         android:text="0" />
 
                 </LinearLayout>
@@ -288,7 +287,8 @@
 
                     <TextView
                         style="@style/cell_label"
-                        android:layout_width="wrap_content"
+                        android:gravity="center"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="CHILD" />
 
@@ -296,9 +296,10 @@
                         android:id="@+id/no_child"
                         style="@style/cell_text"
                         android:layout_marginTop="4dp"
-                        android:layout_width="wrap_content"
+                        android:gravity="center"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="18sp"
+
                         android:text="0" />
 
                 </LinearLayout>
@@ -311,17 +312,17 @@
 
                     <TextView
                         style="@style/cell_label"
-                        android:layout_width="wrap_content"
+                        android:gravity="center"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="INFANT" />
 
                     <TextView
                         android:id="@+id/no_infant"
-                        style="@style/cell_text"
-                        android:layout_marginTop="4dp"
-                        android:layout_width="wrap_content"
+                        style="@style/cell_text"  android:gravity="center"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="20sp"
+                        android:layout_marginTop="4dp"
                         android:text="0" />
 
                 </LinearLayout>
@@ -329,9 +330,10 @@
             </LinearLayout>
 
             <View
+                android:id="@+id/pax_lower_line"
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="0dp"
                 android:background="@color/divider" />
 
             <LinearLayout
@@ -352,7 +354,7 @@
                         style="@style/cell_label"
                         android:layout_height="wrap_content"
                         android:layout_width="@dimen/item_label_width"
-                        android:text="TYPE : " />
+                        android:text="TYPE" />
 
                     <TextView
                         android:id="@+id/vehicle_type"
@@ -377,7 +379,7 @@
                         style="@style/cell_label"
                         android:layout_width="@dimen/item_label_width"
                         android:layout_height="wrap_content"
-                        android:text="PICK UP : " />
+                        android:text="PICK UP" />
 
                     <TextView
                         android:id="@+id/pickup"
@@ -400,7 +402,7 @@
                         style="@style/cell_label"
                         android:layout_width="@dimen/item_label_width"
                         android:layout_height="wrap_content"
-                        android:text="DROP OFF : " />
+                        android:text="DROP OFF" />
 
                     <TextView
                         android:id="@+id/dropoff"
@@ -466,12 +468,18 @@
                 <TextView
                     android:id="@+id/remarks"
                     style="@style/cell_text"
+                    android:layout_marginTop="2dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Remarks : " />
+                    android:text="Remarks" />
 
             </LinearLayout>
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                />
 
             <View
                 android:id="@+id/line_itinerary"
@@ -479,6 +487,7 @@
                 android:layout_height="1dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
+                android:visibility="gone"
                 android:background="@color/divider" />
 
             <Button
@@ -663,6 +672,22 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/reject"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@drawable/rounded_button_red"
+                android:text="REJECT"
+                android:textSize="@dimen/button_text_size"
+                android:fontFamily="@font/lato_regular"
+                android:letterSpacing="0.05"
+                android:textColor="@color/white" />
+
+            <View
+                android:layout_width="16dp"
+                android:layout_height="16dp" />
+            <Button
                 android:id="@+id/accept"
                 android:layout_width="match_parent"
                 android:layout_height="42dp"
@@ -675,22 +700,6 @@
                 android:letterSpacing="0.05"
                 android:textColor="@color/white" />
 
-            <View
-                android:layout_width="16dp"
-                android:layout_height="16dp" />
-
-            <Button
-                android:id="@+id/reject"
-                android:layout_width="match_parent"
-                android:layout_height="42dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:background="@drawable/rounded_button_red"
-                android:text="REJECT"
-                android:textSize="@dimen/button_text_size"
-                android:fontFamily="@font/lato_regular"
-                android:letterSpacing="0.05"
-                android:textColor="@color/white" />
         </LinearLayout>
 
         <View

@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.adeel.library.easyFTP;
@@ -20,8 +21,11 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -52,7 +56,7 @@ public class FtpHelper {
         protected void onPreExecute() {
             super.onPreExecute();
             prg = new ProgressDialog(context);
-            prg.setMessage("Initializing ...");
+            prg.setMessage("Initializing ... \n\nPlease wait. This may take 10 to 15 seconds ");
             prg.show();
         }
 
@@ -112,13 +116,20 @@ public class FtpHelper {
 
 
                 FTPClient ftpClient = new FTPClient();
-                ftpClient.connect(InetAddress.getByName(params[0]));
-                ftpClient.login(params[1], params[2]);
+                try {
+                    ftpClient.setConnectTimeout(12000);
+                    ftpClient.connect(InetAddress.getByName(params[0]));
+                    ftpClient.login(params[1], params[2]);
+                } catch (SocketException e) {
+                    // no ftp connection
+                     //EventBus.getDefault().post(mType + "_UPLOAD_FAILED");
+                    // prg.dismiss();
+                     return "Connection is not open";
+                }
 
                 if (!params[3].isEmpty()) {
                     status = ftpClient.changeWorkingDirectory(params[3]); // if User say provided any Destination then Set it , otherwise
                 }
-
 
                 ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
 
@@ -131,14 +142,12 @@ public class FtpHelper {
                 ftpClient.logout();
                 ftpClient.disconnect();
 
-
                 publishProgress("Upload Successful ...");
-
 
                 return new String("Upload Successful");
 
             } catch (Exception e) {
-                String t = "Failure : " + e.getLocalizedMessage();
+                String t = "Failure : " + e.getMessage();
                 return t;
             }
         }
@@ -152,6 +161,19 @@ public class FtpHelper {
 
         @Override
         protected void onPostExecute(String str) {
+           // failed to connect to /128.106.129.15 (port 21) from /:: (port 35610): connect failed: ECONNREFUSED (Connection refused)
+         //   failed to connect to /128.106.129.15 (port 21) from /:: (port 46822): connect failed: ENETUNREACH (Network is unreachable)
+         //   Attempt to invoke virtual method 'void java.io.BufferedInputStream.close()' on a null object reference
+            if(str != null){
+               if(str.indexOf("failed to connect to") >= 0 || str.indexOf("Connection is not open") >= 0){
+                    EventBus.getDefault().post(mType + "_UPLOAD_FAILED");
+                    prg.dismiss();
+                    return;
+                }
+
+               // str.equalsIgnoreCase()
+            }
+
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -166,10 +188,8 @@ public class FtpHelper {
                     if (mType.equalsIgnoreCase("SIGNATURE"))
                         callSaveSignature(context, mJobNo, mFileName);
 
-
                     if (mAction != null)
                         EventBus.getDefault().post(mAction);
-
 
                 }
             }, 2000);

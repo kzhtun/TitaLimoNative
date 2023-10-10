@@ -5,6 +5,13 @@ public class JobCount {
 	private String todayjobcount;
 	private String futurejobcount;
 
+
+	public JobCount() {
+		this.tomorrowjobcount = "0";
+		this.todayjobcount = "0";
+		this.futurejobcount = "0";
+	}
+
 	public void setTomorrowjobcount(String tomorrowjobcount){
 		this.tomorrowjobcount = tomorrowjobcount;
 	}

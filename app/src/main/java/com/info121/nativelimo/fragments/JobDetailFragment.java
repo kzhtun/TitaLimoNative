@@ -205,6 +205,9 @@ public class JobDetailFragment extends AbstractFragment {
     @BindView(R.id.list_contact)
     ListView mContactList;
 
+    @BindView(R.id.pax_lower_line)
+    View mPaxLowerLine;
+
 //    @BindView(R.id.update)
 //    EditText mUpdate;
 
@@ -298,26 +301,26 @@ public class JobDetailFragment extends AbstractFragment {
 //        startActivity(intent);
 //    }
 
-    public void showDialog(String jobNo, String name, String phone, String displayMessage) {
-
-
-        Intent intent = new Intent(getContext(), DialogActivity.class);
-        //   intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-
-        Bundle bundle = new Bundle();
-
-        bundle.putString(ShowDialogService.JOB_NO, jobNo);
-        bundle.putString(ShowDialogService.NAME, name);
-        bundle.putString(ShowDialogService.PHONE, phone);
-        bundle.putString(ShowDialogService.MESSAGE, displayMessage);
-
-        intent.putExtras(bundle);
-        // startService(intent);
-
-        startActivity(intent);
-    }
+//    public void showDialog(String jobNo, String name, String phone, String displayMessage) {
+//
+//
+//        Intent intent = new Intent(getContext(), DialogActivity.class);
+//        //   intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//
+//
+//        Bundle bundle = new Bundle();
+//
+//        bundle.putString(ShowDialogService.JOB_NO, jobNo);
+//        bundle.putString(ShowDialogService.NAME, name);
+//        bundle.putString(ShowDialogService.PHONE, phone);
+//        bundle.putString(ShowDialogService.MESSAGE, displayMessage);
+//
+//        intent.putExtras(bundle);
+//        // startService(intent);
+//
+//        startActivity(intent);
+//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -418,35 +421,35 @@ public class JobDetailFragment extends AbstractFragment {
                 mAssignLayout.setVisibility(GONE);
                 mActionLayout.setVisibility(VISIBLE);
 
-               // mJobStatus.setText("CONFIRM");
+                // mJobStatus.setText("CONFIRM");
 
                 mActionPrev.setVisibility(View.INVISIBLE);
                 mActionNext.setText("ON THE WAY");
                 break;
 
             case "ON THE WAY":
-           //     mJobStatus.setText("On The Way");
+                //     mJobStatus.setText("On The Way");
 
                 mActionPrev.setVisibility(VISIBLE);
                 mActionNext.setText("ON SITE");
                 break;
 
             case "ON SITE":
-            //    mJobStatus.setText("On Site");
+                //    mJobStatus.setText("On Site");
 
                 mActionPrev.setVisibility(VISIBLE);
                 mActionNext.setText("POB");
                 break;
 
             case "PASSENGER ON BOARD":
-             //   mJobStatus.setText("Passenger On Board");
+                //   mJobStatus.setText("Passenger On Board");
 
                 mActionPrev.setVisibility(VISIBLE);
                 mActionNext.setText("COMPLETE");
                 break;
 
             case "PASSENGER NO SHOW":
-            //    mJobStatus.setText("Passenger No Show");
+                //    mJobStatus.setText("Passenger No Show");
 
                 mActionPrev.setVisibility(VISIBLE);
                 mActionNext.setText("NEXT");
@@ -732,7 +735,6 @@ public class JobDetailFragment extends AbstractFragment {
     }
 
 
-
     private void showCompleteDialog() {
         dialog = new Dialog(getActivity());
 
@@ -794,9 +796,9 @@ public class JobDetailFragment extends AbstractFragment {
 
         Button save = dialog.findViewById(R.id.save);
 
-        title.setText("PASSENGER NO SHOW");
-        label.setText("PHOTO");
-        remarks.setText(job.getNoShowRemarks());
+        title.setText("NO SHOW");
+        label.setText("TAKE PHOTO");
+        remarks.setText(job.getNoShowRemarks().replaceAll("##-##", "\n"));
 
         // hide signature pad
         signatureLabel.setVisibility(GONE);
@@ -841,7 +843,6 @@ public class JobDetailFragment extends AbstractFragment {
 
     private void showPassengerOnBoardDialog() {
 
-
         dialog = new Dialog(getActivity());
 
         dialog.setContentView(R.layout.dialog_pob);
@@ -867,8 +868,8 @@ public class JobDetailFragment extends AbstractFragment {
         Button save = dialog.findViewById(R.id.save);
 
         title.setText("PASSENGER ON BOARD");
-        label.setText("PASSENGER PHOTO");
-        remarks.setText(job.getShowRemarks());
+        label.setText("TAKE PHOTO");
+        remarks.setText(job.getShowRemarks().replaceAll("##-##", "\n"));
 
         passengerPhoto.setImageResource(0);
 
@@ -888,6 +889,7 @@ public class JobDetailFragment extends AbstractFragment {
                     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                         signaturePad.setSignatureBitmap(bitmap);
                         done.setText("SAVED");
+                        signaturePad.setEnabled(false);
                     }
 
                     @Override
@@ -915,6 +917,7 @@ public class JobDetailFragment extends AbstractFragment {
             public void onClick(View v) {
                 signaturePad.clear();
                 done.setText("DONE");
+                signaturePad.setEnabled(true);
             }
         });
 
@@ -949,7 +952,7 @@ public class JobDetailFragment extends AbstractFragment {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
-                                        saveSignature(signaturePad.getSignatureBitmap(), null);
+                                        saveSignature(signaturePad.getSignatureBitmap(), "");
                                         done.setText("SAVED");
                                     }
                                 })
@@ -1066,11 +1069,13 @@ public class JobDetailFragment extends AbstractFragment {
     private void callUpdateShowPassenger() {
         App.fullAddress = (App.fullAddress.isEmpty()) ? " " : App.fullAddress;
 
-        EditText remark = dialog.findViewById(R.id.remarks);
+        EditText ed = dialog.findViewById(R.id.remarks);
+        String remark = ed.getText().toString().replaceAll("\n", "##-##");
+
         Call<JobRes> call = RestClient.COACH().getApiService().UpdateShowConfirmJob(
                 job.getJobNo(),
                 App.fullAddress,
-                Util.replaceEscapeChr(remark.getText().toString()),
+                Util.replaceEscapeChr(remark),
                 "Passenger On Board"
         );
 
@@ -1099,11 +1104,13 @@ public class JobDetailFragment extends AbstractFragment {
     private void callUpdateNoShowPassenger() {
         App.fullAddress = (App.fullAddress.isEmpty()) ? " " : App.fullAddress;
 
-        EditText remark = dialog.findViewById(R.id.remarks);
+        EditText ed = (EditText) dialog.findViewById(R.id.remarks);
+        String remark = ed.getText().toString().replaceAll("\n", "##-##");
+
         Call<JobRes> call = RestClient.COACH().getApiService().UpdateNoShowConfirmJob(
                 job.getJobNo(),
                 App.fullAddress,
-                Util.replaceEscapeChr(remark.getText().toString()),
+                Util.replaceEscapeChr(remark),
                 "Passenger No Show"
         );
 
@@ -1134,11 +1141,13 @@ public class JobDetailFragment extends AbstractFragment {
     private void callCompletedJob() {
         App.fullAddress = (App.fullAddress.isEmpty()) ? " " : App.fullAddress;
 
-        EditText remark = dialog.findViewById(R.id.remarks);
+        EditText ed = dialog.findViewById(R.id.remarks);
+        String remark = ed.getText().toString().replaceAll("\n", "##-##");
+
         Call<JobRes> call = RestClient.COACH().getApiService().UpdateCompletJob(
                 job.getJobNo(),
                 App.fullAddress,
-                Util.replaceEscapeChr(remark.getText().toString()),
+                Util.replaceEscapeChr(remark),
                 "Completed"
         );
 
@@ -1374,7 +1383,8 @@ public class JobDetailFragment extends AbstractFragment {
             mLayoutPax.setVisibility(View.GONE);
             mDividerPax.setVisibility(View.GONE);
 
-          //  mLayoutFlight.setVisibility(GONE);
+
+            //  mLayoutFlight.setVisibility(GONE);
             mLabelFlightNo.setVisibility(GONE);
             mFlightNo.setVisibility(GONE);
 
@@ -1437,11 +1447,11 @@ public class JobDetailFragment extends AbstractFragment {
         }
 
 
-        if (job.getRemarks() == null || job.getRemarks().length() == 0) {
-            mRemarks.setVisibility(GONE);
-            mLayoutRemarks.setVisibility(GONE);
-            mLineRemarks.setVisibility(GONE);
-        }
+//        if (job.getRemarks() == null || job.getRemarks().length() == 0) {
+//            mRemarks.setVisibility(GONE);
+//            mLayoutRemarks.setVisibility(GONE);
+//            mLineRemarks.setVisibility(GONE);
+//        }
 
         // Set Mobile Numbers
 
@@ -1473,12 +1483,12 @@ public class JobDetailFragment extends AbstractFragment {
         mPassenger.setVisibility(VISIBLE);
 
         mETA.setText(job.getETA());
-      //  mType.setText(job.getVehicleType());
+        //  mType.setText(job.getVehicleType());
         mPickup.setText(job.getPickUp());
         mDropOff.setText(job.getDestination());
         mRemarks.setText(job.getRemarks());
         mVehicleType.setText(job.getVehicleType());
-       // mUpdate.setText(job.getRemark());
+        // mUpdate.setText(job.getRemark());
 
 
         if (job.getFile1().isEmpty()) {
@@ -1544,7 +1554,6 @@ public class JobDetailFragment extends AbstractFragment {
         App.fullAddress = (App.fullAddress.isEmpty()) ? " " : App.fullAddress;
 
 
-
 //        Util.copyToClipboard(getActivity().getBaseContext(), App.fullAddress);
 //        Toast.makeText(getActivity().getBaseContext(), "Address Copied", Toast.LENGTH_SHORT).show();
 
@@ -1560,9 +1569,9 @@ public class JobDetailFragment extends AbstractFragment {
 //        alertDialog.show();
 
 
-       //  App.fullAddress = "FullAddress";
+        //  App.fullAddress = "FullAddress";
 
-      //  Log.e("Address Update", App.fullAddress);
+        //  Log.e("Address Update", App.fullAddress);
 
         Call<JobRes> call = RestClient.COACH().getApiService().UpdateJobStatus(
                 job.getJobNo(),
@@ -1752,6 +1761,7 @@ public class JobDetailFragment extends AbstractFragment {
     @Subscribe(sticky = false)
     public void onEvent(Action action) {
 
+
         if (action.getAction().equalsIgnoreCase("UNASSIGN") && action.getJobNo().equalsIgnoreCase(App.jobList.get(index).getJobNo())) {
             getActivity().finish();
         }
@@ -1772,7 +1782,7 @@ public class JobDetailFragment extends AbstractFragment {
 
         AlertDialog dialog = new AlertDialog.Builder(getContext())
                 .setTitle(R.string.AppName)
-                .setMessage("Details for this job may have changed.\nClick ok to refresh.")
+                .setMessage("Details for this job may have changed.\nClick OK to refresh.")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -2071,6 +2081,45 @@ public class JobDetailFragment extends AbstractFragment {
 
     @Subscribe(sticky = true)
     public void onEvent(String action) {
+        ;
+
+        switch (action.toUpperCase()) {
+            case "SIGNATURE_UPLOAD_FAILED":
+                // Error in signature uploading.
+                AlertDialog sigDialog = new AlertDialog.Builder(getContext())
+                        .setTitle(R.string.AppName)
+                        .setMessage("Error in signature uploading.")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                done.setText("DONE");
+                            }
+                        })
+                        .create();
+
+                sigDialog.show();
+                break;
+
+            case "SHOW_UPLOAD_FAILED":
+            case "NOSHOW_UPLOAD_FAILED":
+                // Error in Photo uploading.
+                AlertDialog photoDialog = new AlertDialog.Builder(getContext())
+                        .setTitle(R.string.AppName)
+                        .setMessage("Error in photo uploading.")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                // done.setText("DONE");
+                            }
+                        })
+                        .create();
+
+                photoDialog.show();
+                break;
+        }
+
         if (action.equalsIgnoreCase("GET_JOB_DETAIL")) {
             callJobDetail();
         }
@@ -2081,6 +2130,29 @@ public class JobDetailFragment extends AbstractFragment {
 
         if (action.equalsIgnoreCase("UPDATE_SHOW_PASSENGER")) {
             callUpdateShowPassenger();
+
+            // validate photo already exit.
+//            if (passengerPhoto.getDrawable() == null) {
+//                AlertDialog dialog = new AlertDialog.Builder(getContext())
+//                        .setTitle(R.string.AppName)
+//                        .setMessage("Please take a photo before submit.")
+//                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                dialog.dismiss();
+//                            }
+//                        })
+//                        .create();
+//
+//                dialog.setCancelable(false);
+//                dialog.setCanceledOnTouchOutside(false);
+//                dialog.show();
+//
+//            }else{
+//                 callUpdateShowPassenger();
+//            }
+
+
         }
 
         if (action.equalsIgnoreCase("UPDATE_NO_SHOW")) {

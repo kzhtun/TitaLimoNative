@@ -30,6 +30,13 @@
             {
               "client_id": "649863208156-nna7dd5ifgtilavaqlkh1bh5o2vqt9i5.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "649863208156-pku97sfdfsahj9r9b7tcavq739780a9u.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.info121.iTitaLimo"
+              }
             }
           ]
         }

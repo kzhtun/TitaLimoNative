@@ -17,12 +17,6 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
-import com.info121.nativelimo.activities.JobOverviewActivity;
-import com.info121.nativelimo.activities.LoginActivity;
 import com.info121.nativelimo.models.Job;
 import com.info121.nativelimo.models.SearchParams;
 import com.info121.nativelimo.utils.PrefDB;
@@ -41,16 +35,18 @@ public class App extends Application {
 
     //---------------------------------------------------------------------//
     // iOPS DEV Cypress API
-    public static String CONST_REST_API_URL = "http://128.106.129.15/RestApiTitanium/MyLimoService.svc/";
-    public static String CONST_PDF_URL = "http://128.106.129.15/iopsdev/uploads/";
-    public static String CONST_PHOTO_URL = "http://128.106.129.15/iopsdev/images/limopics/";
+    public static String CONST_REST_API_URL = "http://info121.sytes.net/RestApiTitanium/MyLimoService.svc/";
+    public static String CONST_PDF_URL = "http://info121.sytes.net/iopsdev/uploads/";
+    public static String CONST_PHOTO_URL = "http://info121.sytes.net/iopsdev/images/limopics/";
 
 
     //  iOPS DEV Cypress FTP
-    public static final String FTP_URL = "128.106.129.15";
-    public static final String FTP_USER = "ipos";
-    public static final String FTP_PASSWORD = "iposftp";
+    public static final String FTP_URL = "info121.sytes.net";
+   // public static final String FTP_URL = "128.106.129.217";
+    public static final String FTP_USER = "info121ftp";
+    public static final String FTP_PASSWORD = "6b604358f1a34a88a8506205f2d0e501";
     public static String FTP_DIR = "limopics";
+    //public static String FTP_DIR = "limopics";
 
     //---------------------------------------------------------------------//
 
@@ -109,6 +105,7 @@ public class App extends Application {
     public static boolean notiActivityIsShowing = false;
 
 
+    public static Integer BadgeCount = 0;
 
     public static List<Job> jobList = new ArrayList<>();
 
@@ -150,20 +147,20 @@ public class App extends Application {
 
      //   super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
 
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                        if (!task.isSuccessful()) {
-                            Log.e(TAG, "getInstanceId failed", task.getException());
-                            return;
-                        }
-
-                        // Get new Instance ID token
-                        FCM_TOKEN = task.getResult().getToken();
-                        Log.e("TOKEN : ", FCM_TOKEN);
-                    }
-                });
+//        FirebaseInstanceId.getInstance().getInstanceId()
+//                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+//                        if (!task.isSuccessful()) {
+//                            Log.e(TAG, "getInstanceId failed", task.getException());
+//                            return;
+//                        }
+//
+//                        // Get new Instance ID token
+//                        FCM_TOKEN = task.getResult().getToken();
+//                        Log.e("TOKEN : ", FCM_TOKEN);
+//                    }
+//                });
 
 
 //        File f = new File(Environment.getExternalStorageDirectory(), PHOTO_FOLDER);
@@ -181,17 +178,17 @@ public class App extends Application {
         // for notification tone
         prefDB = new PrefDB(getApplicationContext());
 
-//        if (prefDB.getString("OLD_CH_ID").length() == 0)
-//            prefDB.putString("OLD_CH_ID", "DEFAULT_OLD");
-//
-//        if (prefDB.getString("NEW_CH_ID").length() == 0)
-//            prefDB.putString("NEW_CH_ID", "DEFAULT_NEW");
-//
-//        if (prefDB.getString("OLD_CH_ID_P").length() == 0)
-//            prefDB.putString("OLD_CH_ID_P", "DEFAULT_OLD_P");
-//
-//        if (prefDB.getString("NEW_CH_ID_P").length() == 0)
-//            prefDB.putString("NEW_CH_ID_P", "DEFAULT_NEW_P");
+        if (prefDB.getString("OLD_CH_ID").length() == 0)
+            prefDB.putString("OLD_CH_ID", "DEFAULT_OLD");
+
+        if (prefDB.getString("NEW_CH_ID").length() == 0)
+            prefDB.putString("NEW_CH_ID", "DEFAULT_NEW");
+
+        if (prefDB.getString("OLD_CH_ID_P").length() == 0)
+            prefDB.putString("OLD_CH_ID_P", "DEFAULT_OLD_P");
+
+        if (prefDB.getString("NEW_CH_ID_P").length() == 0)
+            prefDB.putString("NEW_CH_ID_P", "DEFAULT_NEW_P");
 
     }
 
@@ -211,20 +208,20 @@ public class App extends Application {
 
 
     public static String getNewChannelId() {
-        return "TITA_NOTI";
+        return prefDB.getString("NEW_CH_ID");
     }
-//
-//    public static String getOldChannelId() {
-//        return prefDB.getString("OLD_CH_ID");
-//    }
-//
+
+    public static String getOldChannelId() {
+        return prefDB.getString("OLD_CH_ID");
+    }
+
     public static String getNewChannelIdP() {
-        return "TITA_NOTI_P";
+        return prefDB.getString("NEW_CH_ID_P");
     }
-//
-//    public static String getOldChannelIdP() {
-//        return prefDB.getString("OLD_CH_ID_P");
-//    }
+
+    public static String getOldChannelIdP() {
+        return prefDB.getString("OLD_CH_ID_P");
+    }
 
 
     @Override
