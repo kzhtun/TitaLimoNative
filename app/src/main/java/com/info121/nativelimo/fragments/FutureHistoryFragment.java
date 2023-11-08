@@ -5,6 +5,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +49,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * A simple {@link Fragment} subclass.
+ * A simple {@linkFragment} subclass.
  * Activities that contain this fragment must implement the
  * {@link FutureHistoryFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
@@ -366,6 +367,8 @@ public class FutureHistoryFragment extends AbstractFragment {
 //        if (mToDate.getText().length() == 0)
 //            mToDate.setText(" ");
 
+        Log.e("Search Params : ", params.getSort());
+
         Call<JobRes> call = RestClient.COACH().getApiService().GetHistoryJobs(
                 params.getFromDate(),
                 params.getToDate(),
@@ -391,7 +394,7 @@ public class FutureHistoryFragment extends AbstractFragment {
 
                     // data refresh
                     jobsAdapter.updateJobList(mJobList, mCurrentTab);
-                    mRecyclerView.getAdapter().notifyDataSetChanged();
+                    //mRecyclerView.getAdapter().notifyDataSetChanged();
                 }
 
                 if (response.body().getResponsemessage().equalsIgnoreCase("BAD TOKEN")) {

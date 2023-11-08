@@ -56,6 +56,9 @@ public interface APIService {
     @GET("getHistoryJobsList/{fromDate},{toDate},{passenger},{updates},{sort}")
     Call<JobRes> GetHistoryJobs(@Path("fromDate") String fromDate,@Path("toDate") String toDate, @Path("passenger") String passenger, @Path("updates") String updates, @Path("sort") String sort);
 
+    @GET("getPatientHistory/{customercode},{datefrom},{dateto},{sort}")
+    Call<JobRes> GetPatientHistory(@Path("customercode") String customercode,@Path("datefrom") String datefrom, @Path("dateto") String dateto, @Path("sort") String sort);
+
     @GET("updateJobStatus/{jobno},{address},{status}")
     Call<JobRes> UpdateJobStatus(@Path("jobno") String jobno, @Path("address") String address, @Path("status") String status);
 

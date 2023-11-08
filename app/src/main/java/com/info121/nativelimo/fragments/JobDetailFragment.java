@@ -78,6 +78,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -93,6 +94,11 @@ import static android.view.View.VISIBLE;
 import static com.info121.nativelimo.utils.FtpHelper.getImageUri;
 import static com.info121.nativelimo.utils.FtpHelper.getRealPathFromURI;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -265,9 +271,59 @@ public class JobDetailFragment extends AbstractFragment {
     Boolean visible = false;
     Boolean hasSignature = false;
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            try {
+
+                Bundle extras = data.getExtras();
+
+                Bitmap photo = (Bitmap) data.getExtras().get("data");
+
+                // display passenger photo
+                ImageView passenger_photo = dialog.findViewById(R.id.passenger_photo);
+                passenger_photo.setImageBitmap(photo);
+
+//                // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
+//                Uri tempUri = getImageUri(getActivity().getApplicationContext(), photo);
+//
+//                // CALL THIS METHOD TO GET THE ACTUAL PATH
+//                File finalFile = new File(getRealPathFromURI(getActivity().getApplicationContext(), tempUri));
+//
+//                InputStream inputStream = getActivity().getContentResolver().openInputStream(tempUri);
+
+                InputStream inputStream = bitmap2InputStream(photo);
+
+                // FTP Uploading
+                FtpHelper.uploadTask async = new FtpHelper.uploadTask(getContext(), inputStream);
+
+                if (requestCode == REQUEST_SHOW_CAMERA)
+                    async.execute(App.FTP_URL,
+                            App.FTP_USER,
+                            App.FTP_PASSWORD,
+                            App.FTP_DIR,
+                            job.getJobNo() + App.CONST_PHOTO_SHOW_FILE_NAME,
+                            job.getJobNo(),
+                            "SHOW", null);   //Passing arguments to AsyncThread
+
+                if (requestCode == REQUEST_NO_SHOW_CAMERA)
+                    async.execute(App.FTP_URL,
+                            App.FTP_USER,
+                            App.FTP_PASSWORD,
+                            App.FTP_DIR,
+                            job.getJobNo() + App.CONST_PHOTO_NO_SHOW_FILE_NAME,
+                            job.getJobNo(),
+                            "NOSHOW", null);
+
+            } catch (Exception e) {
+                Log.e("Camera Error : ", e.getLocalizedMessage().toString());
+            }
+        }
+    }
 
     public JobDetailFragment() {
         // Required empty public constructor
+
     }
 
 
@@ -808,7 +864,8 @@ public class JobDetailFragment extends AbstractFragment {
         done.setVisibility(GONE);
 
         passengerPhoto.setImageResource(0);
-        Picasso.get().load(App.CONST_PHOTO_URL + job.getNoShowPhoto())
+
+        Picasso.get().load(App.CONST_PHOTO_URL + job.getJobNo() + App.CONST_PHOTO_NO_SHOW_FILE_NAME)
                 .networkPolicy(NetworkPolicy.NO_CACHE)
                 .memoryPolicy(MemoryPolicy.NO_CACHE)
                 //    .placeholder(R.drawable.bv_logo_default).stableKey(id)
@@ -873,14 +930,14 @@ public class JobDetailFragment extends AbstractFragment {
 
         passengerPhoto.setImageResource(0);
 
-        Picasso.get().load(App.CONST_PHOTO_URL + job.getShowPhoto())
+        Picasso.get().load(App.CONST_PHOTO_URL + job.getJobNo() + App.CONST_PHOTO_SHOW_FILE_NAME)
                 .networkPolicy(NetworkPolicy.NO_CACHE)
                 .memoryPolicy(MemoryPolicy.NO_CACHE)
                 //    .placeholder(R.drawable.bv_logo_default).stableKey(id)
                 .into(passengerPhoto);
 
 
-        Picasso.get().load(App.CONST_PHOTO_URL + job.getJobNo() + "_signature.jpg")
+        Picasso.get().load(App.CONST_PHOTO_URL + job.getJobNo() + App.CONST_SIGNATURE_FILE_NAME)
                 .networkPolicy(NetworkPolicy.NO_CACHE)
                 .memoryPolicy(MemoryPolicy.NO_CACHE)
                 //    .placeholder(R.drawable.bv_logo_default).stableKey(id)
@@ -1219,55 +1276,9 @@ public class JobDetailFragment extends AbstractFragment {
 //    }
 
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            try {
 
-                Bundle extras = data.getExtras();
 
-                Bitmap photo = (Bitmap) data.getExtras().get("data");
 
-                // display passenger photo
-                ImageView passenger_photo = dialog.findViewById(R.id.passenger_photo);
-                passenger_photo.setImageBitmap(photo);
-
-//                // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
-//                Uri tempUri = getImageUri(getActivity().getApplicationContext(), photo);
-//
-//                // CALL THIS METHOD TO GET THE ACTUAL PATH
-//                File finalFile = new File(getRealPathFromURI(getActivity().getApplicationContext(), tempUri));
-//
-//                InputStream inputStream = getActivity().getContentResolver().openInputStream(tempUri);
-
-                InputStream inputStream = bitmap2InputStream(photo);
-
-                // FTP Uploading
-                FtpHelper.uploadTask async = new FtpHelper.uploadTask(getContext(), inputStream);
-
-                if (requestCode == REQUEST_SHOW_CAMERA)
-                    async.execute(App.FTP_URL,
-                            App.FTP_USER,
-                            App.FTP_PASSWORD,
-                            App.FTP_DIR,
-                            job.getJobNo() + "_show.jpg",
-                            job.getJobNo(),
-                            "SHOW", null);   //Passing arguments to AsyncThread
-
-                if (requestCode == REQUEST_NO_SHOW_CAMERA)
-                    async.execute(App.FTP_URL,
-                            App.FTP_USER,
-                            App.FTP_PASSWORD,
-                            App.FTP_DIR,
-                            job.getJobNo() + "_no_show.jpg",
-                            job.getJobNo(),
-                            "NOSHOW", null);
-
-            } catch (Exception e) {
-                Log.e("Camera Error : ", e.getLocalizedMessage().toString());
-            }
-        }
-    }
 
 
     public void openCamera(final int requestCode, final String jobNo) {
@@ -1901,8 +1912,14 @@ public class JobDetailFragment extends AbstractFragment {
     public void saveSignature(Bitmap photo, String callBack) {
         try {
 
+//            String filename = job.getJobNo() + "_sig_"
+//                    + Util.convertLongDateToString(System.currentTimeMillis(), "MMddyyyy_hhss")
+//                    + ".jpg";
 
-            photo = getResizedBitmap(photo, 400);
+            String filename = job.getJobNo() +  App.CONST_SIGNATURE_FILE_NAME;
+
+
+             photo = getResizedBitmap(photo, 400);
 
 //            // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
 //            Uri tempUri = getImageUri(getContext(), photo);
@@ -1915,7 +1932,7 @@ public class JobDetailFragment extends AbstractFragment {
             InputStream inputStream = bitmap2InputStream(photo);
 
             FtpHelper.uploadTask async = new FtpHelper.uploadTask(getActivity(), inputStream);
-            async.execute(App.FTP_URL, App.FTP_USER, App.FTP_PASSWORD, App.FTP_DIR, job.getJobNo() + "_signature.jpg", job.getJobNo(), "SIGNATURE", callBack);   //Passing arguments to AsyncThread
+            async.execute(App.FTP_URL, App.FTP_USER, App.FTP_PASSWORD, App.FTP_DIR, filename, job.getJobNo(), "SIGNATURE", callBack);   //Passing arguments to AsyncThread
 
 
         } catch (Exception e) {

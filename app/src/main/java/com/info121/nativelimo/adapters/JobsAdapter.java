@@ -29,12 +29,15 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.info121.nativelimo.R;
 import com.info121.nativelimo.App;
 import com.info121.nativelimo.activities.JobDetailActivity;
+import com.info121.nativelimo.activities.LoginActivity;
+import com.info121.nativelimo.activities.PatientHistoryActivity;
 import com.info121.nativelimo.api.RestClient;
 import com.info121.nativelimo.models.Job;
 import com.info121.nativelimo.models.JobRes;
@@ -85,18 +88,31 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public void updateJobList(List<Job> jobList, String currentTab) {
         mJobList = jobList;
-        mJobListAsc = mJobList;
-        mJobListDesc = new ArrayList<>(mJobList);
-        Collections.reverse(mJobListDesc);
 
         mCurrentTab = currentTab;
 
         if (mCurrentTab.equalsIgnoreCase("FUTURE")) {
-            mJobList = (App.futureSearchParams.getSort() == "0") ? mJobListAsc : mJobListDesc;
+            if (App.futureSearchParams.getSort() == "0") {
+                mJobListAsc = mJobList;
+                mJobListDesc = new ArrayList<>(mJobList);
+                Collections.reverse(mJobListDesc);
+            } else {
+                mJobListDesc = mJobList;
+                mJobListAsc = new ArrayList<>(mJobList);
+                Collections.reverse(mJobListAsc);
+            }
         }
 
         if (mCurrentTab.equalsIgnoreCase("HISTORY")) {
-            mJobList = (App.historySearchParams.getSort() == "0") ? mJobListAsc : mJobListDesc;
+            if (App.historySearchParams.getSort() == "0") {
+                mJobListAsc = mJobList;
+                mJobListDesc = new ArrayList<>(mJobList);
+                Collections.reverse(mJobListDesc);
+            } else {
+                mJobListDesc = mJobList;
+                mJobListAsc = new ArrayList<>(mJobList);
+                Collections.reverse(mJobListAsc);
+            }
         }
 
         notifyDataSetChanged();
@@ -234,7 +250,7 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             itemVH.updateLayout.setVisibility(View.VISIBLE);
 
-            if(Util.isNullOrEmpty(mJobList.get(i).getUpdates()))
+            if (Util.isNullOrEmpty(mJobList.get(i).getUpdates()))
                 mJobList.get(i).setUpdates("");
 
             if (mJobList.get(i).getUpdates().length() == 0 || mJobList.get(i).getUpdates().equals("##-##")) {
@@ -349,6 +365,9 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         @BindView(R.id.sort_layout)
         LinearLayout mSortLayout;
 
+        @BindView(R.id.radio_group)
+        RadioGroup mRadioGroup;
+
         @BindView(R.id.sort_asc)
         RadioButton sortAsc;
 
@@ -383,105 +402,143 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 }
             });
 
-            sortAsc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
-                    if (checked) {
-                        switch (compoundButton.getId()) {
-                            case R.id.sort_asc:
-                                sort = "0";
-                                mJobList = mJobListAsc;
+                public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+                    switch (checkedId) {
+                        case R.id.sort_asc:
+                            sort = "0";
+                            mJobList = mJobListAsc;
+                            break;
+                        case R.id.sort_desc:
+                            sort = "1";
+                            mJobList = mJobListDesc;
+                            break;
+                    }
 
-                                break;
-                            case R.id.sort_desc:
-                                sort = "1";
-                                mJobList = mJobListDesc;
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mCurrentTab.equalsIgnoreCase("HISTORY")) {
+                                App.historySearchParams.setSort(sort);
 
-                                break;
-                        }
-
-                        new Handler(Looper.getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                notifyDataSetChanged();
                             }
-                        });
+                            if (mCurrentTab.equalsIgnoreCase("FUTURE")) {
+                                App.futureSearchParams.setSort(sort);
 
-                    }
-
-
-                    if (mCurrentTab.equalsIgnoreCase("HISTORY")) {
-                        App.historySearchParams.setSort(sort);
-                    }
-                    if (mCurrentTab.equalsIgnoreCase("FUTURE")) {
-                        App.futureSearchParams.setSort(sort);
-                    }
+                            }
+                            notifyDataSetChanged();
+                        }
+                    });
                 }
             });
 
-            sortDesc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
-                    if (checked) {
-                        switch (compoundButton.getId()) {
-                            case R.id.sort_asc:
-                                sort = "0";
-                                mJobList = mJobListAsc;
-
-                                break;
-                            case R.id.sort_desc:
-                                sort = "1";
-                                mJobList = mJobListDesc;
-
-                                break;
-                        }
-
-                        new Handler(Looper.getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                notifyDataSetChanged();
-                            }
-                        });
-                    }
-
-
-                    if (mCurrentTab.equalsIgnoreCase("HISTORY")) {
-                        App.historySearchParams.setSort(sort);
-                    }
-                    if (mCurrentTab.equalsIgnoreCase("FUTURE")) {
-                        App.futureSearchParams.setSort(sort);
-                    }
-                }
-            });
+//            sortAsc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                @Override
+//                public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+//                    if (checked) {
+//                        switch (compoundButton.getId()) {
+//                            case R.id.sort_asc:
+//                                sort = "0";
+//                                mJobList = mJobListAsc;
+//                                break;
+//
+//                            case R.id.sort_desc:
+//                                sort = "1";
+//                                mJobList = mJobListDesc;
+//                                break;
+//                        }
+//
+//                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                notifyDataSetChanged();
+//                            }
+//                        });
+//                    }
+//
+//                    if (mCurrentTab.equalsIgnoreCase("HISTORY")) {
+//                        App.historySearchParams.setSort(sort);
+//                      //  EventBus.getDefault().post(App.historySearchParams);
+//                    }
+//                    if (mCurrentTab.equalsIgnoreCase("FUTURE")) {
+//                        App.futureSearchParams.setSort(sort);
+//                     //   EventBus.getDefault().post(App.futureSearchParams);
+//                    }
+//
+//                }
+//            });
+//
+//            sortDesc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                @Override
+//                public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+//                    if (checked) {
+//                        switch (compoundButton.getId()) {
+//                            case R.id.sort_asc:
+//                                sort = "0";
+//                                mJobList = mJobListAsc;
+//                                break;
+//
+//                            case R.id.sort_desc:
+//                                sort = "1";
+//                                mJobList = mJobListDesc;
+//                                break;
+//                        }
+//
+//                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                notifyDataSetChanged();
+//                            }
+//                        });
+//                    }
+//
+//
+//                    if (mCurrentTab.equalsIgnoreCase("HISTORY")) {
+//                        App.historySearchParams.setSort(sort);
+//                      //  EventBus.getDefault().post(App.historySearchParams);
+//                    }
+//                    if (mCurrentTab.equalsIgnoreCase("FUTURE")) {
+//                        App.futureSearchParams.setSort(sort);
+//                      //  EventBus.getDefault().post(App.futureSearchParams);
+//                    }
+//
+//
+//                }
+//            });
 
 
             mSearch.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
-                    SearchParams searchParams = new SearchParams(
-                            mPassenger.getText().toString().trim(),
-                            mFromDate.getText().toString().trim(),
-                            mToDate.getText().toString().trim(),
-                            sort,
-                            mUpdates.getText().toString().trim()
-                    );
-
-                    //  App.mHistorySearch = searchParams;
-
-                    if (mCurrentTab.equalsIgnoreCase("HISTORY"))
-                        App.historySearchParams = searchParams;
-
-                    if (mCurrentTab.equalsIgnoreCase("FUTURE"))
-                        App.futureSearchParams = searchParams;
-
-                    EventBus.getDefault().post(searchParams);
+                    performSearch();
                 }
             });
 
 
         }
 
+
+        private void performSearch() {
+            SearchParams searchParams = new SearchParams(
+                    mPassenger.getText().toString().trim(),
+                    mFromDate.getText().toString().trim(),
+                    mToDate.getText().toString().trim(),
+                    sort,
+                    mUpdates.getText().toString().trim()
+            );
+
+            //  App.mHistorySearch = searchParams;
+
+            if (mCurrentTab.equalsIgnoreCase("HISTORY"))
+                App.historySearchParams = searchParams;
+
+            if (mCurrentTab.equalsIgnoreCase("FUTURE"))
+                App.futureSearchParams = searchParams;
+
+            EventBus.getDefault().post(searchParams);
+        }
 
         private void showDateDialog(final EditText target) {
             DatePickerDialog.OnDateSetListener dateListener = new DatePickerDialog.OnDateSetListener() {
@@ -556,6 +613,10 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         @BindView(R.id.view)
         Button mViewUpdates;
 
+        @BindView(R.id.patient_history)
+        Button mPatientHistory;
+
+
         @BindView(R.id.updateText)
         TextView updateText;
 
@@ -597,6 +658,16 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     showUpdatesDialog(mJobList.get(adapterPosition).getJobNo(), mJobList.get(adapterPosition).getUpdates());
                 }
             });
+
+            mPatientHistory.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mContext, PatientHistoryActivity.class);
+                    intent.putExtra("CUSTOMER_NAME", mJobList.get(adapterPosition).getCustomerCode().trim());
+                    mContext.startActivity(intent);
+                }
+            });
+
         }
 
     }

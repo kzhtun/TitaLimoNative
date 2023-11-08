@@ -2,11 +2,14 @@ package com.info121.nativelimo.fragments;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -139,7 +142,6 @@ public class JobListFragment extends AbstractFragment {
             case "TOMORROW":
                 getTomorrowJobs();
                 break;
-
 
         }
     }
@@ -304,6 +306,7 @@ public class JobListFragment extends AbstractFragment {
         if (action.equalsIgnoreCase("GET_TOMORROW_JOBS")) {
             getTomorrowJobs();
         }
+
 
 
 

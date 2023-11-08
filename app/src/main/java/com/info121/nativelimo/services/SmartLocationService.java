@@ -54,7 +54,16 @@ public class SmartLocationService extends Service implements OnLocationUpdatedLi
             }
         };
 
-        registerReceiver(mGpsSwitchStateReceiver, new IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION));
+
+        try {
+            //Register or UnRegister your broadcast receiver here
+            registerReceiver(mGpsSwitchStateReceiver, new IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION));
+        } catch(IllegalArgumentException e) {
+            unregisterReceiver(mGpsSwitchStateReceiver);
+            e.printStackTrace();
+        }
+
+
     }
 
     @Override

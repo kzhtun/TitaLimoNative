@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
+    android:layout_marginBottom="16dp"
+    android:background="@drawable/rounded_layout"
+    android:baselineAligned="false"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- very 1st Row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/cell_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="JOB TYPE" />
+
+            <TextView
+                android:id="@+id/job_type"
+                style="@style/cell_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="10293" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/cell_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TRANSLATOR" />
+
+            <TextView
+                android:id="@+id/translator"
+                style="@style/cell_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Translator Name" />
+
+        </LinearLayout>
+
+
+
+
+
+    </LinearLayout>
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"/>
+    <!-- 1st Row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/cell_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="JOB DATE" />
+
+            <TextView
+                android:id="@+id/job_date"
+                style="@style/cell_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="11/11/2023" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/cell_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="JOB TIME" />
+
+            <TextView
+                android:id="@+id/job_time"
+                style="@style/cell_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="1:00 PM" />
+
+        </LinearLayout>
+
+
+
+
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"/>
+
+    <!-- 2nd Row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/cell_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PICKUP POINT" />
+
+            <TextView
+                android:id="@+id/pickup"
+                style="@style/cell_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="PICK UP PLACE" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/cell_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ALIGNT POINT" />
+
+            <TextView
+                android:id="@+id/dropoff"
+                style="@style/cell_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="DROP OFF PLACE" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"/>
+
+    <!-- 4th Row -->
+    <LinearLayout
+        android:id="@+id/update_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/cell_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="UPDATES" />
+
+            <TextView
+                android:id="@+id/updateText"
+                style="@style/cell_text"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:gravity="top|start"
+                android:layout_weight="2"
+                android:text="" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+
+</LinearLayout>
+

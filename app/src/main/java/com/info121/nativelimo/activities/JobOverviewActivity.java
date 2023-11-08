@@ -412,6 +412,10 @@ public class JobOverviewActivity extends AbstractActivity {
 
         if (id == android.R.id.home) {
             finish();
+            if(!LoginActivity.active){
+                LoginActivity.autoLogin = false;
+                startActivity(new Intent(mContext, LoginActivity.class));
+            }
             return true;
         }
 

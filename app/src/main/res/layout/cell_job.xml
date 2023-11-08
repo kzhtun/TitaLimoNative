@@ -61,9 +61,9 @@
             <TextView
                 android:id="@+id/job_type"
                 style="@style/cell_text"
-                android:layout_marginTop="2dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
                 android:layout_weight="1"
                 android:text="JOB TYPE" />
 
@@ -85,8 +85,8 @@
                 android:id="@+id/staff"
                 style="@style/cell_text"
                 android:layout_width="wrap_content"
-                android:layout_marginTop="2dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
                 android:layout_weight="1"
                 android:text="DHABIAH AWWAD ISMAIL IBRAHIM AL-AL" />
 
@@ -267,8 +267,6 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 
-
-
     <!--    <View-->
     <!--        android:layout_width="wrap_content"-->
     <!--        android:layout_height="1dp"-->
@@ -281,12 +279,13 @@
         android:id="@+id/update_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="visible"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:orientation="vertical">
 
             <TextView
@@ -311,20 +310,48 @@
                     android:gravity="top|start"
                     android:text="" />
 
-                <Button
-                    android:id="@+id/view"
-                    android:layout_width="70dp"
-                    android:layout_height="32dp"
-                    android:layout_gravity="bottom"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/rounded_button"
-                    android:text="VIEW"
-                    android:textSize="14sp"
-                    android:fontFamily="@font/lato_regular"
-                    android:letterSpacing="0.05"
-                    android:textColor="@color/white" />
+
             </LinearLayout>
 
+
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/patient_history"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="34dp"
+                android:layout_gravity="bottom"
+                android:layout_marginRight="6dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/rounded_button"
+                android:fontFamily="@font/lato_regular"
+                android:letterSpacing="0.05"
+                android:text="PATIENT HISTORY"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="34dp"
+                android:layout_marginRight="6dp"
+                android:layout_weight="1"
+                android:layout_gravity="bottom"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/rounded_button"
+                android:fontFamily="@font/lato_regular"
+                android:letterSpacing="0.05"
+                android:text="VIEW"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
         </LinearLayout>
     </LinearLayout>
 

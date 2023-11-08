@@ -7,14 +7,15 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_MEDIA_*"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.ACTION_MANAGE_OVERLAY_PERMISSION" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <uses-feature
         android:name="android.hardware.camera.any"
@@ -35,7 +36,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat"
         tools:replace="android:allowBackup">
-
+        <activity
+            android:name=".PatientHistoryActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
@@ -44,12 +51,7 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/black" />
 
-
-
         <service android:name=".services.ShowDialogService" />
-
-
-
         <service
             android:name=".services.FirebaseMessagingService"
             android:enabled="true"
@@ -65,12 +67,6 @@
             android:name=".activities.DialogActivity"
             android:excludeFromRecents="true"
             android:theme="@style/Theme.Transparent" />
-
-
-        <activity
-            android:name=".activities.TiramisuPermissionActivity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/AppTheme" />
         <activity
             android:name=".activities.NotifyActivity"
             android:configChanges="orientation|screenSize"
@@ -89,6 +85,10 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".activities.LoginActivity"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".activities.PatientHistoryActivity"
             android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme" />
         <activity

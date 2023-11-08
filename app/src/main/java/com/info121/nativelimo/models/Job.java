@@ -93,6 +93,8 @@ public class Job {
 	@SerializedName("Staff")
 	private String staff ;
 
+	@SerializedName("CustomerCode")
+	private String CustomerCode ;
 
 	public void setCustomerTel(String customerTel){
 		this.customerTel = customerTel;
@@ -340,6 +342,14 @@ public class Job {
 
 	public void setStaff(String staff) {
 		this.staff = staff;
+	}
+
+	public String getCustomerCode() {
+		return CustomerCode;
+	}
+
+	public void setCustomerCode(String customerCode) {
+		CustomerCode = customerCode;
 	}
 
 	@Override

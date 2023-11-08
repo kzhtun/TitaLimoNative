@@ -1,15 +1,23 @@
 package com.info121.nativelimo.activities;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.PowerManager;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
@@ -18,6 +26,8 @@ import android.widget.Toast;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.info121.nativelimo.App;
 import com.info121.nativelimo.R;
+import com.info121.nativelimo.utils.PrefDB;
+import com.info121.nativelimo.utils.Util;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -25,11 +35,14 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import java.util.List;
+import java.util.Spliterator;
 
 public class SplashActivity extends AppCompatActivity {
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = SplashActivity.class.getSimpleName();
     private static final int REQUEST_OVERLAY_PERMISSION = 9007;
     Context mContext = SplashActivity.this;
+
+    PrefDB prefDB;
 
     // android 11 to 14
     String[] permissionT =  {
@@ -37,7 +50,9 @@ public class SplashActivity extends AppCompatActivity {
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.CAMERA,
-            Manifest.permission.CALL_PHONE};
+            Manifest.permission.READ_MEDIA_IMAGES,
+            Manifest.permission.CALL_PHONE
+    };
 
 
     // api 25 ~ 29
@@ -48,25 +63,90 @@ public class SplashActivity extends AppCompatActivity {
             Manifest.permission.CAMERA,
             Manifest.permission.CALL_PHONE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE
             };
 
     String[] permission;
+
+
+    ActivityResultLauncher<Intent> requestOverLay = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+
+                        if (Settings.canDrawOverlays(mContext)) {
+                           // startActivity(new Intent(mContext, LoginActivity.class));
+                            openLoginActivity();
+                        }else{
+                            // permission not granted...
+                            AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
+                            alertDialog.setTitle("Warning");
+                            alertDialog.setMessage("If not allow overlay permission, full screen alert window can not be display when urgent job is coming.\nAre you sure want to proceed without it?");
+                            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                            //startActivity(new Intent(mContext, LoginActivity.class));
+                                            getFCMToken();
+                                        }
+                                    });
+
+                            alertDialog.show();
+                        }
+                    }
+                }
+            }
+    );
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_OVERLAY_PERMISSION) {
+            if (Settings.canDrawOverlays(this)) {
+               // startActivity(new Intent(mContext, LoginActivity.class));
+                openLoginActivity();
+            }else{
+                // permission not granted...
+
+                AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
+                alertDialog.setTitle("Warning");
+                alertDialog.setMessage("If not allow overlay permission, full screen alert window can not be display when urgent job is coming.\nAre you sure want to proceed without it?");
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                //startActivity(new Intent(mContext, LoginActivity.class));
+                                getFCMToken();
+                            }
+                        });
+
+                alertDialog.show();
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R){
+        prefDB = new PrefDB(getApplicationContext());
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
             permission = permissionT;
         } else{
             permission = permissionN;
         }
 
         requestPermissions();
-    }
 
+       // Log.e("Adaptive Battery : ", Util.isAdaptiveBatteryEnabled(mContext) + "");
+
+    }
 
     @Override
     protected void onResume() {
@@ -89,7 +169,7 @@ public class SplashActivity extends AppCompatActivity {
                         // this method is called when all permissions are granted
                         if (multiplePermissionsReport.areAllPermissionsGranted()) {
                             // do you work now
-                            Toast.makeText(mContext, "All the permissions are granted..", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mContext, "Permissions are granted..", Toast.LENGTH_SHORT).show();
                             //validateDevice();
 
                             // check overlay permission
@@ -147,39 +227,18 @@ public class SplashActivity extends AppCompatActivity {
         if (!Settings.canDrawOverlays(this)){
             Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                     Uri.parse("package:" + getPackageName()));
-            startActivityForResult(intent, REQUEST_OVERLAY_PERMISSION);
+
+            finish();
+            requestOverLay.launch(intent);
+
+            //startActivityForResult(intent, REQUEST_OVERLAY_PERMISSION);
         }else{
             //startActivity(new Intent(mContext, LoginActivity.class));
             getFCMToken();
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == REQUEST_OVERLAY_PERMISSION) {
-            if (Settings.canDrawOverlays(this)) {
-                startActivity(new Intent(mContext, LoginActivity.class));
-            }else{
-                // permission not granted...
-
-                AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
-                alertDialog.setTitle("Warning");
-                alertDialog.setMessage("If not allow overlay permission, full screen alert window can not be display when urgent job is coming.\nAre you sure want to proceed without it?");
-                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                //startActivity(new Intent(mContext, LoginActivity.class));
-                                getFCMToken();
-                            }
-                        });
-
-                alertDialog.show();
-            }
-        }
-    }
 
     private void getFCMToken(){
         FirebaseMessaging.getInstance().getToken().addOnSuccessListener(token -> {
@@ -187,7 +246,9 @@ public class SplashActivity extends AppCompatActivity {
                 App.FCM_TOKEN = token;
                 Log.e("Token: ", token);
                 Log.d(TAG, "retrieve token successful : " + token);
-                startActivity(new Intent(mContext, LoginActivity.class));
+                //startActivity(new Intent(mContext, LoginActivity.class));
+                openLoginActivity();
+
             } else {
                 showFCMTokenError();
                 Log.w(TAG, "token should not be null...");
@@ -202,6 +263,37 @@ public class SplashActivity extends AppCompatActivity {
 
                 }
         );
+    }
+
+
+    private void openLoginActivity(){
+
+        startActivity(new Intent(mContext, LoginActivity.class));
+
+//       if(Util.isAdaptiveBatteryEnabled(mContext) && prefDB.getString(App.CONST_DONT_ASK_AB) != "TRUE") {
+//           AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
+//           alertDialog.setTitle("Warning");
+//           alertDialog.setMessage("Adaptive battery is currently set ON. If you do not want notification delay, please set OFF by Setting-> Battery-> Adaptive Preferences-> Adaptive Battery.\n" +
+//                   "(Setting hierarchy may varies depend on the custom ROMs and android versions)");
+//           alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Don't Ask Again", new DialogInterface.OnClickListener() {
+//               @Override
+//               public void onClick(DialogInterface dialogInterface, int i) {
+//                   prefDB.putString(App.CONST_DONT_ASK_AB, "TRUE");
+//                   alertDialog.dismiss();
+//                   startActivity(new Intent(mContext, LoginActivity.class));
+//               }
+//           });
+//
+//           alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "OK", new DialogInterface.OnClickListener() {
+//               @Override
+//               public void onClick(DialogInterface dialogInterface, int i) {
+//                   prefDB.putString(App.CONST_DONT_ASK_AB, "FALSE");
+//                   alertDialog.dismiss();
+//                   startActivity(new Intent(mContext, LoginActivity.class));
+//               }
+//           });
+//       }else{
+
     }
 
     private void showFCMTokenError(){

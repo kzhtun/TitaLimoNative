@@ -18,6 +18,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import com.info121.nativelimo.models.Job;
+import com.info121.nativelimo.models.PatientSearchParams;
 import com.info121.nativelimo.models.SearchParams;
 import com.info121.nativelimo.utils.PrefDB;
 
@@ -33,20 +34,25 @@ public class App extends Application {
     public static String DEVICE_TYPE = "ANDROID";
     String TAG = "Application";
 
+    static String ENDPOINT = "http://121.7.129.30/";
+
     //---------------------------------------------------------------------//
     // iOPS DEV Cypress API
-    public static String CONST_REST_API_URL = "http://info121.sytes.net/RestApiTitanium/MyLimoService.svc/";
-    public static String CONST_PDF_URL = "http://info121.sytes.net/iopsdev/uploads/";
-    public static String CONST_PHOTO_URL = "http://info121.sytes.net/iopsdev/images/limopics/";
+   public static String CONST_REST_API_URL = ENDPOINT + "RestApiTitanium/MyLimoService.svc/";
+  //  public static String CONST_REST_API_URL = "http://info121.sytes.net/RestApiTitanium/MyLimoService.svc/";
+    public static String CONST_PDF_URL = ENDPOINT+ "iops/uploads/";
+    public static String CONST_PHOTO_URL = ENDPOINT + "iops/images/limopics/";
 
 
     //  iOPS DEV Cypress FTP
-    public static final String FTP_URL = "info121.sytes.net";
-   // public static final String FTP_URL = "128.106.129.217";
+ // public static final String FTP_URL = "info121.sytes.net";
+
+   public static final String FTP_URL = "121.7.129.30/";
     public static final String FTP_USER = "info121ftp";
     public static final String FTP_PASSWORD = "6b604358f1a34a88a8506205f2d0e501";
     public static String FTP_DIR = "limopics";
     //public static String FTP_DIR = "limopics";
+
 
     //---------------------------------------------------------------------//
 
@@ -60,7 +66,6 @@ public class App extends Application {
 //    public static final String FTP_USER = "ipos";
 //    public static final String FTP_PASSWORD = "$$1posftp%%";
 //    public static String FTP_DIR = "limopics";
-
 
     //---------------------------------------------------------------------//
 
@@ -77,6 +82,12 @@ public class App extends Application {
     public static String CONST_DEVICE_ID = "DEVICE_ID";
     public static String CONST_TIMER_DELAY = "TIMER_DELAY";
     public static String CONST_REMEMBER_ME = "REMEMBER_ME";
+    public static String CONST_DONT_ASK_AB = "DONT_ASK_AB";
+
+
+    public static String CONST_PHOTO_NO_SHOW_FILE_NAME = "_no_show.jpg";
+    public static String CONST_PHOTO_SHOW_FILE_NAME = "_show.jpg";
+    public static String CONST_SIGNATURE_FILE_NAME = "_signature.jpg";
 
 
     public static String userName = "user";
@@ -111,6 +122,7 @@ public class App extends Application {
 
     public static SearchParams futureSearchParams = new SearchParams("","", "", "0", "");
     public static SearchParams historySearchParams = new SearchParams("","", "", "0", "");
+    public static PatientSearchParams patientSearchParams = new PatientSearchParams("","","","1");
 
     public static final String[] SONG_PROJECTION = new String[]{
             MediaStore.Audio.Media._ID

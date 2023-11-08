@@ -44,6 +44,7 @@ import com.info121.nativelimo.BuildConfig;
 import com.info121.nativelimo.R;
 import com.info121.nativelimo.api.RestClient;
 import com.info121.nativelimo.models.ObjectRes;
+import com.info121.nativelimo.models.SearchParams;
 import com.info121.nativelimo.services.FirebaseMessagingService;
 import com.info121.nativelimo.services.SmartLocationService;
 import com.info121.nativelimo.utils.PrefDB;
@@ -61,6 +62,9 @@ import retrofit2.Response;
 
 public class LoginActivity extends AbstractActivity {
     private static final int REQUEST_OVERLAY_PERMISSION = 9007;
+
+    static boolean active = false;
+    static boolean autoLogin = true;
 
     Context mContext = LoginActivity.this;
     PrefDB prefDB;
@@ -89,17 +93,22 @@ public class LoginActivity extends AbstractActivity {
     };
 
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        active = true;
 
+        App.futureSearchParams = new SearchParams("","", "", "0", "");
+        App.historySearchParams = new SearchParams("","", "", "0", "");
 
-    private void askOverlayPermission(){
-        if(!Settings.canDrawOverlays(this)){
-            // ask for setting
-            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                    Uri.parse("package:" + getPackageName()));
-            startActivityForResult(intent, REQUEST_OVERLAY_PERMISSION);
-        }
+        Log.e("Login : " , "on Start");
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        active = false;
+    }
 
 
     @Override
@@ -287,8 +296,10 @@ public class LoginActivity extends AbstractActivity {
                         mUserName.setText(prefDB.getString(App.CONST_USER_NAME));
                         mRemember.setChecked(true);
 
-
-                        performLogin();
+                        if(autoLogin)
+                            performLogin();
+                        else
+                            btnLogin.setEnabled(true);
                      }else{
                         btnLogin.setEnabled(true);
                      }

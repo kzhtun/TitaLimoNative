@@ -150,6 +150,15 @@ public class Util {
         return date;
     }
 
+    public static boolean isAdaptiveBatteryEnabled(Context ctx) {
+        int intValue = Settings.Global.getInt(
+                ctx.getContentResolver(),
+                "adaptive_battery_management_enabled",
+                -1
+        );
+        return intValue == 1;
+    }
+
     public static String convertLongDateToString(long date, String outputDateFormat) {
         return DateFormat.format(outputDateFormat, new Date(date)).toString();
     }

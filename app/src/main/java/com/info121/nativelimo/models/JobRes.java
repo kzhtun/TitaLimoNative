@@ -6,10 +6,19 @@ public class JobRes {
     private Object jobcount;
     private List<JobCount> jobcountlist;
     private List<Job> jobs;
+    private List<Patient> patients;
     private Job jobdetails;
     private String responsemessage;
     private String status;
     private String token;
+
+    public List<Patient> getPatients() {
+        return patients;
+    }
+
+    public void setPatients(List<Patient> patients) {
+        this.patients = patients;
+    }
 
     public Object getJobcount() {
         return jobcount;

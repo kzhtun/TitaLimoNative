@@ -1,7 +1,6 @@
 package com.info121.nativelimo.services;
 
 
-import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -12,9 +11,13 @@ import android.content.Intent;
 import android.media.AudioAttributes;
 import android.net.Uri;
 
+import android.os.Build;
 import android.os.Bundle;
 
+import android.os.PowerManager;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 
 
 import androidx.annotation.NonNull;
@@ -26,10 +29,8 @@ import com.info121.nativelimo.R;
 import com.info121.nativelimo.App;
 import com.info121.nativelimo.activities.DialogActivity;
 
-import com.info121.nativelimo.activities.MainActivity;
 import com.info121.nativelimo.activities.NotifyActivity;
 import com.info121.nativelimo.activities.SplashActivity;
-import com.info121.nativelimo.activities.ToneSelection;
 import com.info121.nativelimo.models.Action;
 
 import org.greenrobot.eventbus.EventBus;
@@ -112,6 +113,9 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         String title = payloadData.get("title");
         String body = payloadData.get("message");
 
+
+        if(body.isEmpty()) return;
+
         Intent intent = new Intent(this, SplashActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 
@@ -137,7 +141,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 .setContentText(body)
                 .setAutoCancel(true)
                 .setNumber(App.BadgeCount)
-              //  .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
                 .setSound(soundUri)
                 //  .setSound(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getPackageName() + "/raw/kalimba"))
                 .setContentIntent(pendingIntent);
@@ -175,7 +179,34 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
       //  mNotificationManager.notify(Integer.parseInt(payloadData.get("jobno")), notificationBuilder.build());
         mNotificationManager.notify(notiIndex, notificationBuilder.build());
+
+        wakelock(5000);
     }
+
+
+    private void wakelock(int delay) {
+
+        // If the app is in the background, then we display it automatically displayNotification(notification, null);
+        // Turn on the screen for notification
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        boolean isScreenOn = pm.isScreenOn();
+
+        if (!isScreenOn) {
+            try {
+                PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "com.mdcandroid:MyLock");
+                wl.acquire(delay);
+
+                PowerManager.WakeLock wl_cpu = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "com.mdcandroid:MyCpuLock");
+                wl_cpu.acquire(delay);
+
+                wl.release();
+                wl_cpu.release();
+            } catch (Exception e) {
+                Log.e("Wake Lock : ", e.getLocalizedMessage());
+            }
+        }
+    }
+
 
     public void showDialog(String jobNo, String name, String phone, String displayMessage) {
         OLD_CH = App.getOldChannelIdP();
@@ -361,8 +392,12 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
             Log.e("Current Date : " , currentDateTime.toString());
             long timeDiff =  jobDateTime.getTime() - currentDateTime.getTime();
 
-            // 3600000 , 1HR
-            if(timeDiff<=3600000 && timeDiff>=0)
+            // 3600000 , 1 HR
+            // 1800000 , 30 MIN
+            long h1 = 3600000;
+            long m30 = 1800000;
+
+            if(timeDiff <= m30 && timeDiff >= 0)
                 return true;
             else
                 return false;
