@@ -166,6 +166,13 @@
 
     </LinearLayout>
 
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/colorAccent"
+        android:visibility="gone"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_patient"
         android:layout_width="match_parent"

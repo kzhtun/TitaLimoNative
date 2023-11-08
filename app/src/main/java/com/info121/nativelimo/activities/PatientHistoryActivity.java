@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 
 import com.info121.nativelimo.App;
@@ -23,6 +24,7 @@ import com.info121.nativelimo.adapters.PatientAdapter;
 import com.info121.nativelimo.api.RestClient;
 import com.info121.nativelimo.models.JobRes;
 import com.info121.nativelimo.models.Patient;
+import com.info121.nativelimo.models.PatientSearchParams;
 import com.info121.nativelimo.models.SearchParams;
 
 import java.text.SimpleDateFormat;
@@ -59,6 +61,9 @@ public class PatientHistoryActivity extends AppCompatActivity {
     @BindView(R.id.search)
     Button btnSearch;
 
+    @BindView(R.id.loading)
+    ProgressBar mLoading;
+
     Context mContext;
     PatientAdapter patientAdapter;
 
@@ -69,6 +74,8 @@ public class PatientHistoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_patient_history);
 
         ButterKnife.bind(this);
+
+        App.patientSearchParams = new PatientSearchParams("","","","1");
 
         mContext = PatientHistoryActivity.this;
 
@@ -123,6 +130,8 @@ public class PatientHistoryActivity extends AppCompatActivity {
 
 
     private  void getPatientHistory(){
+        mLoading.setVisibility(View.VISIBLE);
+        mRecyclerView.setVisibility(View.GONE);
 
         Call<JobRes> call = RestClient.COACH().getApiService().GetPatientHistory(
                 App.patientSearchParams.getCustomercode(),
@@ -136,12 +145,16 @@ public class PatientHistoryActivity extends AppCompatActivity {
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
                 if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
                     patientAdapter.UpdatePatientHistory(response.body().getPatients());
+
+                    mLoading.setVisibility(View.GONE);
+                    mRecyclerView.setVisibility(View.VISIBLE);
                 }
             }
 
             @Override
             public void onFailure(Call<JobRes> call, Throwable t) {
-
+                mLoading.setVisibility(View.GONE);
+                mRecyclerView.setVisibility(View.VISIBLE);
             }
         });
     }
