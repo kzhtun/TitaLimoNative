@@ -58,8 +58,8 @@ public class App extends Application {
 
     // TitaLimo Live
 //    public static String CONST_REST_API_URL = "http://97.74.89.233/RestApiTitanium/MyLimoService.svc/";
-//    public static String CONST_PDF_URL = "http://97.74.89.233/iopsdev/uploads/";
-//    public static String CONST_PHOTO_URL = "http://97.74.89.233/iopsdev/images/limopics/";
+//    public static String CONST_PDF_URL = "http://97.74.89.233/iops/uploads/";
+//    public static String CONST_PHOTO_URL = "http://97.74.89.233/iops/images/limopics/";
 //
 //    //LIVE FTP
 //    public static final String FTP_URL = "97.74.89.233";
@@ -117,6 +117,8 @@ public class App extends Application {
 
 
     public static Integer BadgeCount = 0;
+
+    public static String StackTraceLog = "";
 
     public static List<Job> jobList = new ArrayList<>();
 

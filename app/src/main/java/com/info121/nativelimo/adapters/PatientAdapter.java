@@ -28,6 +28,7 @@ public class PatientAdapter extends RecyclerView.Adapter<PatientAdapter.ViewHold
     public void UpdatePatientHistory(List<Patient> patientList){
         mPatientList = patientList;
         notifyDataSetChanged();
+
     }
 
 
@@ -49,7 +50,7 @@ public class PatientAdapter extends RecyclerView.Adapter<PatientAdapter.ViewHold
         holder.jobTime.setText(mPatientList.get(i).getJobTime());
         holder.pickup.setText(mPatientList.get(i).getPickupPoint());
         holder.dropoff.setText(mPatientList.get(i).getAlightPoint());
-        holder.update.setText(mPatientList.get(i).getUpdates());
+        holder.update.setText(mPatientList.get(i).getUpdates().replaceAll("##-##", "\n"));
     }
 
     @Override

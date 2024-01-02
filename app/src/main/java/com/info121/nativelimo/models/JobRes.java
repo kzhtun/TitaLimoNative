@@ -3,11 +3,12 @@ package com.info121.nativelimo.models;
 import java.util.List;
 
 public class JobRes {
-    private Object jobcount;
+    private String jobcount;
     private List<JobCount> jobcountlist;
     private List<Job> jobs;
     private List<Patient> patients;
     private Job jobdetails;
+
     private String responsemessage;
     private String status;
     private String token;
@@ -20,11 +21,11 @@ public class JobRes {
         this.patients = patients;
     }
 
-    public Object getJobcount() {
+    public String getJobcount() {
         return jobcount;
     }
 
-    public void setJobcount(Object jobcount) {
+    public void setJobcount(String jobcount) {
         this.jobcount = jobcount;
     }
 

@@ -16,6 +16,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.info121.nativelimo.App;
 import com.info121.nativelimo.R;
@@ -61,8 +62,15 @@ public class PatientHistoryActivity extends AppCompatActivity {
     @BindView(R.id.search)
     Button btnSearch;
 
+    @BindView(R.id.clear)
+    Button btnClear;
+
     @BindView(R.id.loading)
     ProgressBar mLoading;
+
+    @BindView(R.id.no_data)
+    TextView noData;
+
 
     Context mContext;
     PatientAdapter patientAdapter;
@@ -124,6 +132,15 @@ public class PatientHistoryActivity extends AppCompatActivity {
             }
         });
 
+        btnClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                App.patientSearchParams = new PatientSearchParams(  App.patientSearchParams.getCustomercode(),"","","1");
+                patientAdapter.UpdatePatientHistory( new ArrayList<>());
+                noData.setVisibility(View.VISIBLE);
+            }
+        });
+
 
         getPatientHistory();
     }
@@ -145,6 +162,11 @@ public class PatientHistoryActivity extends AppCompatActivity {
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
                 if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
                     patientAdapter.UpdatePatientHistory(response.body().getPatients());
+
+                    if(response.body().getPatients().size()>0)
+                        noData.setVisibility(View.GONE);
+                    else
+                        noData.setVisibility(View.VISIBLE);
 
                     mLoading.setVisibility(View.GONE);
                     mRecyclerView.setVisibility(View.VISIBLE);

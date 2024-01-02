@@ -41,6 +41,7 @@ import com.info121.nativelimo.activities.PatientHistoryActivity;
 import com.info121.nativelimo.api.RestClient;
 import com.info121.nativelimo.models.Job;
 import com.info121.nativelimo.models.JobRes;
+import com.info121.nativelimo.models.RequestUpdateRemark;
 import com.info121.nativelimo.models.SearchParams;
 import com.info121.nativelimo.utils.Util;
 
@@ -241,6 +242,8 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ItemViewHolder itemVH = (ItemViewHolder) viewHolder;
             setAnimation(viewHolder.itemView, i);
 
+
+
 //              show/ hide updates textbox and button depend on the which tabs
 //            if (mCurrentTab.equalsIgnoreCase("HISTORY") && mJobList.get(i).getUaeType().equalsIgnoreCase("Translation Job"))
 //                if (mCurrentTab.equalsIgnoreCase("HISTORY"))
@@ -250,10 +253,18 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             itemVH.updateLayout.setVisibility(View.VISIBLE);
 
+            if(mJobList.get(i).getUaeType().equalsIgnoreCase("Translation Job")){
+                itemVH.mButtonLayout.setVisibility(View.VISIBLE);
+            }else{
+                itemVH.mButtonLayout.setVisibility(View.GONE);
+            }
+
+
+
             if (Util.isNullOrEmpty(mJobList.get(i).getUpdates()))
                 mJobList.get(i).setUpdates("");
 
-            if (mJobList.get(i).getUpdates().length() == 0 || mJobList.get(i).getUpdates().equals("##-##")) {
+            if (mJobList.get(i).getUpdates().length() == 0 || mJobList.get(i).getUpdates().equals("##-##") || mJobList.get(i).getUpdates().equals("\n")) {
                 itemVH.mViewUpdates.setText("ADD");
                 itemVH.mViewUpdates.setBackground(ContextCompat.getDrawable(mContext, R.drawable.rounded_button));
             } else {
@@ -263,7 +274,8 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             String jobStatus = (mJobList.get(i).getJobStatus().equalsIgnoreCase("JOB NEW") ? "JOB ASSIGNED" : mJobList.get(i).getJobStatus().toUpperCase());
 
-            itemVH.jobType.setText(Util.capitalize(mJobList.get(i).getJobType()));
+          //  itemVH.jobType.setText(Util.capitalize(mJobList.get(i).getJobType()));
+            itemVH.jobType.setText(mJobList.get(i).getJobType());
             itemVH.jobStatus.setText(jobStatus);
             itemVH.vehicleType.setText(mJobList.get(i).getVehicleType());
             itemVH.pickupTime.setText(mJobList.get(i).getPickUpTime());
@@ -379,6 +391,9 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         @BindView(R.id.search)
         Button mSearch;
+
+        @BindView(R.id.clear)
+        Button mClear;
 
         public HeaderViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -516,8 +531,33 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 }
             });
 
+            mClear.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mCurrentTab.equalsIgnoreCase("HISTORY")) {
+                        App.historySearchParams = new SearchParams("", "", "", "0", "");
+                        EventBus.getDefault().post(App.historySearchParams);
+                    }
+
+
+                    if (mCurrentTab.equalsIgnoreCase("FUTURE")) {
+                        App.futureSearchParams = new SearchParams("", "", "", "0", "");
+                        EventBus.getDefault().post(App.futureSearchParams);
+                    }
+
+                   notifyDataSetChanged();
+//                    performSearch();
+
+
+                    // clear recycler view
+//                    mJobList = new ArrayList<>();
+//                    notifyDataSetChanged();
+
+                }
+            });
 
         }
+
 
 
         private void performSearch() {
@@ -610,6 +650,10 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         @BindView(R.id.main_layout)
         LinearLayout parent;
 
+        @BindView(R.id.buttons_layout)
+        LinearLayout mButtonLayout;
+
+
         @BindView(R.id.view)
         Button mViewUpdates;
 
@@ -672,6 +716,34 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     }
 
+
+    private void UpdateLongRemarks(RequestUpdateRemark request){
+        Call<JobRes> call = RestClient.COACH().getApiService().UpdateLongRemarks(request);
+
+        call.enqueue(new Callback<JobRes>() {
+            @Override
+            public void onResponse(Call<JobRes> call, Response<JobRes> response) {
+                if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
+                    Toast.makeText(mContext, "Successfully Updated", Toast.LENGTH_SHORT).show();
+
+                    // refresh the adapter
+                    mJobList.get(adapterPosition).setUpdates(request.getRemarks());
+                    notifyDataSetChanged();
+                }
+
+                if (response.body().getResponsemessage().equalsIgnoreCase("BAD TOKEN")) {
+                    RestClient.refreshToken("GET_TODAY_JOBS");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JobRes> call, Throwable t) {
+
+            }
+        });
+    }
+
+
     // daily updates
     private void updateJobRemark(final String jobNo, final String message) {
         Call<JobRes> call = RestClient.COACH().getApiService().UpdateJobRemark(jobNo, message.replaceAll("\n", "##-##"));
@@ -685,7 +757,6 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     // refresh the adapter
                     mJobList.get(adapterPosition).setUpdates(message);
                     notifyDataSetChanged();
-
                 }
 
                 if (response.body().getResponsemessage().equalsIgnoreCase("BAD TOKEN")) {
@@ -789,14 +860,29 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         final EditText updates = dialog.findViewById(R.id.updates);
 
-        updates.setText((message.equals("##-##")) ? "" : message);
+        String msg = (message.equals("##-##")) ? "" : message;
+        msg = msg.replaceAll("##-##", "\n");
+
+        updates.setText(msg);
 
         Button save = dialog.findViewById(R.id.save);
 
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                updateJobRemark(jobno, (updates.getText().toString().trim().length() == 0) ? "\n" : updates.getText().toString().trim());
+
+                String newRemark = updates.getText().toString().trim();
+                newRemark = (newRemark.length() == 0) ? "\n" : newRemark;
+                newRemark = newRemark.replaceAll("\n", "##-##");
+                newRemark = newRemark.replaceAll("/", "|");
+                newRemark = newRemark.replaceAll("\\\\", "|");
+
+
+                //updateJobRemark(jobno, newRemark);
+
+                RequestUpdateRemark request = new RequestUpdateRemark(jobno, newRemark);
+                UpdateLongRemarks(request);
+
                 dialog.hide();
                 dialog.dismiss();
                 notifyDataSetChanged();

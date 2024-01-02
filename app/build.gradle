@@ -8,7 +8,7 @@ android {
         applicationId "com.info121.nativelimo"
         minSdkVersion 23
         targetSdkVersion 33
-        versionCode 39
+        versionCode 45
         versionName "2.3"
     }
     buildTypes {
@@ -67,6 +67,8 @@ dependencies {
 
     // Runtime permission
     implementation 'com.karumi:dexter:6.2.3'
+
+    implementation 'com.squareup.retrofit2:converter-scalars:2.1.0'
 
 
 }

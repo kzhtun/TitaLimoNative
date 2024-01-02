@@ -157,6 +157,8 @@
                 android:textColor="@color/edit_text_color"
                 android:gravity="top|left"
                 android:inputType="textMultiLine"
+                android:scrollbars="vertical"
+                android:scrollbarThumbVertical="@color/monsoon"
                 android:padding="16dp" />
         </LinearLayout>
 

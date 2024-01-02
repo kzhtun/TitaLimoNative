@@ -64,6 +64,8 @@
                 android:background="@drawable/rounded_edittext"
                 android:textColor="@color/edit_text_color"
                 android:gravity="top|left"
+                android:scrollbars="vertical"
+                android:scrollbarThumbVertical="@color/monsoon"
                 android:inputType="textMultiLine" />
         </LinearLayout>
 

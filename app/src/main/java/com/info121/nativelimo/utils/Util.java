@@ -11,15 +11,19 @@ import android.provider.Settings;
 
 import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.info121.nativelimo.App;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -173,6 +177,13 @@ public class Util {
 
     public static float convertPixelsToDp(float px, Context context){
         return px / ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+    }
+
+    public static void addLog(String log){
+        Date currentTime = Calendar.getInstance().getTime();
+        String traceLog = convertDateToString(currentTime, "yyyy-MM-dd HH:mm:ss.SSSS") +  "     " +  log + "\n";
+        App.StackTraceLog += traceLog;
+        Log.e("Stack Trace : ", traceLog);
     }
 
 

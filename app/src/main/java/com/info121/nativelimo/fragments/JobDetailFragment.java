@@ -1482,7 +1482,8 @@ public class JobDetailFragment extends AbstractFragment {
         }
 
         mJobNo.setText(job.getJobNo());
-        mJobType.setText(Util.capitalize(job.getJobType()));
+       // mJobType.setText(Util.capitalize(job.getJobType()));
+        mJobType.setText(job.getJobType());
 
         mJobStatus.setText(job.getJobStatus().equalsIgnoreCase("JOB NEW") ? "JOB ASSIGNED" : job.getJobStatus().toUpperCase());
         mDate.setText(job.getUsageDate());

@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     android:orientation="vertical"
     tools:context=".activities.PatientHistoryActivity">
 
@@ -140,31 +139,47 @@
                 </RadioGroup>
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:orientation="vertical">
-
-                <Button
-                    android:id="@+id/search"
-                    android:layout_width="match_parent"
-                    android:layout_height="38dp"
-                    android:layout_gravity="center"
-                    android:layout_marginRight="3dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginTop="16dp"
-                    android:background="@drawable/rounded_button"
-                    android:textSize="@dimen/button_text_size"
-                    android:fontFamily="@font/lato_regular"
-                    android:letterSpacing="0.06"
-                    android:text="SEARCH"
-                    android:textColor="@color/white" />
-
-            </LinearLayout>
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:orientation="horizontal">
 
+            <Button
+                android:id="@+id/clear"
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:background="@drawable/rounded_button_orange"
+                android:layout_marginRight="4dp"
+                android:textSize="@dimen/button_text_size"
+                android:fontFamily="@font/lato_regular"
+                android:letterSpacing="0.06"
+                android:text="CLEAR"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/search"
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:background="@drawable/rounded_button"
+                android:textSize="@dimen/button_text_size"
+                android:layout_marginLeft="4dp"
+                android:fontFamily="@font/lato_regular"
+                android:letterSpacing="0.06"
+                android:text="SEARCH"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
     </LinearLayout>
+
+
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ProgressBar
         android:id="@+id/loading"
@@ -172,6 +187,17 @@
         android:layout_height="wrap_content"
         android:indeterminateTint="@color/colorAccent"
         android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/no_data"
+        style="@style/cell_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="100dp"
+        android:textColor="@color/colorAccent"
+        android:letterSpacing="0.2"
+        android:text="There is no history." />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_patient"
@@ -181,4 +207,7 @@
         android:layout_marginBottom="16dp"
         android:clipToPadding="false"
         android:paddingBottom="16dp" />
+
+</FrameLayout>
+
 </LinearLayout>

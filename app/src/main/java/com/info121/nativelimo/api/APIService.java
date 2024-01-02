@@ -3,9 +3,13 @@ package com.info121.nativelimo.api;
 
 import com.info121.nativelimo.models.JobRes;
 import com.info121.nativelimo.models.ObjectRes;
+import com.info121.nativelimo.models.RequestMobileLog;
+import com.info121.nativelimo.models.RequestUpdateRemark;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface APIService {
@@ -65,6 +69,9 @@ public interface APIService {
     @GET("updateJobRemark/{jobno},{remark}")
     Call<JobRes> UpdateJobRemark(@Path("jobno") String jobno, @Path("remark") String remark);
 
+    @POST("updatelongremarks")
+    Call<JobRes> UpdateLongRemarks(@Body RequestUpdateRemark requestUpdateRemark);
+
     @GET("updateShowConfirmJob/{jobno},{address},{remarks},{status}")
     Call<JobRes> UpdateShowConfirmJob(@Path("jobno") String jobno, @Path("address") String address, @Path("remarks") String remarks, @Path("status") String status);
 
@@ -73,6 +80,9 @@ public interface APIService {
 
     @GET("updateCompleteJob/{jobno},{address},{remarks},{status}")
     Call<JobRes> UpdateCompletJob(@Path("jobno") String jobno, @Path("address") String address, @Path("remarks") String remarks, @Path("status") String status);
+
+    @POST("updatemobilelog")
+    Call<JobRes> UpdateMobileLog(@Body RequestMobileLog requestMobileLog);
 
 //    //amad,123,android,241jlksfljsaf
 //    @GET("updatedriverdetail/{user},{deviceId},{deviceType},{fcm_token}")
