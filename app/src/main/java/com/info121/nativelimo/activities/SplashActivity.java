@@ -87,41 +87,42 @@ public class SplashActivity extends AppCompatActivity {
             new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent data = result.getData();
-                        if (Settings.canDrawOverlays(mContext)) {
-                            // startActivity(new Intent(mContext, LoginActivity.class));
-                            Log.e("OnActivityResult", "1 Allow");
-                            getFCMToken();
-                        }
+//                    Intent data = result.getData();
+//                    Log.e("data", data.getData().toString());
+
+                    if (!Settings.canDrawOverlays(mContext)){
+                        Log.e("OnActivityResult", "not allow");
+                        showOverlayPermissionWarning();
                     }else{
-                        Log.e("OnActivityResult", "1 Cancel");
-                        if (!Settings.canDrawOverlays(mContext))
-                            showOverlayPermissionWarning();
+                        Log.e("OnActivityResult", " allow");
+                        getFCMToken();
                     }
                 }
             }
     );
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == REQUEST_OVERLAY_PERMISSION) {
-            if (Settings.canDrawOverlays(this)) {
-                isOverlayDialogShow = false;
-                // startActivity(new Intent(mContext, LoginActivity.class));
-                openLoginActivity();
-                Log.e("OnActivityResult", "2 Allow");
-            } else {
-                // permission not granted...
-                showOverlayPermissionWarning();
-                Log.e("OnActivityResult", "2 Denied");
-            }
-        }else{
-            Log.e("OnActivityResult", "2 Cancel");
-        }
-    }
+
+
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        if (requestCode == REQUEST_OVERLAY_PERMISSION) {
+//            if (Settings.canDrawOverlays(this)) {
+//                isOverlayDialogShow = false;
+//                // startActivity(new Intent(mContext, LoginActivity.class));
+//                openLoginActivity();
+//                Log.e("OnActivityResult", "2 Allow");
+//            } else {
+//                // permission not granted...
+//                showOverlayPermissionWarning();
+//                Log.e("OnActivityResult", "2 Denied");
+//            }
+//        }else{
+//            Log.e("OnActivityResult", "2 Cancel");
+//        }
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
