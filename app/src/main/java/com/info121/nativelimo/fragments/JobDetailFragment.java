@@ -1001,19 +1001,15 @@ public class JobDetailFragment extends AbstractFragment {
             @Override
             public void onClick(View v) {
                 if (done.getText().toString().equalsIgnoreCase("DONE")) {
-                    if (!hasSignature) {
+
+                    if(hasSignature){
+                        saveSignature(signaturePad.getSignatureBitmap(), null);
+                        done.setText("SAVED");
+                    }else{
                         AlertDialog dialog = new AlertDialog.Builder(getContext())
                                 .setTitle(R.string.AppName)
-                                .setMessage("Signature is blank do you want to save this?")
-                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                        saveSignature(signaturePad.getSignatureBitmap(), "");
-                                        done.setText("SAVED");
-                                    }
-                                })
-                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                .setMessage("Signature can not be left blank.")
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
@@ -1022,10 +1018,8 @@ public class JobDetailFragment extends AbstractFragment {
                                 .create();
 
                         dialog.show();
-                    } else {
-                        saveSignature(signaturePad.getSignatureBitmap(), null);
-                        done.setText("SAVED");
                     }
+
                 }
             }
         });
@@ -1036,15 +1030,8 @@ public class JobDetailFragment extends AbstractFragment {
                 if (done.getText().toString().equalsIgnoreCase("DONE")) {
                     AlertDialog dialog = new AlertDialog.Builder(getContext())
                             .setTitle(R.string.AppName)
-                            .setMessage("Either signature is blank or has not been done.\nDo you want to proceed?")
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                    saveSignature(signaturePad.getSignatureBitmap(), "UPDATE_SHOW_PASSENGER");
-                                }
-                            })
-                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            .setMessage("Either signature is blank or has not been done.")
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();

@@ -9,9 +9,11 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.webkit.URLUtil;
 import android.widget.Toast;
 
 import com.adeel.library.easyFTP;
+import com.info121.nativelimo.App;
 import com.info121.nativelimo.api.RestClient;
 import com.info121.nativelimo.models.JobRes;
 
@@ -165,9 +167,24 @@ public class FtpHelper {
          //   failed to connect to /128.106.129.15 (port 21) from /:: (port 46822): connect failed: ENETUNREACH (Network is unreachable)
          //   Attempt to invoke virtual method 'void java.io.BufferedInputStream.close()' on a null object reference
             if(str != null){
-               if(str.indexOf("failed to connect to") >= 0 || str.indexOf("Connection is not open") >= 0){
+
+                 String url = App.CONST_PHOTO_URL + mFileName;
+
+                if(URLUtil.isValidUrl(url)) {
+                    Log.e("FTP", "File Exists");
+                }
+                else {
                     EventBus.getDefault().post(mType + "_UPLOAD_FAILED");
                     prg.dismiss();
+                    Log.e("FTP", "File Not Found");
+                }
+
+
+
+               if(str.contains("failed to connect to") || str.contains("Connection is not open")){
+                    EventBus.getDefault().post(mType + "_UPLOAD_FAILED");
+                    prg.dismiss();
+                    //URLUtil.isValidUrl(url)
                     return;
                 }
 

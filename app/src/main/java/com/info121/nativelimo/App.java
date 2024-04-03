@@ -34,7 +34,7 @@ public class App extends Application {
     public static String DEVICE_TYPE = "ANDROID";
     String TAG = "Application";
 
-    static String ENDPOINT = "http://121.7.129.30/";
+    static String ENDPOINT = "http://118.200.137.124/";
 
     //---------------------------------------------------------------------//
     // iOPS DEV Cypress API
@@ -42,12 +42,12 @@ public class App extends Application {
 //  //  public static String CONST_REST_API_URL = "http://info121.sytes.net/RestApiTitanium/MyLimoService.svc/";
 //    public static String CONST_PDF_URL = ENDPOINT+ "iops/uploads/";
 //    public static String CONST_PHOTO_URL = ENDPOINT + "iops/images/limopics/";
-//
-//
-//    //  iOPS DEV Cypress FTP
-// // public static final String FTP_URL = "info121.sytes.net";
-//
-//   public static final String FTP_URL = "121.7.129.30/";
+
+
+    //  iOPS DEV Cypress FTP
+ // public static final String FTP_URL = "info121.sytes.net";
+
+//   public static final String FTP_URL = "118.200.137.124";
 //    public static final String FTP_USER = "info121ftp";
 //    public static final String FTP_PASSWORD = "6b604358f1a34a88a8506205f2d0e501";
 //    public static String FTP_DIR = "limopics";

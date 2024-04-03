@@ -274,7 +274,7 @@ public class NotifyActivity  extends AbstractActivity {
     public void rootLayoutOnClick() {
         acceptJob();
 
-        Toast.makeText(mContext, "rootLayoutOnClick", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(mContext, "RootLayoutOnClick", Toast.LENGTH_SHORT).show();
 
     }
 
