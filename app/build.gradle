@@ -2,15 +2,24 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
 android {
-    compileSdkVersion 34
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.info121.nativelimo"
         minSdkVersion 23
         targetSdkVersion 34
-        versionCode 48
+        versionCode 50
         versionName "2.3"
     }
+
+    tasks.withType(JavaCompile).configureEach{
+        options.fork = true
+        options.forkOptions.jvmArgs +=[
+                '--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
+                '--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED',
+                '--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED']
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -22,7 +31,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    buildToolsVersion '34.0.0'
+
+    packagingOptions {
+        resources.excludes.add("META-INF/*")
+    }
 }
 
 dependencies {
@@ -36,7 +48,7 @@ dependencies {
     // runtime permission helper
     implementation 'pub.devrel:easypermissions:2.0.1'
 
-    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.google.code.gson:gson:2.8.9'
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     implementation 'org.greenrobot:eventbus:3.1.1'
@@ -46,22 +58,22 @@ dependencies {
     implementation 'com.github.florent37:viewanimator:1.0.5'
 
     implementation 'io.nlopez.smartlocation:library:3.3.3'
-    implementation 'com.google.android.gms:play-services-location:21.0.1'
+    implementation 'com.google.android.gms:play-services-location:21.3.0'
 
 
-    implementation 'com.google.firebase:firebase-messaging:23.4.0'
+    implementation 'com.google.firebase:firebase-messaging:24.0.0'
 
 
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'androidx.work:work-runtime:2.9.0'
 
     implementation 'com.jakewharton:butterknife:10.0.0'
-    implementation 'androidx.browser:browser:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.browser:browser:1.8.0'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.0.0'
 
-    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'com.google.android.material:material:1.12.0'
     // shortcut badge
     implementation "me.leolin:ShortcutBadger:1.1.22@aar"
 

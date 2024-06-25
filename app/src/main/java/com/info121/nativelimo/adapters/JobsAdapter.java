@@ -291,6 +291,8 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             itemVH.updateText.setText(mJobList.get(i).getUpdates().toString().replaceAll("##-##", "\n"));
             //viewHolder.passenger.setText(mJobList.get(i).getJobNo());
 
+            Log.e("Job No:", mJobList.get(i).getJobNo());
+
 
             final String jobNo = mJobList.get(i).getJobNo();
             final int index = i;
@@ -336,6 +338,8 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //
 //                }
 //            });
+
+
 
     }
 
@@ -706,14 +710,13 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             mPatientHistory.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    adapterPosition = getAdapterPosition() - 1;
                     Intent intent = new Intent(mContext, PatientHistoryActivity.class);
                     intent.putExtra("CUSTOMER_NAME", mJobList.get(adapterPosition).getCustomerCode().trim());
                     mContext.startActivity(intent);
                 }
             });
-
         }
-
     }
 
 

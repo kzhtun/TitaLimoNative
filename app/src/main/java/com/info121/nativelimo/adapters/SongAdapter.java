@@ -1,10 +1,12 @@
 package com.info121.nativelimo.adapters;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.info121.nativelimo.R;
@@ -29,7 +32,10 @@ import java.util.List;
 
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
+
+
     List<Song> mSongs;
+
     Context mContext;
     int lastIndex = -1;
     PrefDB prefDB = null;
@@ -75,6 +81,11 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
     }
 
     class ViewHolder extends RecyclerView.ViewHolder{
+        Song song;
+
+        Ringtone r;
+
+
         TextView songName, path;
         RadioButton select;
 
@@ -129,14 +140,32 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
             mainLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Song song = mSongs.get(getAdapterPosition());
-                    //playAudio(song.getData());
-
-                    Ringtone r = RingtoneManager.getRingtone(mContext, song.getSongUri());
-                    r.play();
-
+                    song = mSongs.get(getAdapterPosition());
+                    playSong(song.getSongUri());
                 }
             });
+        }
+    }
+
+    public void playSong(Uri ringtone) {
+        long count = 1;
+       //Uri ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Ringtone notification = RingtoneManager.getRingtone(mContext, ringtone);
+        //Ringtone notification = RingtoneManager.getRingtone(mContext.getApplicationContext(), songUri);
+
+        // If phone is not set to silent mode
+        if (notification != null) {
+            for (long i = 0; i < count; ++i) {
+                notification.play();
+                long timeout = 5000;
+                while (notification.isPlaying() && (timeout > 0)) {
+                    timeout = timeout - 100;
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                    }
+                }
+            }
         }
     }
 
@@ -153,4 +182,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
             e.printStackTrace();
         }
     }
+
+
 }

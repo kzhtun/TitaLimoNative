@@ -6,6 +6,8 @@ import com.info121.nativelimo.models.ObjectRes;
 import com.info121.nativelimo.models.RequestMobileLog;
 import com.info121.nativelimo.models.RequestUpdateRemark;
 
+import java.util.stream.Stream;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -13,6 +15,9 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface APIService {
+
+    @POST("upload")
+    Call<ObjectRes> Upload(@Path("uploadFile") byte[] uploadFile);
 
     @GET("checkSession")
     Call<ObjectRes> CheckSession();

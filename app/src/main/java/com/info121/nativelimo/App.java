@@ -34,38 +34,38 @@ public class App extends Application {
     public static String DEVICE_TYPE = "ANDROID";
     String TAG = "Application";
 
-    static String ENDPOINT = "http://118.200.137.124/";
+    static String ENDPOINT = "http://118.200.133.162/";
 
     //---------------------------------------------------------------------//
-    // iOPS DEV Cypress API
-//   public static String CONST_REST_API_URL = ENDPOINT + "RestApiTitanium/MyLimoService.svc/";
-//  //  public static String CONST_REST_API_URL = "http://info121.sytes.net/RestApiTitanium/MyLimoService.svc/";
-//    public static String CONST_PDF_URL = ENDPOINT+ "iops/uploads/";
-//    public static String CONST_PHOTO_URL = ENDPOINT + "iops/images/limopics/";
+    // iOPS DEV ACER API
+   //  public static String CONST_REST_API_URL = "http://info121.sytes.net/RestApiTitanium/MyLimoService.svc/";
+    public static String CONST_REST_API_URL = ENDPOINT + "RestApiTitanium/MyLimoService.svc/";
+    public static String CONST_PDF_URL = ENDPOINT+ "iops/uploads/";
+    public static String CONST_PHOTO_URL = ENDPOINT + "iops/images/limopics/";
 
 
-    //  iOPS DEV Cypress FTP
+ //     iOPS DEV Cypress FTP
  // public static final String FTP_URL = "info121.sytes.net";
 
-//   public static final String FTP_URL = "118.200.137.124";
-//    public static final String FTP_USER = "info121ftp";
-//    public static final String FTP_PASSWORD = "6b604358f1a34a88a8506205f2d0e501";
-//    public static String FTP_DIR = "limopics";
-//    //public static String FTP_DIR = "limopics";
+    public static final String FTP_URL = "119.74.229.225";
+    public static final String FTP_USER = "info121ftp";
+    public static final String FTP_PASSWORD = "6b604358f1a34a88a8506205f2d0e501";
+    public static String FTP_DIR = "limopics";
+    //public static String FTP_DIR = "limopics";
 
 
     //---------------------------------------------------------------------//
 
-    // TitaLimo Live
-    public static String CONST_REST_API_URL = "http://97.74.89.233/RestApiTitanium/MyLimoService.svc/";
-    public static String CONST_PDF_URL = "http://97.74.89.233/iops/uploads/";
-    public static String CONST_PHOTO_URL = "http://97.74.89.233/iops/images/limopics/";
-
-    //LIVE FTP
-    public static final String FTP_URL = "97.74.89.233";
-    public static final String FTP_USER = "ipos";
-    public static final String FTP_PASSWORD = "$$1posftp%%";
-    public static String FTP_DIR = "limopics";
+//    // TitaLimo Live
+//    public static String CONST_REST_API_URL = "http://97.74.89.233/RestApiTitanium/MyLimoService.svc/";
+//    public static String CONST_PDF_URL = "http://97.74.89.233/iops/uploads/";
+//    public static String CONST_PHOTO_URL = "http://97.74.89.233/iops/images/limopics/";
+//
+//    //LIVE FTP
+//    public static final String FTP_URL = "97.74.89.233";
+//    public static final String FTP_USER = "ipos";
+//    public static final String FTP_PASSWORD = "$$1posftp%%";
+//    public static String FTP_DIR = "limopics";
 
     //---------------------------------------------------------------------//
 

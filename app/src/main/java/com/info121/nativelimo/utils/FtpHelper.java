@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.adeel.library.easyFTP;
 import com.info121.nativelimo.App;
 import com.info121.nativelimo.api.RestClient;
+import com.info121.nativelimo.models.Action;
 import com.info121.nativelimo.models.JobRes;
 
 import org.apache.commons.net.ftp.FTP;
@@ -60,6 +61,9 @@ public class FtpHelper {
             prg = new ProgressDialog(context);
             prg.setMessage("Initializing ... \n\nPlease wait. This may take 10 to 15 seconds ");
             prg.show();
+
+
+           // EventBus.getDefault().postSticky(mType + "Init");
         }
 
 //        @Override
@@ -168,7 +172,7 @@ public class FtpHelper {
          //   Attempt to invoke virtual method 'void java.io.BufferedInputStream.close()' on a null object reference
             if(str != null){
 
-                 String url = App.CONST_PHOTO_URL + mFileName;
+                String url = App.CONST_PHOTO_URL + mFileName;
 
                 if(URLUtil.isValidUrl(url)) {
                     Log.e("FTP", "File Exists");
@@ -179,12 +183,9 @@ public class FtpHelper {
                     Log.e("FTP", "File Not Found");
                 }
 
-
-
                if(str.contains("failed to connect to") || str.contains("Connection is not open")){
                     EventBus.getDefault().post(mType + "_UPLOAD_FAILED");
                     prg.dismiss();
-                    //URLUtil.isValidUrl(url)
                     return;
                 }
 
@@ -281,6 +282,7 @@ public class FtpHelper {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
                 Toast.makeText(context, "Show save successful", Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
@@ -321,6 +323,8 @@ public class FtpHelper {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
                 Toast.makeText(context, "Signature save successful", Toast.LENGTH_SHORT).show();
+                EventBus.getDefault().post("CALL_UPDATE_SHOW_PASSENGER");
+
             }
 
             @Override

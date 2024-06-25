@@ -1,6 +1,7 @@
 package com.info121.nativelimo.fragments;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.Notification;
@@ -56,10 +57,12 @@ import com.info121.nativelimo.api.RestClient;
 import com.info121.nativelimo.models.Action;
 import com.info121.nativelimo.models.Job;
 import com.info121.nativelimo.models.JobRes;
-import com.info121.nativelimo.services.ShowDialogService;
+import com.info121.nativelimo.models.ObjectRes;
+
 import com.info121.nativelimo.utils.FtpHelper;
 import com.info121.nativelimo.utils.GeocodingLocation;
 import com.info121.nativelimo.utils.Util;
+
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -71,15 +74,18 @@ import org.greenrobot.eventbus.Subscribe;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Stream;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -110,6 +116,9 @@ import androidx.core.content.ContextCompat;
 
 
 public class JobDetailFragment extends AbstractFragment {
+    String TAG = JobDetailFragment.class.getSimpleName();
+
+
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
@@ -1000,12 +1009,44 @@ public class JobDetailFragment extends AbstractFragment {
         done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (done.getText().toString().equalsIgnoreCase("DONE")) {
+                   uploadSignature(signaturePad.getSignatureBitmap());
 
-                    if(hasSignature){
+                   if(signaturePad.isEnabled()) {
+                       Log.e("Signature Pad : " , "Enabled - Edit Mode");
+
+                       if (hasSignature) {
+                           saveSignature(signaturePad.getSignatureBitmap(), null);
+                           done.setText("SAVED");
+                       } else {
+                           AlertDialog dialog = new AlertDialog.Builder(getContext())
+                                   .setTitle(R.string.AppName)
+                                   .setMessage("Signature can not be left blank.")
+                                   .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                       @Override
+                                       public void onClick(DialogInterface dialog, int which) {
+                                           dialog.dismiss();
+                                       }
+                                   })
+                                   .create();
+
+                           dialog.show();
+                       }
+                   }
+                   else{
+                       Log.e("Signature Pad : " , "Disabled - Display Mode");
+                   }
+            }
+        });
+
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(signaturePad.isEnabled()) {
+                    Log.e("Signature Pad : ", "Enabled - Edit Mode");
+                    if (hasSignature) {
                         saveSignature(signaturePad.getSignatureBitmap(), null);
-                        done.setText("SAVED");
-                    }else{
+                        // done.setText("SAVED");
+                    } else {
                         AlertDialog dialog = new AlertDialog.Builder(getContext())
                                 .setTitle(R.string.AppName)
                                 .setMessage("Signature can not be left blank.")
@@ -1019,33 +1060,13 @@ public class JobDetailFragment extends AbstractFragment {
 
                         dialog.show();
                     }
-
-                }
-            }
-        });
-
-        save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (done.getText().toString().equalsIgnoreCase("DONE")) {
-                    AlertDialog dialog = new AlertDialog.Builder(getContext())
-                            .setTitle(R.string.AppName)
-                            .setMessage("Either signature is blank or has not been done.")
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            })
-                            .create();
-
-                    dialog.setCancelable(false);
-                    dialog.setCanceledOnTouchOutside(false);
-                    dialog.show();
-                }
-
-                if (done.getText().toString().equalsIgnoreCase("SAVED"))
+                }else{
+                    Log.e("Signature Pad : ", "Enabled - Display Mode");
                     callUpdateShowPassenger();
+                }
+
+//                if (done.getText().toString().equalsIgnoreCase("SAVED"))
+//                    callUpdateShowPassenger();
 
             }
         });
@@ -1080,6 +1101,53 @@ public class JobDetailFragment extends AbstractFragment {
         dialog.getWindow().setAttributes(lp);
     }
 
+
+   public void uploadTest(byte[] photo){
+       Call<ObjectRes> call = RestClient.COACH().getApiService().Upload(photo);
+
+       call.enqueue(new Callback<ObjectRes>() {
+           @Override
+           public void onResponse(Call<ObjectRes> call, Response<ObjectRes> response) {
+               Log.e(TAG, "Multipart upload successful");
+           }
+
+           @Override
+           public void onFailure(Call<ObjectRes> call, Throwable t) {
+               Log.e(TAG, "Multipart upload failed");
+           }
+       });
+
+
+   }
+
+
+
+
+
+    // ftp Related Functions
+    @SuppressLint("MissingPermission")
+    public void uploadSignature(Bitmap photo){
+
+        storeImage(photo);
+
+//        if (ftpClient != null) {
+//            ftpClient.uploadFile(file.getAbsolutePath(), new EZFtpTransferSpeedCallback() {
+//                @Override
+//                public void onTransferSpeed(boolean isFinished, long startTime, long endTime, double speed, double averageSpeed) {
+//                    Log.e("FTP", "onTransferSpeed: speed = " + speed + ",isFinished = " + isFinished);
+//                }
+//            });
+//        }
+    }
+
+
+
+
+
+
+
+
+
     private void togglePlaceHolder(int tab) {
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
@@ -1089,7 +1157,7 @@ public class JobDetailFragment extends AbstractFragment {
             signaturePad.setVisibility(VISIBLE);
             signatureBackground.setVisibility(VISIBLE);
             clear.setVisibility(VISIBLE);
-            done.setVisibility(View.VISIBLE);
+           // done.setVisibility(View.VISIBLE);
 
             // signatureLabel.setLayoutParams(params);
             photoLabel.setTextColor(ContextCompat.getColor(getContext(), R.color.aluminum));
@@ -1896,6 +1964,7 @@ public class JobDetailFragment extends AbstractFragment {
     }
 
 
+
     // Signature Related ==================================================
     public void saveSignature(Bitmap photo, String callBack) {
         try {
@@ -1904,7 +1973,7 @@ public class JobDetailFragment extends AbstractFragment {
 //                    + Util.convertLongDateToString(System.currentTimeMillis(), "MMddyyyy_hhss")
 //                    + ".jpg";
 
-            String filename = job.getJobNo() +  App.CONST_SIGNATURE_FILE_NAME;
+             String filename = job.getJobNo() +  App.CONST_SIGNATURE_FILE_NAME;
 
 
              photo = getResizedBitmap(photo, 400);
@@ -2087,6 +2156,8 @@ public class JobDetailFragment extends AbstractFragment {
     @Subscribe(sticky = true)
     public void onEvent(String action) {
         ;
+ //   Toast.makeText(getContext(), "Event Bus Called", Toast.LENGTH_SHORT).show();
+
 
         switch (action.toUpperCase()) {
             case "SIGNATURE_UPLOAD_FAILED":
@@ -2168,10 +2239,59 @@ public class JobDetailFragment extends AbstractFragment {
             callCompletedJob();
         }
 
+        if (action.equalsIgnoreCase("CALL_UPDATE_SHOW_PASSENGER")) {
+            callUpdateShowPassenger();
+        }
+
+
 
 //        if (action.equalsIgnoreCase("GET_JOB_DETAIL")) {
 //            callJobDetail();
 //        }
+    }
+
+
+    private void storeImage(Bitmap image) {
+        File pictureFile = getOutputMediaFile();
+        if (pictureFile == null) {
+            Log.d(TAG,
+                    "Error creating media file, check storage permissions: ");// e.getMessage());
+            return;
+        }
+        try {
+            FileOutputStream fos = new FileOutputStream(pictureFile);
+            image.compress(Bitmap.CompressFormat.PNG, 90, fos);
+            fos.close();
+        } catch (FileNotFoundException e) {
+            Log.d(TAG, "File not found: " + e.getMessage());
+        } catch (IOException e) {
+            Log.d(TAG, "Error accessing file: " + e.getMessage());
+        }
+    }
+
+    private  File getOutputMediaFile(){
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
+                + "/Android/data/"
+                + getActivity().getApplicationContext().getPackageName()
+                + "/Files");
+
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if (! mediaStorageDir.exists()){
+            if (! mediaStorageDir.mkdirs()){
+                return null;
+            }
+        }
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
+        File mediaFile;
+        String mImageName="MI_"+ timeStamp +".jpg";
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
+        return mediaFile;
     }
 }
 

@@ -150,6 +150,9 @@ public class PatientHistoryActivity extends AppCompatActivity {
         mLoading.setVisibility(View.VISIBLE);
         mRecyclerView.setVisibility(View.GONE);
 
+        // replace / with ^SLASH^ to prevent bad url issue
+        App.patientSearchParams.setCustomercode(App.patientSearchParams.getCustomercode().replace("/", "^SLASH^"));
+
         Call<JobRes> call = RestClient.COACH().getApiService().GetPatientHistory(
                 App.patientSearchParams.getCustomercode(),
                 App.patientSearchParams.getDatefrom(),
