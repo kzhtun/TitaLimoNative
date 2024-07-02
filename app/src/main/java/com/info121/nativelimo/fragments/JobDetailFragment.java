@@ -29,6 +29,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -51,6 +52,7 @@ import com.info121.nativelimo.R;
 import com.info121.nativelimo.AbstractFragment;
 import com.info121.nativelimo.App;
 import com.info121.nativelimo.activities.DialogActivity;
+import com.info121.nativelimo.activities.JobDetailActivity;
 import com.info121.nativelimo.activities.NotifyActivity;
 import com.info121.nativelimo.adapters.ContactAdapter;
 import com.info121.nativelimo.api.RestClient;
@@ -59,6 +61,7 @@ import com.info121.nativelimo.models.Job;
 import com.info121.nativelimo.models.JobRes;
 import com.info121.nativelimo.models.ObjectRes;
 
+import com.info121.nativelimo.models.RequestUpdateJob;
 import com.info121.nativelimo.utils.FtpHelper;
 import com.info121.nativelimo.utils.GeocodingLocation;
 import com.info121.nativelimo.utils.Util;
@@ -273,6 +276,7 @@ public class JobDetailFragment extends AbstractFragment {
     TextView photoLabel, signatureLabel, clear, done;
     ImageView addPhoto, passengerPhoto, signaturePhoto;
     SignaturePad signaturePad;
+    Bitmap passengerPhotoBitmap;
     View signatureBackground;
 
     ToneGenerator toneGen = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
@@ -280,55 +284,77 @@ public class JobDetailFragment extends AbstractFragment {
     Boolean visible = false;
     Boolean hasSignature = false;
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            try {
+    Context mContext;
 
-                Bundle extras = data.getExtras();
+    ActivityResultLauncher<Intent> cameraResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        Bundle extras = data.getExtras();
 
-                Bitmap photo = (Bitmap) data.getExtras().get("data");
+                        ImageView passenger_photo = dialog.findViewById(R.id.passenger_photo);
 
-                // display passenger photo
-                ImageView passenger_photo = dialog.findViewById(R.id.passenger_photo);
-                passenger_photo.setImageBitmap(photo);
+                        passengerPhotoBitmap = (Bitmap) extras.get("data");
+                        passenger_photo.setImageBitmap(passengerPhotoBitmap);
 
-//                // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
-//                Uri tempUri = getImageUri(getActivity().getApplicationContext(), photo);
+                    }
+                }
+            });
+
+
+
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if (resultCode == RESULT_OK) {
+//            try {
 //
-//                // CALL THIS METHOD TO GET THE ACTUAL PATH
-//                File finalFile = new File(getRealPathFromURI(getActivity().getApplicationContext(), tempUri));
+//                Bundle extras = data.getExtras();
 //
-//                InputStream inputStream = getActivity().getContentResolver().openInputStream(tempUri);
-
-                InputStream inputStream = bitmap2InputStream(photo);
-
-                // FTP Uploading
-                FtpHelper.uploadTask async = new FtpHelper.uploadTask(getContext(), inputStream);
-
-                if (requestCode == REQUEST_SHOW_CAMERA)
-                    async.execute(App.FTP_URL,
-                            App.FTP_USER,
-                            App.FTP_PASSWORD,
-                            App.FTP_DIR,
-                            job.getJobNo() + App.CONST_PHOTO_SHOW_FILE_NAME,
-                            job.getJobNo(),
-                            "SHOW", null);   //Passing arguments to AsyncThread
-
-                if (requestCode == REQUEST_NO_SHOW_CAMERA)
-                    async.execute(App.FTP_URL,
-                            App.FTP_USER,
-                            App.FTP_PASSWORD,
-                            App.FTP_DIR,
-                            job.getJobNo() + App.CONST_PHOTO_NO_SHOW_FILE_NAME,
-                            job.getJobNo(),
-                            "NOSHOW", null);
-
-            } catch (Exception e) {
-                Log.e("Camera Error : ", e.getLocalizedMessage().toString());
-            }
-        }
-    }
+//                Bitmap photo = (Bitmap) data.getExtras().get("data");
+//
+//                // display passenger photo
+//                ImageView passenger_photo = dialog.findViewById(R.id.passenger_photo);
+//                passenger_photo.setImageBitmap(photo);
+//
+////                // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
+////                Uri tempUri = getImageUri(getActivity().getApplicationContext(), photo);
+////
+////                // CALL THIS METHOD TO GET THE ACTUAL PATH
+////                File finalFile = new File(getRealPathFromURI(getActivity().getApplicationContext(), tempUri));
+////
+////                InputStream inputStream = getActivity().getContentResolver().openInputStream(tempUri);
+//
+////                InputStream inputStream = bitmap2InputStream(photo);
+////
+////                // FTP Uploading
+////                FtpHelper.uploadTask async = new FtpHelper.uploadTask(getContext(), inputStream);
+////
+////                if (requestCode == REQUEST_SHOW_CAMERA)
+////                    async.execute(App.FTP_URL,
+////                            App.FTP_USER,
+////                            App.FTP_PASSWORD,
+////                            App.FTP_DIR,
+////                            job.getJobNo() + App.CONST_PHOTO_SHOW_FILE_NAME,
+////                            job.getJobNo(),
+////                            "SHOW", null);   //Passing arguments to AsyncThread
+////
+////                if (requestCode == REQUEST_NO_SHOW_CAMERA)
+////                    async.execute(App.FTP_URL,
+////                            App.FTP_USER,
+////                            App.FTP_PASSWORD,
+////                            App.FTP_DIR,
+////                            job.getJobNo() + App.CONST_PHOTO_NO_SHOW_FILE_NAME,
+////                            job.getJobNo(),
+////                            "NOSHOW", null);
+//
+//            } catch (Exception e) {
+//                Log.e("Camera Error : ", e.getLocalizedMessage().toString());
+//            }
+//        }
+//    }
 
     public JobDetailFragment() {
         // Required empty public constructor
@@ -890,7 +916,7 @@ public class JobDetailFragment extends AbstractFragment {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                callUpdateNoShowPassenger();
+                callUpdateNoShowPassengerPhoto();
             }
         });
 
@@ -909,7 +935,7 @@ public class JobDetailFragment extends AbstractFragment {
 
     private void showPassengerOnBoardDialog() {
 
-        dialog = new Dialog(getActivity());
+        dialog = new Dialog(mContext);
 
         dialog.setContentView(R.layout.dialog_pob);
         dialog.setTitle("");
@@ -939,11 +965,33 @@ public class JobDetailFragment extends AbstractFragment {
 
         passengerPhoto.setImageResource(0);
 
+
+
+
+
+
         Picasso.get().load(App.CONST_PHOTO_URL + job.getJobNo() + App.CONST_PHOTO_SHOW_FILE_NAME)
                 .networkPolicy(NetworkPolicy.NO_CACHE)
                 .memoryPolicy(MemoryPolicy.NO_CACHE)
                 //    .placeholder(R.drawable.bv_logo_default).stableKey(id)
-                .into(passengerPhoto);
+ //                       .into(passengerPhoto);
+                .into(new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                       passengerPhoto.setImageBitmap(bitmap);
+                        passengerPhoto.setEnabled(false);
+                    }
+
+                    @Override
+                    public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                    }
+                });
 
 
         Picasso.get().load(App.CONST_PHOTO_URL + job.getJobNo() + App.CONST_SIGNATURE_FILE_NAME)
@@ -974,6 +1022,7 @@ public class JobDetailFragment extends AbstractFragment {
             @Override
             public void onClick(View v) {
                 openCamera(REQUEST_SHOW_CAMERA, job.getJobNo());
+                passengerPhoto.setEnabled(true);
             }
         });
 
@@ -1006,48 +1055,16 @@ public class JobDetailFragment extends AbstractFragment {
         });
 
 
-        done.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                   uploadSignature(signaturePad.getSignatureBitmap());
-
-                   if(signaturePad.isEnabled()) {
-                       Log.e("Signature Pad : " , "Enabled - Edit Mode");
-
-                       if (hasSignature) {
-                           saveSignature(signaturePad.getSignatureBitmap(), null);
-                           done.setText("SAVED");
-                       } else {
-                           AlertDialog dialog = new AlertDialog.Builder(getContext())
-                                   .setTitle(R.string.AppName)
-                                   .setMessage("Signature can not be left blank.")
-                                   .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                       @Override
-                                       public void onClick(DialogInterface dialog, int which) {
-                                           dialog.dismiss();
-                                       }
-                                   })
-                                   .create();
-
-                           dialog.show();
-                       }
-                   }
-                   else{
-                       Log.e("Signature Pad : " , "Disabled - Display Mode");
-                   }
-            }
-        });
-
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(signaturePad.isEnabled()) {
-                    Log.e("Signature Pad : ", "Enabled - Edit Mode");
                     if (hasSignature) {
-                        saveSignature(signaturePad.getSignatureBitmap(), null);
+                        callUpdateShowPassengerPhotoSignature();
+                        //  saveSignature(signaturePad.getSignatureBitmap(), null);
                         // done.setText("SAVED");
                     } else {
-                        AlertDialog dialog = new AlertDialog.Builder(getContext())
+                        AlertDialog dialog = new AlertDialog.Builder(mContext)
                                 .setTitle(R.string.AppName)
                                 .setMessage("Signature can not be left blank.")
                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -1061,15 +1078,45 @@ public class JobDetailFragment extends AbstractFragment {
                         dialog.show();
                     }
                 }else{
-                    Log.e("Signature Pad : ", "Enabled - Display Mode");
-                    callUpdateShowPassenger();
+                    callUpdateShowPassengerPhotoSignature();
                 }
-
-//                if (done.getText().toString().equalsIgnoreCase("SAVED"))
-//                    callUpdateShowPassenger();
-
             }
         });
+
+//
+//        done.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                   uploadSignature(signaturePad.getSignatureBitmap());
+//
+//                   if(signaturePad.isEnabled()) {
+//                       Log.e("Signature Pad : " , "Enabled - Edit Mode");
+//
+//                       if (hasSignature) {
+//                           saveSignature(signaturePad.getSignatureBitmap(), null);
+//                           done.setText("SAVED");
+//                       } else {
+//                           AlertDialog dialog = new AlertDialog.Builder(getContext())
+//                                   .setTitle(R.string.AppName)
+//                                   .setMessage("Signature can not be left blank.")
+//                                   .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                                       @Override
+//                                       public void onClick(DialogInterface dialog, int which) {
+//                                           dialog.dismiss();
+//                                       }
+//                                   })
+//                                   .create();
+//
+//                           dialog.show();
+//                       }
+//                   }
+//                   else{
+//                       Log.e("Signature Pad : " , "Disabled - Display Mode");
+//                   }
+//            }
+//        });
+
+
 
         // resize dialog
         Rect displayRectangle = new Rect();
@@ -1079,7 +1126,6 @@ public class JobDetailFragment extends AbstractFragment {
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.copyFrom(dialog.getWindow().getAttributes());
         lp.width = (int) (displayRectangle.width() * 0.85f);
-
 
         togglePlaceHolder(1);
 
@@ -1102,23 +1148,8 @@ public class JobDetailFragment extends AbstractFragment {
     }
 
 
-   public void uploadTest(byte[] photo){
-       Call<ObjectRes> call = RestClient.COACH().getApiService().Upload(photo);
-
-       call.enqueue(new Callback<ObjectRes>() {
-           @Override
-           public void onResponse(Call<ObjectRes> call, Response<ObjectRes> response) {
-               Log.e(TAG, "Multipart upload successful");
-           }
-
-           @Override
-           public void onFailure(Call<ObjectRes> call, Throwable t) {
-               Log.e(TAG, "Multipart upload failed");
-           }
-       });
 
 
-   }
 
 
 
@@ -1178,26 +1209,40 @@ public class JobDetailFragment extends AbstractFragment {
         }
     }
 
-    private void callUpdateShowPassenger() {
-        App.fullAddress = (App.fullAddress.isEmpty()) ? " " : App.fullAddress;
 
+    private void callUpdateShowPassengerPhotoSignature() {
+        RequestUpdateJob requestUpdateJob = new RequestUpdateJob();
+
+        App.fullAddress = (App.fullAddress.isEmpty()) ? " " : App.fullAddress;
         EditText ed = dialog.findViewById(R.id.remarks);
+        ImageView passenger_photo = dialog.findViewById(R.id.passenger_photo);
+
         String remark = ed.getText().toString().replaceAll("\n", "##-##");
 
-        Call<JobRes> call = RestClient.COACH().getApiService().UpdateShowConfirmJob(
-                job.getJobNo(),
-                App.fullAddress,
-                Util.replaceEscapeChr(remark),
-                "Passenger On Board"
-        );
+
+
+        String Base64photo;
+        String Base64signature;
+
+        Base64photo = (passengerPhoto.isEnabled()) ? Util.convertBitmapToBase64String(passengerPhotoBitmap) : "";
+        Base64signature = (signaturePad.isEnabled()) ? Util.convertBitmapToBase64String(signaturePad.getSignatureBitmap()) : "";
+
+        requestUpdateJob.setJobno( job.getJobNo());
+        requestUpdateJob.setJobloc( App.fullAddress);
+        requestUpdateJob.setRemarks(Util.replaceEscapeChr(remark));
+        requestUpdateJob.setStatus("Passenger On Board");
+        requestUpdateJob.setBase64signature(Base64signature);
+        requestUpdateJob.setBase64photo(Base64photo);
+
+        Call<JobRes> call = RestClient.COACH().getApiService().UpdateShowPassengerPhotoSignature(requestUpdateJob);
 
         call.enqueue(new Callback<JobRes>() {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
+                assert response.body() != null;
                 if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
                     Toast.makeText(getContext(), "Passenger On Board Successful", Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
-
                     callJobDetail();
                 }
 
@@ -1212,6 +1257,82 @@ public class JobDetailFragment extends AbstractFragment {
             }
         });
     }
+
+    private void callUpdateNoShowPassengerPhoto() {
+        RequestUpdateJob requestUpdateJob = new RequestUpdateJob();
+
+        App.fullAddress = (App.fullAddress.isEmpty()) ? " " : App.fullAddress;
+        EditText ed = dialog.findViewById(R.id.remarks);
+        ImageView passenger_photo = dialog.findViewById(R.id.passenger_photo);
+
+        String remark = ed.getText().toString().replaceAll("\n", "##-##");
+
+        requestUpdateJob.setJobno( job.getJobNo());
+        requestUpdateJob.setJobloc(  App.fullAddress);
+        requestUpdateJob.setRemarks(  Util.replaceEscapeChr(remark));
+        requestUpdateJob.setStatus("Passenger On Board");
+        requestUpdateJob.setBase64signature("");
+        requestUpdateJob.setBase64photo(Util.convertBitmapToBase64String(passengerPhotoBitmap));
+
+        Call<JobRes> call = RestClient.COACH().getApiService().UpdateNoShowPassengerPhoto(requestUpdateJob);
+
+        call.enqueue(new Callback<JobRes>() {
+            @Override
+            public void onResponse(Call<JobRes> call, Response<JobRes> response) {
+                assert response.body() != null;
+                if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
+                    Toast.makeText(getContext(), "Passenger On Board Successful", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                    callJobDetail();
+                }
+
+                if (response.body().getResponsemessage().equalsIgnoreCase("BAD TOKEN")) {
+                    RestClient.refreshToken("UPDATE_SHOW_PASSENGER");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JobRes> call, Throwable t) {
+                dialog.dismiss();
+            }
+        });
+    }
+
+
+//    private void callUpdateShowPassenger() {
+//        App.fullAddress = (App.fullAddress.isEmpty()) ? " " : App.fullAddress;
+//
+//        EditText ed = dialog.findViewById(R.id.remarks);
+//        String remark = ed.getText().toString().replaceAll("\n", "##-##");
+//
+//        Call<JobRes> call = RestClient.COACH().getApiService().UpdateShowConfirmJob(
+//                job.getJobNo(),
+//                App.fullAddress,
+//                Util.replaceEscapeChr(remark),
+//                "Passenger On Board"
+//        );
+//
+//        call.enqueue(new Callback<JobRes>() {
+//            @Override
+//            public void onResponse(Call<JobRes> call, Response<JobRes> response) {
+//                if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
+//                    Toast.makeText(getContext(), "Passenger On Board Successful", Toast.LENGTH_SHORT).show();
+//                    dialog.dismiss();
+//
+//                    callJobDetail();
+//                }
+//
+//                if (response.body().getResponsemessage().equalsIgnoreCase("BAD TOKEN")) {
+//                    RestClient.refreshToken("UPDATE_SHOW_PASSENGER");
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<JobRes> call, Throwable t) {
+//                dialog.dismiss();
+//            }
+//        });
+//    }
 
     private void callUpdateNoShowPassenger() {
         App.fullAddress = (App.fullAddress.isEmpty()) ? " " : App.fullAddress;
@@ -1338,21 +1459,25 @@ public class JobDetailFragment extends AbstractFragment {
 
     public void openCamera(final int requestCode, final String jobNo) {
 
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
+        getActivity().runOnUiThread(() -> {
+
+            //Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            cameraResultLauncher.launch(intent);
 
 //                File f = new File(Environment.getExternalStorageDirectory(), "temp.jpg");
 //                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 //                intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(MainActivity.this, AUTHORITY, f));
 //                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-                //Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                //intent.putExtra("filename", fileName);
-                startActivityForResult(intent, requestCode);
-            }
+//                //Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+//                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//                //intent.putExtra("filename", fileName);
+//                startActivityForResult(intent, requestCode);
+//
+//              //  someActivityResultLauncher.launch(intent);
         });
     }
 
@@ -1683,7 +1808,7 @@ public class JobDetailFragment extends AbstractFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
+        mContext = context;
     }
 
     @Override
@@ -2204,8 +2329,12 @@ public class JobDetailFragment extends AbstractFragment {
             updateJobStatus(action.replace("ACTION_", ""));
         }
 
-        if (action.equalsIgnoreCase("UPDATE_SHOW_PASSENGER")) {
-            callUpdateShowPassenger();
+        // TODO: test well before release
+//        if (action.equalsIgnoreCase("UPDATE_SHOW_PASSENGER")) {
+//            callUpdateShowPassenger();
+
+
+
 
             // validate photo already exit.
 //            if (passengerPhoto.getDrawable() == null) {
@@ -2229,7 +2358,7 @@ public class JobDetailFragment extends AbstractFragment {
 //            }
 
 
-        }
+//        }
 
         if (action.equalsIgnoreCase("UPDATE_NO_SHOW")) {
             callUpdateNoShowPassenger();
@@ -2239,9 +2368,10 @@ public class JobDetailFragment extends AbstractFragment {
             callCompletedJob();
         }
 
-        if (action.equalsIgnoreCase("CALL_UPDATE_SHOW_PASSENGER")) {
-            callUpdateShowPassenger();
-        }
+        // TODO: test well before release
+//        if (action.equalsIgnoreCase("CALL_UPDATE_SHOW_PASSENGER")) {
+//            callUpdateShowPassenger();
+//        }
 
 
 

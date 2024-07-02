@@ -82,8 +82,6 @@ public class ContactAdapter extends BaseAdapter {
 
 
 
-
-
         whatsapp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

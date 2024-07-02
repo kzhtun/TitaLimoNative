@@ -301,13 +301,23 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 @Override
                 public void onClick(View v) {
 
-                    if (mCurrentTab.equalsIgnoreCase("TODAY")) {
-                        getTodayJobs(jobNo, index);
-                    }
+//                    if (mCurrentTab.equalsIgnoreCase("TODAY")) {
+//                        getTodayJobs(jobNo, index);
+//                    }
+//
+//                    if (mCurrentTab.equalsIgnoreCase("TOMORROW")) {
+//                        getTomorrowJobs(jobNo, index);
+//                    }
 
-                    if (mCurrentTab.equalsIgnoreCase("TOMORROW")) {
-                        getTomorrowJobs(jobNo, index);
-                    }
+                   // if (mCurrentTab.equalsIgnoreCase("FUTURE") || mCurrentTab.equalsIgnoreCase("HISTORY")) {
+                        App.jobList = mJobList;
+
+                        Intent intent = new Intent(mContext, JobDetailActivity.class);
+                        intent.putExtra("jobNo", jobNo);
+                        intent.putExtra("index", index);
+                        intent.putExtra("currentTab", mCurrentTab);
+                        mContext.startActivity(intent);
+                  //  }
 
 
 //                    App.jobList = mJobList;
@@ -747,34 +757,6 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
 
-    // daily updates
-    private void updateJobRemark(final String jobNo, final String message) {
-        Call<JobRes> call = RestClient.COACH().getApiService().UpdateJobRemark(jobNo, message.replaceAll("\n", "##-##"));
-
-        call.enqueue(new Callback<JobRes>() {
-            @Override
-            public void onResponse(Call<JobRes> call, Response<JobRes> response) {
-                if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
-                    Toast.makeText(mContext, "Successfully Updated", Toast.LENGTH_SHORT).show();
-
-                    // refresh the adapter
-                    mJobList.get(adapterPosition).setUpdates(message);
-                    notifyDataSetChanged();
-                }
-
-                if (response.body().getResponsemessage().equalsIgnoreCase("BAD TOKEN")) {
-                    RestClient.refreshToken("GET_TODAY_JOBS");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<JobRes> call, Throwable t) {
-
-            }
-        });
-
-
-    }
 
     private void getTodayJobs(final String jobNo, final int index) {
         Call<JobRes> call = RestClient.COACH().getApiService().GetTodayJobs();
@@ -782,7 +764,7 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         call.enqueue(new Callback<JobRes>() {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
-
+               assert response.body() != null;
                 if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
                     mJobList = (List<Job>) response.body().getJobs();
                     if (mJobList != null)
@@ -821,6 +803,7 @@ public class JobsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         call.enqueue(new Callback<JobRes>() {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
+                assert response.body() != null;
                 if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
 
                     mJobList = (List<Job>) response.body().getJobs();

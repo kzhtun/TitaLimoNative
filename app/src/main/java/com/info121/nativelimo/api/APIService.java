@@ -4,6 +4,7 @@ package com.info121.nativelimo.api;
 import com.info121.nativelimo.models.JobRes;
 import com.info121.nativelimo.models.ObjectRes;
 import com.info121.nativelimo.models.RequestMobileLog;
+import com.info121.nativelimo.models.RequestUpdateJob;
 import com.info121.nativelimo.models.RequestUpdateRemark;
 
 import java.util.stream.Stream;
@@ -88,6 +89,13 @@ public interface APIService {
 
     @POST("updatemobilelog")
     Call<JobRes> UpdateMobileLog(@Body RequestMobileLog requestMobileLog);
+
+    @POST("UpdateShowPassengerPhotoSignature")
+    Call<JobRes> UpdateShowPassengerPhotoSignature(@Body RequestUpdateJob requestUpdateJob);
+
+    @POST("UpdateNoShowPassengerPhoto")
+    Call<JobRes> UpdateNoShowPassengerPhoto(@Body RequestUpdateJob requestUpdateJob);
+
 
 //    //amad,123,android,241jlksfljsaf
 //    @GET("updatedriverdetail/{user},{deviceId},{deviceType},{fcm_token}")
