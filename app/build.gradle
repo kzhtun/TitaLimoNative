@@ -9,8 +9,8 @@ android {
         applicationId "com.info121.nativelimo"
         minSdkVersion 23
         targetSdkVersion 34
-        versionCode 50
-        versionName "2.3"
+        versionCode 52
+        versionName "2.4"
     }
 
     tasks.withType(JavaCompile).configureEach{

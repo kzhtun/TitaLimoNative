@@ -34,7 +34,8 @@ public class App extends Application {
     public static String DEVICE_TYPE = "ANDROID";
     String TAG = "Application";
 
-    static String ENDPOINT = "http://118.200.133.162/";
+    static String ENDPOINT = "http://219.75.99.33/";
+  //  static String ENDPOINT = "  http://info121.sytes.net/";
 
     //---------------------------------------------------------------------//
     // iOPS DEV ACER API
@@ -56,7 +57,7 @@ public class App extends Application {
 
     //---------------------------------------------------------------------//
 
-//    // TitaLimo Live
+    // TitaLimo Live
 //    public static String CONST_REST_API_URL = "http://97.74.89.233/RestApiTitanium/MyLimoService.svc/";
 //    public static String CONST_PDF_URL = "http://97.74.89.233/iops/uploads/";
 //    public static String CONST_PHOTO_URL = "http://97.74.89.233/iops/images/limopics/";

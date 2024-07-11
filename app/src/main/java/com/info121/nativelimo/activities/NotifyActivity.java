@@ -444,20 +444,20 @@ public class NotifyActivity  extends AbstractActivity {
         });
     }
 
+//
+//    private void callPendingIntent(){
+//        Intent mStartActivity = new Intent(mContext, LoginActivity.class);
+//        int mPendingIntentId = 123456;
+//        PendingIntent mPendingIntent = PendingIntent.getActivity(mContext, mPendingIntentId,    mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+//        AlarmManager mgr = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+//        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+//        System.exit(0);
+//    }
 
-    private void callPendingIntent(){
-        Intent mStartActivity = new Intent(mContext, LoginActivity.class);
-        int mPendingIntentId = 123456;
-        PendingIntent mPendingIntent = PendingIntent.getActivity(mContext, mPendingIntentId,    mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
-        AlarmManager mgr = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
-        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
-        System.exit(0);
-    }
-
-
-    public void updateJobWithNewToken(){
-
-    }
+//
+//    public void updateJobWithNewToken(){
+//
+//    }
 
 
     public void callValidateDriver(String userName) {

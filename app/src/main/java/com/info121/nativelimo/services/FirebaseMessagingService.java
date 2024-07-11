@@ -397,10 +397,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
             long h1 = 3600000;
             long m30 = 1800000;
 
-            if(timeDiff <= m30 && timeDiff >= 0)
-                return true;
-            else
-                return false;
+            return timeDiff <= m30 && timeDiff >= 0;
 
         } catch (ParseException e) {
             e.printStackTrace();

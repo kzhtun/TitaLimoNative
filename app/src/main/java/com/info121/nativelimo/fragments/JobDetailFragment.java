@@ -904,7 +904,23 @@ public class JobDetailFragment extends AbstractFragment {
                 .networkPolicy(NetworkPolicy.NO_CACHE)
                 .memoryPolicy(MemoryPolicy.NO_CACHE)
                 //    .placeholder(R.drawable.bv_logo_default).stableKey(id)
-                .into(passengerPhoto);
+                .into(new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        passengerPhoto.setImageBitmap(bitmap);
+                        passengerPhoto.setEnabled(false);
+                    }
+
+                    @Override
+                    public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                    }
+                });
 
         addPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -979,7 +995,7 @@ public class JobDetailFragment extends AbstractFragment {
                     @Override
                     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                        passengerPhoto.setImageBitmap(bitmap);
-                        passengerPhoto.setEnabled(false);
+                       passengerPhoto.setEnabled(false);
                     }
 
                     @Override
@@ -1218,8 +1234,6 @@ public class JobDetailFragment extends AbstractFragment {
         ImageView passenger_photo = dialog.findViewById(R.id.passenger_photo);
 
         String remark = ed.getText().toString().replaceAll("\n", "##-##");
-
-
 
         String Base64photo;
         String Base64signature;
