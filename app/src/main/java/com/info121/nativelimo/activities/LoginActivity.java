@@ -429,9 +429,13 @@ public class LoginActivity extends AbstractActivity {
     private void showOutdatedDialog() {
         if (App.CONST_REST_API_URL.indexOf(":83") > 0) return;
 
+        btnLogin.setEnabled(true);
+
         AlertDialog dialog = new AlertDialog.Builder(mContext)
                 .setTitle(R.string.AppName)
                 .setMessage(R.string.message_version_outdated)
+
+
                 .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -439,7 +443,28 @@ public class LoginActivity extends AbstractActivity {
                         finishAffinity();
                     }
                 })
-                .setNegativeButton("Go to Play Store", new DialogInterface.OnClickListener() {
+
+                .setNegativeButton("Ignore",new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+
+                        if (prefDB.getBoolean(App.CONST_REMEMBER_ME)) {
+                            mUserName.setText(prefDB.getString(App.CONST_USER_NAME));
+                            mRemember.setChecked(true);
+
+                            if(autoLogin)
+                                performLogin();
+                            else
+                                btnLogin.setEnabled(true);
+                        }else{
+                            btnLogin.setEnabled(true);
+                        }
+                    }
+                })
+
+
+                .setNeutralButton("Go to Play Store", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         finishAffinity();

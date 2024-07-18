@@ -71,7 +71,7 @@
                     android:id="@+id/passenger_photo"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
+                    android:adjustViewBounds="false"
                     android:background="@drawable/bottom_rounded_layout"
                     android:scaleType="fitCenter" />
 

@@ -189,13 +189,13 @@ public class Util {
         Log.e("Stack Trace : ", traceLog);
     }
 
-    public static String convertBitmapToBase64String(Bitmap bitmap){
+    public static String convertBitmapToBase64String(Bitmap bitmap, Integer quality){
 
         if(bitmap==null) return "";
 
         // get signature byte and base64 string
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, byteArrayOutputStream);
         byte[] byteArray = byteArrayOutputStream .toByteArray();
         return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }

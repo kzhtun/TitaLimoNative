@@ -14,9 +14,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -29,6 +31,8 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 
+import android.os.ParcelFileDescriptor;
+import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
@@ -77,12 +81,14 @@ import org.greenrobot.eventbus.Subscribe;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -116,6 +122,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 
 public class JobDetailFragment extends AbstractFragment {
@@ -292,13 +299,30 @@ public class JobDetailFragment extends AbstractFragment {
                 @Override
                 public void onActivityResult(ActivityResult result) {
                     if (result.getResultCode() == Activity.RESULT_OK) {
+
                         Intent data = result.getData();
                         Bundle extras = data.getExtras();
 
                         ImageView passenger_photo = dialog.findViewById(R.id.passenger_photo);
 
+                        assert extras != null;
                         passengerPhotoBitmap = (Bitmap) extras.get("data");
+
                         passenger_photo.setImageBitmap(passengerPhotoBitmap);
+
+//                        Uri imgUri = result.getData().getData();
+//                        passengerPhotoBitmap = uriToBitmap(imgUri);
+//                        passenger_photo.setImageURI(imgUri);
+
+//                        passenger_photo.setImageURI(imgUri);
+//
+//                        try {
+//                            passengerPhotoBitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imgUri);
+//                        } catch (IOException e) {
+//                            Log.e(TAG, e.getMessage());
+//                            throw new RuntimeException(e);
+//
+//                        }
 
                     }
                 }
@@ -1238,8 +1262,13 @@ public class JobDetailFragment extends AbstractFragment {
         String Base64photo;
         String Base64signature;
 
-        Base64photo = (passengerPhoto.isEnabled()) ? Util.convertBitmapToBase64String(passengerPhotoBitmap) : "";
-        Base64signature = (signaturePad.isEnabled()) ? Util.convertBitmapToBase64String(signaturePad.getSignatureBitmap()) : "";
+//        BitmapDrawable bitmapDrawable = (BitmapDrawable) passenger_photo.getDrawable();
+//        Bitmap bitmap = bitmapDrawable.getBitmap();
+
+
+
+        Base64photo = (passengerPhoto.isEnabled()) ? Util.convertBitmapToBase64String(passengerPhotoBitmap, 100) : "";
+        Base64signature = (signaturePad.isEnabled()) ? Util.convertBitmapToBase64String(signaturePad.getSignatureBitmap(), 10) : "";
 
         requestUpdateJob.setJobno( job.getJobNo());
         requestUpdateJob.setJobloc( App.fullAddress);
@@ -1286,7 +1315,7 @@ public class JobDetailFragment extends AbstractFragment {
         requestUpdateJob.setRemarks(  Util.replaceEscapeChr(remark));
         requestUpdateJob.setStatus("Passenger On Board");
         requestUpdateJob.setBase64signature("");
-        requestUpdateJob.setBase64photo(Util.convertBitmapToBase64String(passengerPhotoBitmap));
+        requestUpdateJob.setBase64photo(Util.convertBitmapToBase64String(passengerPhotoBitmap, 50));
 
         Call<JobRes> call = RestClient.COACH().getApiService().UpdateNoShowPassengerPhoto(requestUpdateJob);
 
@@ -1476,7 +1505,9 @@ public class JobDetailFragment extends AbstractFragment {
         getActivity().runOnUiThread(() -> {
 
             //Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+           // Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             cameraResultLauncher.launch(intent);
 

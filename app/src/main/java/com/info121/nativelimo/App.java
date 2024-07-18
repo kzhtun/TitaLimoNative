@@ -33,7 +33,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 public class App extends Application {
     public static String DEVICE_TYPE = "ANDROID";
     String TAG = "Application";
-
+//
     static String ENDPOINT = "http://219.75.99.33/";
   //  static String ENDPOINT = "  http://info121.sytes.net/";
 
