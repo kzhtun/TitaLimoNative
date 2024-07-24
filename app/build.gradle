@@ -9,7 +9,7 @@ android {
         applicationId "com.info121.nativelimo"
         minSdkVersion 23
         targetSdkVersion 34
-        versionCode 53
+        versionCode 54
         versionName "2.4"
     }
 
