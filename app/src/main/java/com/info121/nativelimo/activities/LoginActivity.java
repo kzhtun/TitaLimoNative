@@ -35,23 +35,22 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+
 
 import com.info121.nativelimo.AbstractActivity;
 import com.info121.nativelimo.App;
-import com.info121.nativelimo.BuildConfig;
+
 import com.info121.nativelimo.R;
 import com.info121.nativelimo.api.RestClient;
+
 import com.info121.nativelimo.models.ObjectRes;
+import com.info121.nativelimo.models.RequestValidateDriver;
 import com.info121.nativelimo.models.SearchParams;
-import com.info121.nativelimo.services.FirebaseMessagingService;
+
 import com.info121.nativelimo.services.SmartLocationService;
 import com.info121.nativelimo.utils.PrefDB;
 import com.info121.nativelimo.utils.Util;
 
-import java.util.Timer;
-import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -72,6 +71,9 @@ public class LoginActivity extends AbstractActivity {
     @BindView(R.id.user_name)
     EditText mUserName;
 
+    @BindView(R.id.password)
+    EditText mPassword;
+
     @BindView(R.id.remember_me)
     CheckBox mRemember;
 
@@ -88,9 +90,12 @@ public class LoginActivity extends AbstractActivity {
     Button btnLogin;
 
 
+
     String[] permissions = {
             Manifest.permission.POST_NOTIFICATIONS
     };
+
+
 
 
     @Override
@@ -142,6 +147,8 @@ public class LoginActivity extends AbstractActivity {
         mApiVersion.setText("Api " + Util.getVersionCode(mContext));
         mUiVersion.setText("Ver " + Util.getVersionName(mContext));
 
+
+
     }
 
 
@@ -158,50 +165,71 @@ public class LoginActivity extends AbstractActivity {
 //        }
 //    }
 
-    private void performLogin(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // check notification permissions after login success
-            if (hasPermissions(mContext, permissions)) {
-                callValidateDriver(mUserName.getText().toString());
-            } else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                    requestPermissions(permissions, 80);
-            }
-        } else {
-            callValidateDriver(mUserName.getText().toString());
-        }
-    }
+//    private void performLogin(){
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//            // check notification permissions after login success
+//            if (hasPermissions(mContext, permissions)) {
+//                callValidateDriver(mUserName.getText().toString());
+//            } else {
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+//                    requestPermissions(permissions, 80);
+//            }
+//        } else {
+//            callValidateDriver(mUserName.getText().toString());
+//        }
+//    }
 
     @OnClick(R.id.login)
-    public void loginOnClick() {
+    public void login_onClick(){
         mProgressBar.setVisibility(View.VISIBLE);
 
         if (mRemember.isChecked()) {
-            performLogin();
+            callValidateDriverCredential();
         }else{
             AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this).create();
             alertDialog.setTitle("Warning");
-            alertDialog.setMessage("By logging in without remember me checked, application will not automatically login whenever user touch the incomming job notifcations. You will need to login manually.\nAre you sure you want to login?");
+            alertDialog.setMessage("By logging in without remember me checked, application will not automatically login whenever user touch the incoming job notifications. You will need to login manually.\nAre you sure you want to login?");
             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
+                    (dialog, which) -> {
+                        dialog.dismiss();
+                        callValidateDriverCredential();
 
-                                performLogin();
-
-                        }
                     });
             alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "CANCEL",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
+                    (dialog, which) -> dialog.dismiss());
             alertDialog.show();
         }
-
-
     }
+
+//    public void loginOnClickOld() {
+//        mProgressBar.setVisibility(View.VISIBLE);
+//
+//        if (mRemember.isChecked()) {
+//            performLogin();
+//        }else{
+//            AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this).create();
+//            alertDialog.setTitle("Warning");
+//            alertDialog.setMessage("By logging in without remember me checked, application will not automatically login whenever user touch the incomming job notifcations. You will need to login manually.\nAre you sure you want to login?");
+//            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
+//                    new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            dialog.dismiss();
+//
+//                                performLogin();
+//
+//                        }
+//                    });
+//            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "CANCEL",
+//                    new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            dialog.dismiss();
+//                        }
+//                    });
+//            alertDialog.show();
+//        }
+//
+//
+//    }
 
 
     @Override
@@ -229,11 +257,16 @@ public class LoginActivity extends AbstractActivity {
                 }
             }
         }
-        callValidateDriver(mUserName.getText().toString());
+        //callValidateDriver(mUserName.getText().toString());
     }
 
-    public void callValidateDriver(String userName) {
-        Call<ObjectRes> call = RestClient.COACH().getApiService().ValidateDriver(userName.trim());
+    public void callValidateDriverCredential() {
+        mProgressBar.setVisibility(View.GONE);
+
+        Call<ObjectRes> call = RestClient.COACH().getApiService().ValidateDriverCredential(
+                new RequestValidateDriver(mUserName.getText().toString().trim(),
+                        mPassword.getText().toString().trim())
+        );
 
         call.enqueue(new Callback<ObjectRes>() {
             @Override
@@ -243,20 +276,32 @@ public class LoginActivity extends AbstractActivity {
                     showRefreshDialog();
                 }
 
-                if (response.body().getResponsemessage().equalsIgnoreCase("VALID")) {
-                    App.userName = userName;
-                    App.deviceID = Util.getDeviceID(getApplicationContext());
-                    App.authToken = response.body().getToken();
-                    App.timerDelay = 6000;
-
-                    callUpdateDevice();
-
-                } else {
+                if (response.body().getResponsemessage().equalsIgnoreCase("Invalid")) {
                     mUserName.setError("Invalid user name");
                     mUserName.requestFocus();
                     mProgressBar.setVisibility(View.GONE);
                 }
 
+                if (response.body().getResponsemessage().equalsIgnoreCase("FirstLogin")) {
+                    App.userName = mUserName.getText().toString().trim();
+                    App.password = mPassword.getText().toString().trim();
+                    App.deviceID = Util.getDeviceID(getApplicationContext());
+                    App.authToken = response.body().getToken();
+                    startActivity(new Intent(LoginActivity.this, ChangePasswordActivity.class));
+
+                    mUserName.setError(null);
+                }
+
+                if (response.body().getResponsemessage().equalsIgnoreCase("VALID")) {
+                    App.userName = mUserName.getText().toString().trim();
+                    App.password = mPassword.getText().toString().trim();
+                    App.deviceID = Util.getDeviceID(getApplicationContext());
+                    App.authToken = response.body().getToken();
+                    App.timerDelay = 6000;
+                    mUserName.setError(null);
+
+                    callUpdateDevice();
+                }
             }
 
             @Override
@@ -270,17 +315,50 @@ public class LoginActivity extends AbstractActivity {
         btnLogin.setEnabled(true);
     }
 
-    public static boolean hasPermissions(Context context, String... permissions) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
-            for (String permission : permissions) {
-                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
-                    return false;
-                }
-            }
-        }
 
-        return true;
+    private void saveUserInfo(){
+
     }
+
+//    public void callValidateDriver(String userName) {
+//        Call<ObjectRes> call = RestClient.COACH().getApiService().ValidateDriver(userName.trim());
+//
+//        call.enqueue(new Callback<ObjectRes>() {
+//            @Override
+//            public void onResponse(Call<ObjectRes> call, Response<ObjectRes> response) {
+//
+//                if (response.body() == null) {
+//                    showRefreshDialog();
+//                }
+//
+//                if (response.body().getResponsemessage().equalsIgnoreCase("VALID")) {
+//                    App.userName = userName;
+//                    App.deviceID = Util.getDeviceID(getApplicationContext());
+//                    App.authToken = response.body().getToken();
+//                    App.timerDelay = 6000;
+//
+//                    callUpdateDevice();
+//
+//                } else {
+//                    mUserName.setError("Invalid user name");
+//                    mUserName.requestFocus();
+//                    mProgressBar.setVisibility(View.GONE);
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ObjectRes> call, Throwable t) {
+//                mUserName.setError("Error in connection.");
+//                mUserName.requestFocus();
+//                mProgressBar.setVisibility(View.GONE);
+//            }
+//        });
+//
+//        btnLogin.setEnabled(true);
+//    }
+
+
 
     private void callCheckVersion() {
 
@@ -292,12 +370,14 @@ public class LoginActivity extends AbstractActivity {
                 if (response.body().getResponsemessage().equalsIgnoreCase("OUTDATED")) {
                     showOutdatedDialog();
                 }else{
+                    btnLogin.setEnabled(true);
                     if (prefDB.getBoolean(App.CONST_REMEMBER_ME)) {
                         mUserName.setText(prefDB.getString(App.CONST_USER_NAME));
+                        mPassword.setText(prefDB.getString(App.CONST_PASSWORD));
                         mRemember.setChecked(true);
 
-                        if(autoLogin)
-                            performLogin();
+                        if(mPassword.getText().toString().trim().length()>0 && autoLogin)
+                            callValidateDriverCredential();
                         else
                             btnLogin.setEnabled(true);
                      }else{
@@ -350,9 +430,9 @@ public class LoginActivity extends AbstractActivity {
         //RestClient.Dismiss();
 
         prefDB.putString(App.CONST_USER_NAME, App.userName);
+        prefDB.putString(App.CONST_PASSWORD, App.password);
         prefDB.putString(App.CONST_DEVICE_ID, App.deviceID);
         prefDB.putLong(App.CONST_TIMER_DELAY, App.timerDelay);
-
 
 
         if (mRemember.isChecked())
@@ -449,17 +529,17 @@ public class LoginActivity extends AbstractActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
 
-                        if (prefDB.getBoolean(App.CONST_REMEMBER_ME)) {
-                            mUserName.setText(prefDB.getString(App.CONST_USER_NAME));
-                            mRemember.setChecked(true);
-
-                            if(autoLogin)
-                                performLogin();
-                            else
-                                btnLogin.setEnabled(true);
-                        }else{
-                            btnLogin.setEnabled(true);
-                        }
+//                        if (prefDB.getBoolean(App.CONST_REMEMBER_ME)) {
+//                            mUserName.setText(prefDB.getString(App.CONST_USER_NAME));
+//                            mRemember.setChecked(true);
+//
+//                            if(autoLogin)
+//                                performLogin();
+//                            else
+//                                btnLogin.setEnabled(true);
+//                        }else{
+//                            btnLogin.setEnabled(true);
+//                        }
                     }
                 })
 

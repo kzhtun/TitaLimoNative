@@ -317,19 +317,47 @@ public class JobOverviewActivity extends AbstractActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(Menu.NONE, 0, Menu.NONE, "Option")
+
+
+
+        menu.add(Menu.NONE, 0, Menu.NONE, "Prominent Tone")
                 .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        showSettingSelectDialog();
+                        Intent intent = new Intent(mContext, ToneSelection.class);
+                        intent.putExtra(ToneSelection.TONE_TYPE, "PROMINENT");
+                        startActivity(intent);
                         return true;
                     }
                 })
                 .setIcon(ContextCompat.getDrawable(mContext, R.mipmap.ic_settings_white_24dp))
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 
+        menu.add(Menu.NONE, 1, Menu.NONE, "Notification Tone")
+                .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        Intent intent = new Intent(mContext, ToneSelection.class);
+                        intent.putExtra(ToneSelection.TONE_TYPE, "NOTIFICATION");
+                        startActivity(intent);
+                        return true;
+                    }
+                })
+                .setIcon(ContextCompat.getDrawable(mContext, R.mipmap.ic_settings_white_24dp))
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 
-        menu.add(Menu.NONE, 1, Menu.NONE, "Logout")
+        menu.add(Menu.NONE, 2, Menu.NONE, "Change Password")
+                .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        startActivity(new Intent(JobOverviewActivity.this, ChangePasswordActivity.class));
+                        return true;
+                    }
+                })
+                .setIcon(ContextCompat.getDrawable(mContext, R.mipmap.ic_settings_white_24dp))
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+
+        menu.add(Menu.NONE, 3, Menu.NONE, "Logout")
                 .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
@@ -341,7 +369,6 @@ public class JobOverviewActivity extends AbstractActivity {
                 })
                 .setIcon(ContextCompat.getDrawable(mContext, R.mipmap.ic_exit_to_app_white_24dp))
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
 
         return super.onCreateOptionsMenu(menu);
     }

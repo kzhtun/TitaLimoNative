@@ -27,6 +27,7 @@
     <application
         android:name=".App"
         android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
         android:icon="@mipmap/my_limo_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
@@ -35,8 +36,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat"
-        tools:replace="android:allowBackup"
-        android:dataExtractionRules="@xml/data_extraction_rules">
+        tools:replace="android:allowBackup">
+
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
@@ -58,6 +59,11 @@
         <service android:name=".services.SmartLocationService" />
 
         <activity
+            android:name=".activities.ChangePasswordActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"/>
+        <activity
             android:name=".activities.DialogActivity"
             android:excludeFromRecents="true"
             android:screenOrientation="portrait"
@@ -65,8 +71,8 @@
         <activity
             android:name=".activities.NotifyActivity"
             android:configChanges="orientation|screenSize"
-            android:screenOrientation="portrait"
-            android:exported="true" />
+            android:exported="true"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.ToneSelection"
             android:configChanges="orientation|screenSize"
@@ -99,6 +105,7 @@
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

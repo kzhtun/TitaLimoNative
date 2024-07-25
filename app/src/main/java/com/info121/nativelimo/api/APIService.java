@@ -5,7 +5,9 @@ import com.info121.nativelimo.models.JobRes;
 import com.info121.nativelimo.models.ObjectRes;
 import com.info121.nativelimo.models.RequestMobileLog;
 import com.info121.nativelimo.models.RequestUpdateJob;
+import com.info121.nativelimo.models.RequestUpdatePassword;
 import com.info121.nativelimo.models.RequestUpdateRemark;
+import com.info121.nativelimo.models.RequestValidateDriver;
 
 import java.util.stream.Stream;
 
@@ -95,6 +97,13 @@ public interface APIService {
 
     @POST("UpdateNoShowPassengerPhoto")
     Call<JobRes> UpdateNoShowPassengerPhoto(@Body RequestUpdateJob requestUpdateJob);
+
+
+    @POST("ValidateDriverCredential")
+    Call<ObjectRes> ValidateDriverCredential(@Body RequestValidateDriver requestValidateDriver);
+
+    @POST("UpdatePassword")
+    Call<ObjectRes> UpdatePassword(@Body RequestUpdatePassword requestUpdatePassword);
 
 
 //    //amad,123,android,241jlksfljsaf

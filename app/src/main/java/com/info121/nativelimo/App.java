@@ -39,34 +39,34 @@ public class App extends Application {
 
     //---------------------------------------------------------------------//
     // iOPS DEV ACER API
-   //  public static String CONST_REST_API_URL = "http://info121.sytes.net/RestApiTitanium/MyLimoService.svc/";
-//    public static String CONST_REST_API_URL = ENDPOINT + "RestApiTitanium/MyLimoService.svc/";
-//    public static String CONST_PDF_URL = ENDPOINT+ "iops/uploads/";
-//    public static String CONST_PHOTO_URL = ENDPOINT + "iops/images/limopics/";
-//
-//
-// //     iOPS DEV Cypress FTP
-// // public static final String FTP_URL = "info121.sytes.net";
-//
-//    public static final String FTP_URL = "119.74.229.225";
-//    public static final String FTP_USER = "info121ftp";
-//    public static final String FTP_PASSWORD = "6b604358f1a34a88a8506205f2d0e501";
-//    public static String FTP_DIR = "limopics";
-//    //public static String FTP_DIR = "limopics";
+ //    public static String CONST_REST_API_URL = "http://info121.sytes.net/RestApiTitanium/MyLimoService.svc/";
+    public static String CONST_REST_API_URL = ENDPOINT + "RestApiTitanium/MyLimoService.svc/";
+    public static String CONST_PDF_URL = ENDPOINT+ "iops/uploads/";
+    public static String CONST_PHOTO_URL = ENDPOINT + "iops/images/limopics/";
+
+
+ //     iOPS DEV Cypress FTP
+ // public static final String FTP_URL = "info121.sytes.net";
+
+    public static final String FTP_URL = "119.74.229.225";
+    public static final String FTP_USER = "info121ftp";
+    public static final String FTP_PASSWORD = "6b604358f1a34a88a8506205f2d0e501";
+    public static String FTP_DIR = "limopics";
+    //public static String FTP_DIR = "limopics";
 
 
     //---------------------------------------------------------------------//
 
     // TitaLimo Live
-    public static String CONST_REST_API_URL = "http://97.74.89.233/RestApiTitanium/MyLimoService.svc/";
-    public static String CONST_PDF_URL = "http://97.74.89.233/iops/uploads/";
-    public static String CONST_PHOTO_URL = "http://97.74.89.233/iops/images/limopics/";
-
-    //LIVE FTP
-    public static final String FTP_URL = "97.74.89.233";
-    public static final String FTP_USER = "ipos";
-    public static final String FTP_PASSWORD = "$$1posftp%%";
-    public static String FTP_DIR = "limopics";
+//    public static String CONST_REST_API_URL = "http://97.74.89.233/RestApiTitanium/MyLimoService.svc/";
+//    public static String CONST_PDF_URL = "http://97.74.89.233/iops/uploads/";
+//    public static String CONST_PHOTO_URL = "http://97.74.89.233/iops/images/limopics/";
+//
+//    //LIVE FTP
+//    public static final String FTP_URL = "97.74.89.233";
+//    public static final String FTP_USER = "ipos";
+//    public static final String FTP_PASSWORD = "$$1posftp%%";
+//    public static String FTP_DIR = "limopics";
 
     //---------------------------------------------------------------------//
 
@@ -76,6 +76,7 @@ public class App extends Application {
 
     public static String CONST_SELECTED_TAB_INDEX = "0";
     public static String CONST_USER_NAME = "USER_NAME";
+    public static String CONST_PASSWORD = "121";
     public static String CONST_ALREADY_LOGIN = "ALREADY_LOGIN";
     public static String CONST_NOTIFICATION_TONE = "NOTIFICATION_TONE";
     public static String CONST_PROMINENT_TONE = "PROMINENT_TONE";
@@ -92,6 +93,7 @@ public class App extends Application {
 
 
     public static String userName = "user";
+    public static String password = "121";
     public static String deviceID = "00000";
     public static String authToken = "00000";
 

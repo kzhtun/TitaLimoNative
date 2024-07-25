@@ -5,6 +5,8 @@ android {
     namespace 'com.info121.nativelimo'
     compileSdk 34
 
+
+
     defaultConfig {
         applicationId "com.info121.nativelimo"
         minSdkVersion 23
@@ -35,6 +37,9 @@ android {
 
     packagingOptions {
         resources.excludes.add("META-INF/*")
+    }
+    buildFeatures {
+        buildConfig true
     }
 }
 
