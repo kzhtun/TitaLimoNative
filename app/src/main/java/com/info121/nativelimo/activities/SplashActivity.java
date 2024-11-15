@@ -9,11 +9,14 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,6 +25,9 @@ import android.os.PowerManager;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -169,6 +175,8 @@ public class SplashActivity extends AppCompatActivity {
         // requestPermissions();
 
         // Log.e("Adaptive Battery : ", Util.isAdaptiveBatteryEnabled(mContext) + "");
+
+
 
     }
 
@@ -319,10 +327,13 @@ public class SplashActivity extends AppCompatActivity {
     }
 
 
+
     private void getFCMToken() {
+
         FirebaseMessaging.getInstance().getToken().addOnSuccessListener(token -> {
             if (!TextUtils.isEmpty(token)) {
                 App.FCM_TOKEN = token;
+
                 Log.e("Token: ", token);
                 Log.d(TAG, "retrieve token successful : " + token);
                 //startActivity(new Intent(mContext, LoginActivity.class));
@@ -402,6 +413,10 @@ public class SplashActivity extends AppCompatActivity {
         call.enqueue(new Callback<JobRes>() {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
+                if ( response.body() == null){
+                    Util.addLog("callUpdateMobileLog Response: null");
+                    return;
+                }
                 if (response.body().getResponsemessage().equalsIgnoreCase("SUCCESS"))
                     Log.e("Mobile Log Update : ", "Successful");
             }

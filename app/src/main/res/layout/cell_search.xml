@@ -46,6 +46,7 @@
                 android:inputType="none"
                 android:paddingLeft="10dp"
                 android:paddingRight="8dp"
+                android:textSize="18dp"
                 android:tag="FROM_DATE"
                 android:textColor="@color/edit_text_color" />
         </LinearLayout>
@@ -77,6 +78,7 @@
                 android:inputType="none"
                 android:paddingLeft="10dp"
                 android:paddingRight="8dp"
+                android:textSize="18dp"
                 android:tag="TO_DATE"
                 android:textColor="@color/edit_text_color" />
         </LinearLayout>

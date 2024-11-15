@@ -1,9 +1,14 @@
 package com.info121.nativelimo;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -11,11 +16,9 @@ import android.os.Handler;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 
-import android.util.Log;
-import android.view.View;
-
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import com.info121.nativelimo.models.Job;
 import com.info121.nativelimo.models.PatientSearchParams;
@@ -23,7 +26,6 @@ import com.info121.nativelimo.models.SearchParams;
 import com.info121.nativelimo.utils.PrefDB;
 
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,42 +33,44 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 
 public class App extends Application {
+    public static String P_CHANNEL = "10088";
+    public static String N_CHANNEL = "10099";
     public static String DEVICE_TYPE = "ANDROID";
+
     String TAG = "Application";
+
+    //   static String ENDPOINT = "http://118.200.71.10/";
+    static String ENDPOINT = "http://info121.sytes.net/";
+
+    //  ---------------------------------------------------------------------//
+//     iOPS DEV ACER API
+//     public static String CONST_REST_API_URL = "http://info121.sytes.net/RestApiTitanium/MyLimoService.svc/";
+//    public static String CONST_REST_API_URL = ENDPOINT + "RestApiTitanium/MyLimoService.svc/";
+//    public static String CONST_PDF_URL = ENDPOINT+ "iops/uploads/";
+//    public static String CONST_PHOTO_URL = ENDPOINT + "iops/images/limopics/";
 //
-    static String ENDPOINT = "http://219.75.99.33/";
-  //  static String ENDPOINT = "  http://info121.sytes.net/";
-
-    //---------------------------------------------------------------------//
-    // iOPS DEV ACER API
- //    public static String CONST_REST_API_URL = "http://info121.sytes.net/RestApiTitanium/MyLimoService.svc/";
-    public static String CONST_REST_API_URL = ENDPOINT + "RestApiTitanium/MyLimoService.svc/";
-    public static String CONST_PDF_URL = ENDPOINT+ "iops/uploads/";
-    public static String CONST_PHOTO_URL = ENDPOINT + "iops/images/limopics/";
-
-
- //     iOPS DEV Cypress FTP
- // public static final String FTP_URL = "info121.sytes.net";
-
-    public static final String FTP_URL = "119.74.229.225";
-    public static final String FTP_USER = "info121ftp";
-    public static final String FTP_PASSWORD = "6b604358f1a34a88a8506205f2d0e501";
-    public static String FTP_DIR = "limopics";
-    //public static String FTP_DIR = "limopics";
-
+//
+//    //     iOPS DEV Cypress FTP
+//    // public static final String FTP_URL = "info121.sytes.net";
+//
+//    public static final String FTP_URL = "118.200.137.148";
+//    public static final String FTP_USER = "info121ftp";
+//    public static final String FTP_PASSWORD = "6b604358f1a34a88a8506205f2d0e501";
+//    public static String FTP_DIR = "limopics";
+//    //public static String FTP_DIR = "limopics";
 
     //---------------------------------------------------------------------//
 
     // TitaLimo Live
-//    public static String CONST_REST_API_URL = "http://97.74.89.233/RestApiTitanium/MyLimoService.svc/";
-//    public static String CONST_PDF_URL = "http://97.74.89.233/iops/uploads/";
-//    public static String CONST_PHOTO_URL = "http://97.74.89.233/iops/images/limopics/";
-//
-//    //LIVE FTP
-//    public static final String FTP_URL = "97.74.89.233";
-//    public static final String FTP_USER = "ipos";
-//    public static final String FTP_PASSWORD = "$$1posftp%%";
-//    public static String FTP_DIR = "limopics";
+    public static String CONST_REST_API_URL = "http://97.74.89.233/RestApiTitanium/MyLimoService.svc/";
+    public static String CONST_PDF_URL = "http://97.74.89.233/iops/uploads/";
+    public static String CONST_PHOTO_URL = "http://97.74.89.233/iops/images/limopics/";
+
+    //LIVE FTP
+    public static final String FTP_URL = "97.74.89.233";
+    public static final String FTP_USER = "ipos";
+    public static final String FTP_PASSWORD = "$$1posftp%%";
+    public static String FTP_DIR = "limopics";
 
     //---------------------------------------------------------------------//
 
@@ -79,6 +83,8 @@ public class App extends Application {
     public static String CONST_PASSWORD = "121";
     public static String CONST_ALREADY_LOGIN = "ALREADY_LOGIN";
     public static String CONST_NOTIFICATION_TONE = "NOTIFICATION_TONE";
+
+    public static String CONST_NOTIFICATION_CHANNEL_ID = "NOTIFICATION_CHANNEL_ID";
     public static String CONST_PROMINENT_TONE = "PROMINENT_TONE";
 
     public static String CONST_DEVICE_ID = "DEVICE_ID";
@@ -148,6 +154,7 @@ public class App extends Application {
 
         App.targetContent = getApplicationContext();
 
+
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                 .setDefaultFontPath("fonts/Lato-Regular.ttf")
                 // .setFontAttrId(R.attr.fontPath)
@@ -162,7 +169,7 @@ public class App extends Application {
 //                                .build()))
 //                .build());
 
-     //   super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
+        //   super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
 
 //        FirebaseInstanceId.getInstance().getInstanceId()
 //                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
@@ -187,25 +194,28 @@ public class App extends Application {
 //        }
 
 
-       // startActivity(new Intent(getApplicationContext(), JobOverviewActivity.class));
+        // startActivity(new Intent(getApplicationContext(), JobOverviewActivity.class));
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
 
+
         // for notification tone
         prefDB = new PrefDB(getApplicationContext());
 
-        if (prefDB.getString("OLD_CH_ID").length() == 0)
-            prefDB.putString("OLD_CH_ID", "DEFAULT_OLD");
+        App.N_CHANNEL = prefDB.getString(CONST_NOTIFICATION_CHANNEL_ID);
 
-        if (prefDB.getString("NEW_CH_ID").length() == 0)
-            prefDB.putString("NEW_CH_ID", "DEFAULT_NEW");
-
-        if (prefDB.getString("OLD_CH_ID_P").length() == 0)
-            prefDB.putString("OLD_CH_ID_P", "DEFAULT_OLD_P");
-
-        if (prefDB.getString("NEW_CH_ID_P").length() == 0)
-            prefDB.putString("NEW_CH_ID_P", "DEFAULT_NEW_P");
+//        if (prefDB.getString("OLD_CH_ID").length() == 0)
+//            prefDB.putString("OLD_CH_ID", "DEFAULT_OLD");
+//
+//        if (prefDB.getString("NEW_CH_ID").length() == 0)
+//            prefDB.putString("NEW_CH_ID", "DEFAULT_NEW");
+//
+//        if (prefDB.getString("OLD_CH_ID_P").length() == 0)
+//            prefDB.putString("OLD_CH_ID_P", "DEFAULT_OLD_P");
+//
+//        if (prefDB.getString("NEW_CH_ID_P").length() == 0)
+//            prefDB.putString("NEW_CH_ID_P", "DEFAULT_NEW_P");
 
     }
 
@@ -241,12 +251,50 @@ public class App extends Application {
     }
 
 
+
     @Override
     public void onTerminate() {
         super.onTerminate();
 
         mHandler.removeCallbacks(App.mRunnable);
         mRunnable = null;
-
     }
+
+    public static void setupNotificationChannels(@NonNull Context context, String CHANNEL, Uri soundUri) {
+        long[] pattern = {0, 500, 200, 500, 200};
+        // This sample assumes that your sounds are named "sound_win"/"sound_defeat"
+        // and placed in the "raw" resource folder.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            AudioAttributes soundAttributes = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .build();
+
+
+            @SuppressLint("WrongConstant")
+            NotificationChannel channel = new NotificationChannel(
+                    CHANNEL,
+                    "Custom Notification",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+
+            channel.setSound(soundUri, soundAttributes);
+            channel.setVibrationPattern(pattern);
+            channel.setImportance(NotificationManager.IMPORTANCE_HIGH);
+
+
+
+            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+
+            if (notificationManager.getNotificationChannel(CHANNEL) != null) {
+                notificationManager.getNotificationChannel(CHANNEL).setImportance(NotificationManager.IMPORTANCE_NONE);
+                notificationManager.deleteNotificationChannel(CHANNEL);
+
+            }
+
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+
+
 }
+

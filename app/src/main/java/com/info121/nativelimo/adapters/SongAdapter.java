@@ -1,12 +1,15 @@
 package com.info121.nativelimo.adapters;
 
-import android.app.NotificationManager;
+
 import android.content.Context;
+
 import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 
 import android.net.Uri;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,16 +18,27 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.info121.nativelimo.R;
 import com.info121.nativelimo.App;
+
+import com.info121.nativelimo.api.RestClient;
+import com.info121.nativelimo.models.ObjectRes;
+import com.info121.nativelimo.models.RequestUpdateChannelID;
+
 import com.info121.nativelimo.models.Song;
 import com.info121.nativelimo.utils.PrefDB;
 
+
+
 import java.util.Date;
 import java.util.List;
+
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by KZHTUN on 1/30/2018.
@@ -32,7 +46,8 @@ import java.util.List;
 
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
-
+    String OLD_CH = "";
+    String NEW_CH = "";
 
     List<Song> mSongs;
 
@@ -112,30 +127,44 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
 //                    if(MODE.equalsIgnoreCase("NOTIFICATION")){
 //                        prefDB.putString(App.CONST_NOTIFICATION_TONE, mSongs.get(lastIndex).getData());
 //                    }
+               //     Toast.makeText(mContext, mSongs.get(lastIndex).getSongName(), Toast.LENGTH_SHORT).show();
+
+                   // song = mSongs.get(getAdapterPosition());
+
+                    Date now = new Date();
+                    App.N_CHANNEL =  Long.toString(now.getTime());
+                    Log.e("Channel ID", App.N_CHANNEL);
+                    Toast.makeText(mContext, "Channel ID : " +   App.N_CHANNEL , Toast.LENGTH_SHORT).show();
 
 
-                    if(MODE.equalsIgnoreCase("PROMINENT")){
-                        prefDB.putString(App.CONST_PROMINENT_TONE,  mSongs.get(lastIndex).getSongUri().toString());
-                    }
+
+
+//                    if(MODE.equalsIgnoreCase("PROMINENT")){
+//                        prefDB.putString(App.CONST_PROMINENT_TONE,  mSongs.get(lastIndex).getSongUri().toString());
+//                        App.setupNotificationChannels(mContext,
+//                                App.P_CHANNEL,
+//                                mSongs.get(lastIndex).getSongUri()
+//                                );
+//                    }
 
                     if(MODE.equalsIgnoreCase("NOTIFICATION")){
                         prefDB.putString(App.CONST_NOTIFICATION_TONE, mSongs.get(lastIndex).getSongUri().toString());
+                        callUpdateChannelID();
                     }
 
-                    Date now = new Date();
-                    long CHANNEL_ID = now.getTime();
+//                    Date now = new Date();
+//                    long CHANNEL_ID = now.getTime();
+//
+//                    prefDB.putString("OLD_CH_ID", prefDB.getString("NEW_CH_ID"));
+//                    prefDB.putString("NEW_CH_ID", CHANNEL_ID + "");
+//
+//                    prefDB.putString("OLD_CH_ID_P", prefDB.getString("NEW_CH_ID_P"));
+//                    prefDB.putString("NEW_CH_ID_P", CHANNEL_ID + "_P");
 
-                    prefDB.putString("OLD_CH_ID", prefDB.getString("NEW_CH_ID"));
-                    prefDB.putString("NEW_CH_ID", CHANNEL_ID + "");
 
-                    prefDB.putString("OLD_CH_ID_P", prefDB.getString("NEW_CH_ID_P"));
-                    prefDB.putString("NEW_CH_ID_P", CHANNEL_ID + "_P");
 
-                    Toast.makeText(mContext, "Set notification tone (" + mSongs.get(lastIndex).getSongName() + ")" , Toast.LENGTH_SHORT).show();
                 }
             });
-
-
 
             mainLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -146,6 +175,31 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
             });
         }
     }
+
+
+    private void callUpdateChannelID(){
+        Call<ObjectRes> call = RestClient.COACH().getApiService().UpdateChannelID(
+                new RequestUpdateChannelID(App.N_CHANNEL));
+
+        call.enqueue(new Callback<ObjectRes>() {
+            @Override
+            public void onResponse(Call<ObjectRes> call, Response<ObjectRes> response) {
+                App.setupNotificationChannels(mContext,
+                        App.N_CHANNEL,
+                        mSongs.get(lastIndex).getSongUri()
+                );
+
+                prefDB.putString(App.CONST_NOTIFICATION_CHANNEL_ID, App.N_CHANNEL);
+                Toast.makeText(mContext, "Set notification tone (" + mSongs.get(lastIndex).getSongName() + ")" , Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<ObjectRes> call, Throwable t) {
+                Toast.makeText(mContext, "Set notification tone error!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 
     public void playSong(Uri ringtone) {
         long count = 1;

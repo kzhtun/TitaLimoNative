@@ -22,6 +22,8 @@ import android.widget.Toast;
 
 import com.info121.nativelimo.R;
 import com.info121.nativelimo.activities.DialogActivity;
+import com.info121.nativelimo.activities.LoginActivity;
+import com.info121.nativelimo.activities.NotifyActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,14 +45,20 @@ public class ShowDialogService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        createDialog(intent);
+      //  createDialog(intent);
+
+        //startActivity(new Intent(this, NotifyActivity.class));
+        Intent dialogIntent = new Intent(this, NotifyActivity.class);
+        dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(dialogIntent);
+
         stopSelf();
 
 
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private void createDialog(Intent intent) {
+    private void createDialogOld(Intent intent) {
 
         final Dialog dialog = new Dialog(this, R.style.Theme_AppCompat);
 
@@ -142,6 +150,37 @@ public class ShowDialogService extends Service {
             }
         });
 
+
+        // Wake Screen
+        @SuppressLint("InvalidWakeLockTag")
+        PowerManager.WakeLock screenLock = ((PowerManager) getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "TAG");
+        screenLock.acquire();
+        screenLock.release();
+    }
+
+    private void createDialog(Intent intent) {
+
+        final Dialog dialog = new Dialog(getApplicationContext(), R.style.Theme_AppCompat);
+
+        final Spinner mPhones;
+        Button mDismiss, mCall, mConfirm;
+        TextView mMessage;
+
+        dialog.setContentView(R.layout.dialog_prominent);
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        Window window = dialog.getWindow();
+
+        dialog.setTitle("New Jobs");
+        window.setAttributes(lp);
+        window.setGravity(Gravity.CENTER);
+
+        //adding dialog animation sliding up and down
+        dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_PANEL);
+
+        // show dialog
+        dialog.show();
 
         // Wake Screen
         @SuppressLint("InvalidWakeLockTag")

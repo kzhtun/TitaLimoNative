@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.info121.nativelimo.AbstractActivity;
 import com.info121.nativelimo.App;
 import com.info121.nativelimo.R;
 import com.info121.nativelimo.adapters.JobsAdapter;
@@ -41,7 +42,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class PatientHistoryActivity extends AppCompatActivity {
+public class PatientHistoryActivity extends AbstractActivity {
     Calendar myCalendar;
 
     @BindView(R.id.from_date)

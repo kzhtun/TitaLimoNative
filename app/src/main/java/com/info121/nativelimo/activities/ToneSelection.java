@@ -1,9 +1,16 @@
 package com.info121.nativelimo.activities;
 
+import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.AudioAttributes;
 import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -11,22 +18,31 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.info121.nativelimo.AbstractActivity;
+import com.info121.nativelimo.App;
 import com.info121.nativelimo.R;
 import com.info121.nativelimo.adapters.SongAdapter;
+import com.info121.nativelimo.models.Action;
 import com.info121.nativelimo.models.Song;
 import com.info121.nativelimo.utils.PrefDB;
 import com.info121.nativelimo.utils.SongLoader;
 
+
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
-public class ToneSelection extends AppCompatActivity {
+public class ToneSelection extends AbstractActivity {
 
     WebView mWebView;
     Toolbar mToolbar;
@@ -51,7 +67,7 @@ public class ToneSelection extends AppCompatActivity {
         initializeControls();
 
         SongLoader.getSongListFromLocal(ToneSelection.this);
-        mSongList =  listRingtones(); //SongLoader.getSongList();
+        mSongList = listRingtones(); //SongLoader.getSongList();
         songAdapter = new SongAdapter(mSongList, MODE);
 
         populateSongs();
@@ -96,11 +112,11 @@ public class ToneSelection extends AppCompatActivity {
         Intent intent = getIntent();
         MODE = intent.getStringExtra(TONE_TYPE);
 
-        if(MODE.equalsIgnoreCase("PROMINENT")){
+        if (MODE.equalsIgnoreCase("PROMINENT")) {
             mToolbar.setTitle("Select Prominent Job Tone");
         }
 
-        if(MODE.equalsIgnoreCase("NOTIFICATION")){
+        if (MODE.equalsIgnoreCase("NOTIFICATION")) {
             mToolbar.setTitle("Select Notification Tone");
         }
 
@@ -149,15 +165,25 @@ public class ToneSelection extends AppCompatActivity {
 
             mSongList.add(song);
 
-            String ringtoneName= cursor.getString(cursor.getColumnIndex("title"));
+            @SuppressLint("Range")
+            String ringtoneName = cursor.getString(cursor.getColumnIndex("title"));
 
 
-
-            Log.e("All Data", "getNotifications: "+ title+"-=---"+uri+"------"+ringtoneName);
+            Log.e("All Data", "getNotifications: " + title + "-=---" + uri + "------" + ringtoneName);
             // Do something with the title and the URI of ringtone
         }
 
         return mSongList;
     }
+
+
+
+
+    @Override
+    public void onEvent(Throwable t) {
+        super.onEvent(t);
+    }
+
+
 
 }

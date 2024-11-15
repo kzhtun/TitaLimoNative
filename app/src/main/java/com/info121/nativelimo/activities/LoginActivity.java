@@ -1,23 +1,15 @@
 package com.info121.nativelimo.activities;
 
-import android.Manifest;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.ClipData;
-import android.content.ClipboardManager;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
-import android.media.AudioAttributes;
-import android.media.AudioManager;
-import android.media.ToneGenerator;
+
 import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
+
 import android.provider.Settings;
 
 import android.os.Bundle;
@@ -31,9 +23,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
+
 
 
 
@@ -91,12 +83,6 @@ public class LoginActivity extends AbstractActivity {
 
 
 
-    String[] permissions = {
-            Manifest.permission.POST_NOTIFICATIONS
-    };
-
-
-
 
     @Override
     protected void onStart() {
@@ -125,7 +111,7 @@ public class LoginActivity extends AbstractActivity {
 
         prefDB = new PrefDB(getApplicationContext());
 
-        btnLogin.setEnabled(false);
+    //    btnLogin.setEnabled(false);
 
 
         // location
@@ -146,8 +132,6 @@ public class LoginActivity extends AbstractActivity {
 
         mApiVersion.setText("Api " + Util.getVersionCode(mContext));
         mUiVersion.setText("Ver " + Util.getVersionName(mContext));
-
-
 
     }
 
@@ -182,23 +166,23 @@ public class LoginActivity extends AbstractActivity {
     @OnClick(R.id.login)
     public void login_onClick(){
         mProgressBar.setVisibility(View.VISIBLE);
-
-        if (mRemember.isChecked()) {
-            callValidateDriverCredential();
-        }else{
-            AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this).create();
-            alertDialog.setTitle("Warning");
-            alertDialog.setMessage("By logging in without remember me checked, application will not automatically login whenever user touch the incoming job notifications. You will need to login manually.\nAre you sure you want to login?");
-            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
-                    (dialog, which) -> {
-                        dialog.dismiss();
-                        callValidateDriverCredential();
-
-                    });
-            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "CANCEL",
-                    (dialog, which) -> dialog.dismiss());
-            alertDialog.show();
-        }
+        callValidateDriverCredential();
+//        if (mRemember.isChecked()) {
+//
+//        }else{
+//            AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this).create();
+//            alertDialog.setTitle("Warning");
+//            alertDialog.setMessage("By logging in without remember me checked, application will not automatically login whenever user touch the incoming job notifications. You will need to login manually.\nAre you sure you want to login?");
+//            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
+//                    (dialog, which) -> {
+//                        dialog.dismiss();
+//                        callValidateDriverCredential();
+//
+//                    });
+//            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "CANCEL",
+//                    (dialog, which) -> dialog.dismiss());
+//            alertDialog.show();
+//        }
     }
 
 //    public void loginOnClickOld() {
@@ -277,7 +261,7 @@ public class LoginActivity extends AbstractActivity {
                 }
 
                 if (response.body().getResponsemessage().equalsIgnoreCase("Invalid")) {
-                    mUserName.setError("Invalid user name");
+                    mUserName.setError("Invalid user name or password.");
                     mUserName.requestFocus();
                     mProgressBar.setVisibility(View.GONE);
                 }
@@ -375,19 +359,31 @@ public class LoginActivity extends AbstractActivity {
                         mUserName.setText(prefDB.getString(App.CONST_USER_NAME));
                         mPassword.setText(prefDB.getString(App.CONST_PASSWORD));
                         mRemember.setChecked(true);
-
-                        if(mPassword.getText().toString().trim().length()>0 && autoLogin)
-                            callValidateDriverCredential();
-                        else
-                            btnLogin.setEnabled(true);
-                     }else{
-                        btnLogin.setEnabled(true);
-                     }
+                    }
+//                        if(mPassword.getText().toString().trim().length()>0 && autoLogin)
+//                            callValidateDriverCredential();
+//                        else
+//                            btnLogin.setEnabled(true);
+//                     }else{
+//                        btnLogin.setEnabled(true);
+//                     }
                 }
             }
 
             @Override
             public void onFailure(Call<ObjectRes> call, Throwable t) {
+                if(t.getMessage().contains("Unable to resolve host")) {
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
+                    alertDialog.setTitle("Connection Issue");
+                    alertDialog.setMessage("Unable to resolve host. Please check your internet connection.");
+                    alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    alertDialog.show();
+                }
                 btnLogin.setEnabled(true);
             }
         });
@@ -435,10 +431,14 @@ public class LoginActivity extends AbstractActivity {
         prefDB.putLong(App.CONST_TIMER_DELAY, App.timerDelay);
 
 
-        if (mRemember.isChecked())
+
+        if (mRemember.isChecked()) {
             prefDB.putBoolean(App.CONST_REMEMBER_ME, true);
-        else
+        }else {
+            mUserName.setText("");
+            mPassword.setText("");
             prefDB.putBoolean(App.CONST_REMEMBER_ME, false);
+        }
 
 
 //        FirebaseInstanceId.getInstance().getInstanceId()

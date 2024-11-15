@@ -318,20 +318,20 @@ public class JobOverviewActivity extends AbstractActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-
-
-        menu.add(Menu.NONE, 0, Menu.NONE, "Prominent Tone")
-                .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        Intent intent = new Intent(mContext, ToneSelection.class);
-                        intent.putExtra(ToneSelection.TONE_TYPE, "PROMINENT");
-                        startActivity(intent);
-                        return true;
-                    }
-                })
-                .setIcon(ContextCompat.getDrawable(mContext, R.mipmap.ic_settings_white_24dp))
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+//
+//
+//        menu.add(Menu.NONE, 0, Menu.NONE, "Prominent Tone")
+//                .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+//                    @Override
+//                    public boolean onMenuItemClick(MenuItem item) {
+//                        Intent intent = new Intent(mContext, ToneSelection.class);
+//                        intent.putExtra(ToneSelection.TONE_TYPE, "PROMINENT");
+//                        startActivity(intent);
+//                        return true;
+//                    }
+//                })
+//                .setIcon(ContextCompat.getDrawable(mContext, R.mipmap.ic_settings_white_24dp))
+//                .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 
         menu.add(Menu.NONE, 1, Menu.NONE, "Notification Tone")
                 .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {

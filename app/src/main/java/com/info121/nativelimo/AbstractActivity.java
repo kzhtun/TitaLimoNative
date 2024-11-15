@@ -1,5 +1,6 @@
 package com.info121.nativelimo;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.os.Build;
 
@@ -24,6 +25,8 @@ public class AbstractActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
+        Log.e("Abstract", "On Start");
+        checkApplicationState();
         super.onStart();
 
         // event bus register
@@ -33,11 +36,29 @@ public class AbstractActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
+        Log.e("Abstract", "On Stop");
+        checkApplicationState();
+
         // event bus unregister
         EventBus.getDefault().unregister(this);
         Log.e(TAG, "EventBus Un-Registered on Activity ... " + this.getLocalClassName());
 
+
         super.onStop();
+    }
+
+    @Override
+    protected void onResume() {
+        Log.e("Abstract", "On Resume");
+        checkApplicationState();
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.e("Abstract", "On Pause");
+        checkApplicationState();
+        super.onPause();
     }
 
     @Override
@@ -57,5 +78,17 @@ public class AbstractActivity extends AppCompatActivity {
     @Subscribe
     public void onEvent(Throwable t) {
 
+    }
+
+    public void checkApplicationState(){
+        ActivityManager.RunningAppProcessInfo myProcess = new ActivityManager.RunningAppProcessInfo();
+        ActivityManager.getMyMemoryState(myProcess);
+
+        if(myProcess.importance != ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND){
+            Log.e("App State ", "App is in Background");
+            this.finishAffinity();
+        }else{
+            Log.e("App State  ", "App is Active");
+        }
     }
 }

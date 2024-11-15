@@ -1430,6 +1430,10 @@ public class JobDetailFragment extends AbstractFragment {
         call.enqueue(new Callback<JobRes>() {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
+                if ( response.body() ==null){
+                    Util.addLog("callCompletedJob Response: null");
+                    return;
+                }
                 if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
                     Toast.makeText(getContext(), "Job Complete Successful", Toast.LENGTH_SHORT).show();
 

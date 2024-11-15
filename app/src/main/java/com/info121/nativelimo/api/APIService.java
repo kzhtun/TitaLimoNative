@@ -4,6 +4,7 @@ package com.info121.nativelimo.api;
 import com.info121.nativelimo.models.JobRes;
 import com.info121.nativelimo.models.ObjectRes;
 import com.info121.nativelimo.models.RequestMobileLog;
+import com.info121.nativelimo.models.RequestUpdateChannelID;
 import com.info121.nativelimo.models.RequestUpdateJob;
 import com.info121.nativelimo.models.RequestUpdatePassword;
 import com.info121.nativelimo.models.RequestUpdateRemark;
@@ -104,6 +105,9 @@ public interface APIService {
 
     @POST("UpdatePassword")
     Call<ObjectRes> UpdatePassword(@Body RequestUpdatePassword requestUpdatePassword);
+
+    @POST("UpdateChannelID")
+    Call<ObjectRes> UpdateChannelID(@Body RequestUpdateChannelID requestUpdateChannelID);
 
 
 //    //amad,123,android,241jlksfljsaf
