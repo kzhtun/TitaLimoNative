@@ -83,7 +83,6 @@ public class LoginActivity extends AbstractActivity {
 
 
 
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -133,6 +132,13 @@ public class LoginActivity extends AbstractActivity {
         mApiVersion.setText("Api " + Util.getVersionCode(mContext));
         mUiVersion.setText("Ver " + Util.getVersionName(mContext));
 
+        App.setupNotificationChannels(mContext, App.N_CHANNEL, null);
+
+//        try {
+//            App.setupNotificationChannels(mContext, App.N_CHANNEL, Settings.System.DEFAULT_NOTIFICATION_URI);
+//        }catch (Exception e){
+//           Log.e("Create Notification Channel Failed : ", e.getMessage());
+//        }
     }
 
 
@@ -167,6 +173,7 @@ public class LoginActivity extends AbstractActivity {
     public void login_onClick(){
         mProgressBar.setVisibility(View.VISIBLE);
         callValidateDriverCredential();
+        //callValidateDriver("Naima");
 //        if (mRemember.isChecked()) {
 //
 //        }else{
@@ -304,43 +311,43 @@ public class LoginActivity extends AbstractActivity {
 
     }
 
-//    public void callValidateDriver(String userName) {
-//        Call<ObjectRes> call = RestClient.COACH().getApiService().ValidateDriver(userName.trim());
-//
-//        call.enqueue(new Callback<ObjectRes>() {
-//            @Override
-//            public void onResponse(Call<ObjectRes> call, Response<ObjectRes> response) {
-//
-//                if (response.body() == null) {
-//                    showRefreshDialog();
-//                }
-//
-//                if (response.body().getResponsemessage().equalsIgnoreCase("VALID")) {
-//                    App.userName = userName;
-//                    App.deviceID = Util.getDeviceID(getApplicationContext());
-//                    App.authToken = response.body().getToken();
-//                    App.timerDelay = 6000;
-//
-//                    callUpdateDevice();
-//
-//                } else {
-//                    mUserName.setError("Invalid user name");
-//                    mUserName.requestFocus();
-//                    mProgressBar.setVisibility(View.GONE);
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onFailure(Call<ObjectRes> call, Throwable t) {
-//                mUserName.setError("Error in connection.");
-//                mUserName.requestFocus();
-//                mProgressBar.setVisibility(View.GONE);
-//            }
-//        });
-//
-//        btnLogin.setEnabled(true);
-//    }
+    public void callValidateDriver(String userName) {
+        Call<ObjectRes> call = RestClient.COACH().getApiService().ValidateDriver(userName.trim());
+
+        call.enqueue(new Callback<ObjectRes>() {
+            @Override
+            public void onResponse(Call<ObjectRes> call, Response<ObjectRes> response) {
+
+                if (response.body() == null) {
+                    showRefreshDialog();
+                }
+
+                if (response.body().getResponsemessage().equalsIgnoreCase("VALID")) {
+                    App.userName = userName;
+                    App.deviceID = Util.getDeviceID(getApplicationContext());
+                    App.authToken = response.body().getToken();
+                    App.timerDelay = 6000;
+
+                    callUpdateDevice();
+
+                } else {
+                    mUserName.setError("Invalid user name");
+                    mUserName.requestFocus();
+                    mProgressBar.setVisibility(View.GONE);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ObjectRes> call, Throwable t) {
+                mUserName.setError("Error in connection.");
+                mUserName.requestFocus();
+                mProgressBar.setVisibility(View.GONE);
+            }
+        });
+
+        btnLogin.setEnabled(true);
+    }
 
 
 
@@ -407,8 +414,16 @@ public class LoginActivity extends AbstractActivity {
             @Override
             public void onResponse(Call<ObjectRes> call, Response<ObjectRes> response) {
                 // Add to Appication Varialbles
+                if(response.body().getResponsemessage().equalsIgnoreCase("SUCCESS")){
+                    loginSuccessful();
 
-                loginSuccessful();
+                    if(response.body().getStatus().equals("2")){
+                        Log.e("callUpdateDevice : ", "NEW");
+                    }else{
+                        Log.e("callUpdateDevice : ", "OLD");
+                    }
+                }
+
             }
 
             @Override
@@ -456,7 +471,6 @@ public class LoginActivity extends AbstractActivity {
 //                        Log.e("TOKEN : ", App.FCM_TOKEN);
 //                    }
 //                });
-
 
         // login successful
         startActivity(new Intent(LoginActivity.this, JobOverviewActivity.class));

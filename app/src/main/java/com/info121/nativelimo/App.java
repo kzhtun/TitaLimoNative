@@ -15,20 +15,29 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.provider.MediaStore;
+import android.provider.Settings;
+import android.util.Log;
 
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
+import com.info121.nativelimo.api.RestClient;
 import com.info121.nativelimo.models.Job;
+import com.info121.nativelimo.models.JobRes;
 import com.info121.nativelimo.models.PatientSearchParams;
+import com.info121.nativelimo.models.RequestMobileLog;
 import com.info121.nativelimo.models.SearchParams;
 import com.info121.nativelimo.utils.PrefDB;
+import com.info121.nativelimo.utils.Util;
 
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 
@@ -39,38 +48,37 @@ public class App extends Application {
 
     String TAG = "Application";
 
-    //   static String ENDPOINT = "http://118.200.71.10/";
-    static String ENDPOINT = "http://info121.sytes.net/";
+ // static String ENDPOINT = "http://118.200.71.10/";
+    static String ENDPOINT = "http://Info121.sytes.net/";
+
 
     //  ---------------------------------------------------------------------//
 //     iOPS DEV ACER API
-//     public static String CONST_REST_API_URL = "http://info121.sytes.net/RestApiTitanium/MyLimoService.svc/";
-//    public static String CONST_REST_API_URL = ENDPOINT + "RestApiTitanium/MyLimoService.svc/";
-//    public static String CONST_PDF_URL = ENDPOINT+ "iops/uploads/";
-//    public static String CONST_PHOTO_URL = ENDPOINT + "iops/images/limopics/";
-//
-//
-//    //     iOPS DEV Cypress FTP
-//    // public static final String FTP_URL = "info121.sytes.net";
-//
-//    public static final String FTP_URL = "118.200.137.148";
-//    public static final String FTP_USER = "info121ftp";
-//    public static final String FTP_PASSWORD = "6b604358f1a34a88a8506205f2d0e501";
-//    public static String FTP_DIR = "limopics";
-//    //public static String FTP_DIR = "limopics";
+    public static String CONST_REST_API_URL = ENDPOINT + "RestApiTitanium/MyLimoService.svc/";
+    public static String CONST_PDF_URL = ENDPOINT+ "iops/uploads/";
+    public static String CONST_PHOTO_URL = ENDPOINT + "iops/images/limopics/";
+
+
+    //     iOPS DEV Cypress FTP
+    // public static final String FTP_URL = "info121.sytes.net";
+
+    public static final String FTP_URL = "118.200.137.148";
+    public static final String FTP_USER = "info121ftp";
+    public static final String FTP_PASSWORD = "6b604358f1a34a88a8506205f2d0e501";
+    public static String FTP_DIR = "limopics";
 
     //---------------------------------------------------------------------//
 
     // TitaLimo Live
-    public static String CONST_REST_API_URL = "http://97.74.89.233/RestApiTitanium/MyLimoService.svc/";
-    public static String CONST_PDF_URL = "http://97.74.89.233/iops/uploads/";
-    public static String CONST_PHOTO_URL = "http://97.74.89.233/iops/images/limopics/";
-
-    //LIVE FTP
-    public static final String FTP_URL = "97.74.89.233";
-    public static final String FTP_USER = "ipos";
-    public static final String FTP_PASSWORD = "$$1posftp%%";
-    public static String FTP_DIR = "limopics";
+//    public static String CONST_REST_API_URL = "http://97.74.89.233/RestApiTitanium/MyLimoService.svc/";
+//    public static String CONST_PDF_URL = "http://97.74.89.233/iops/uploads/";
+//    public static String CONST_PHOTO_URL = "http://97.74.89.233/iops/images/limopics/";
+//
+//    //LIVE FTP
+//    public static final String FTP_URL = "97.74.89.233";
+//    public static final String FTP_USER = "ipos";
+//    public static final String FTP_PASSWORD = "$$1posftp%%";
+//    public static String FTP_DIR = "limopics";
 
     //---------------------------------------------------------------------//
 
@@ -276,7 +284,12 @@ public class App extends Application {
                     "Custom Notification",
                     NotificationManager.IMPORTANCE_DEFAULT);
 
-            channel.setSound(soundUri, soundAttributes);
+
+            if(soundUri == null)
+                channel.setSound(Settings.System.DEFAULT_NOTIFICATION_URI, soundAttributes);
+            else
+                channel.setSound(soundUri, soundAttributes);
+
             channel.setVibrationPattern(pattern);
             channel.setImportance(NotificationManager.IMPORTANCE_HIGH);
 
@@ -294,7 +307,26 @@ public class App extends Application {
         }
     }
 
+    public static void callUpdateMobileLog(RequestMobileLog request) {
+        Call<JobRes> call = RestClient.COACH().getApiService().UpdateMobileLog(request);
 
+        call.enqueue(new Callback<JobRes>() {
+            @Override
+            public void onResponse(Call<JobRes> call, Response<JobRes> response) {
+                if ( response.body() == null){
+                    Util.addLog("callUpdateMobileLog Response: null");
+                    return;
+                }
+                if (response.body().getResponsemessage().equalsIgnoreCase("SUCCESS"))
+                    Log.e("Mobile Log Update : ", "Successful");
+            }
+
+            @Override
+            public void onFailure(Call<JobRes> call, Throwable t) {
+                Log.e("Mobile Log Update : ", "Failed");
+            }
+        });
+    }
 
 }
 

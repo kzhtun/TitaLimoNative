@@ -145,7 +145,7 @@ public class JobOverviewActivity extends AbstractActivity {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
 
-                JobCount jobCount = new JobCount();
+               JobCount jobCount = new JobCount();
 
                try {
                    jobCount = response.body().getJobcountlist().get(0);
@@ -189,7 +189,6 @@ public class JobOverviewActivity extends AbstractActivity {
             //  TabLayout.Tab tabitem = mTabLayout.newTab();
 
             float scale = getResources().getConfiguration().fontScale;
-
 
             tabitem = mTabLayout.getTabAt(0);
             v = View.inflate(mContext, R.layout.tab_header, null);

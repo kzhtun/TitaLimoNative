@@ -1,6 +1,7 @@
 package com.info121.nativelimo.api;
 
 import android.content.DialogInterface;
+import android.util.Log;
 
 
 import androidx.appcompat.app.AlertDialog;
@@ -35,11 +36,11 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
  */
 
 public class RestClient {
-   // private static final String MAI_URL = "http://8mapi.mywebcheck.in/AIRLINEAPI/AWS.svc/";
+
 
     private static String AuthToken = "";
     private static RestClient instance = null;
-    private static int callCount = 10;
+    private static int callCount = 3;
     private APIService service;
 
 
@@ -69,11 +70,16 @@ public class RestClient {
                                         .method(original.method(), original.body())
                                         .build();
 
+
+//                                Log.e("Request : " , newRequest.toString());
+//                                Log.e("Response : " , chain.proceed(newRequest).toString());
+
+
                                 return chain.proceed(newRequest);
                             }
                         })
-                        .connectTimeout(60, TimeUnit.SECONDS)
-                        .readTimeout(60, TimeUnit.SECONDS)
+                        .connectTimeout(20, TimeUnit.SECONDS)
+                        .readTimeout(20, TimeUnit.SECONDS)
                         .build()
                 ).build();
 

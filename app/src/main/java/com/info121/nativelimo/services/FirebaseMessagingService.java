@@ -78,7 +78,6 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
         if (remoteMessage.getNotification() != null) {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
-
             showNotification(remoteMessage.getData());
         }
 
@@ -91,6 +90,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         if (remoteMessage.getData().get("action").equalsIgnoreCase("Assign") ||
                 remoteMessage.getData().get("action").equalsIgnoreCase("Reassign") ||
                 remoteMessage.getData().get("action").equalsIgnoreCase("Refresh")) {
+
 
             if (remoteMessage.getData().get("IsUrgent") != null) {
                 handler.postDelayed(new Runnable() {
@@ -285,17 +285,17 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         Intent intent = new Intent(this, NotifyActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        Intent intent2 = new Intent(this, ShowDialogService.class);
-
         intent.putExtras(bundle);
 
-        if (App.notiActivityIsShowing) {
-            App.intents.add(intent);
-            Log.e("Noti", "Append");
-        } else {
-            startActivity(intent);
-            Log.e("Noti", "New Task");
-        }
+
+        startActivity(intent);
+//        if (App.notiActivityIsShowing) {
+//            App.intents.add(intent);
+//            Log.e("Noti", "Append");
+//        } else {
+//            startActivity(intent);
+//            Log.e("Noti", "New Task");
+//        }
 
     }
 

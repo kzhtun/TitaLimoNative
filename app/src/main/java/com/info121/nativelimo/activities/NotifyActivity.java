@@ -1,5 +1,6 @@
 package com.info121.nativelimo.activities;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -37,6 +38,7 @@ import com.info121.nativelimo.api.RestClient;
 import com.info121.nativelimo.models.Action;
 import com.info121.nativelimo.models.JobRes;
 import com.info121.nativelimo.models.ObjectRes;
+import com.info121.nativelimo.models.RequestMobileLog;
 import com.info121.nativelimo.utils.Util;
 
 import org.greenrobot.eventbus.EventBus;
@@ -279,9 +281,25 @@ public class NotifyActivity  extends AbstractActivity {
     }
 
 
+
     private void acceptJob() {
         // before update the job call validate driver to get new token
-        callValidateDriver(prefDB.getString(App.CONST_USER_NAME).trim());
+       // callValidateDriver(prefDB.getString(App.CONST_USER_NAME).trim());
+
+
+        Activity loginActivity = new LoginActivity();
+
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                callValidateDriver(prefDB.getString(App.CONST_USER_NAME).trim());
+//                updateJobStatus(jobNo, "Confirm");
+//                callUpdateDriverLocation();
+            }
+        }).start();
+//        startActivity(new Intent(NotifyActivity.this, JobOverviewActivity.class));
+        finish();
     }
 
 
@@ -341,7 +359,16 @@ public class NotifyActivity  extends AbstractActivity {
             toneGen.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200);
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        t1.cancel();
+        t2.cancel();
 
+        vibrator.cancel();
+
+        App.notiActivityIsShowing = false;
+    }
 
     @Override
     protected void onDestroy() {
@@ -387,6 +414,8 @@ public class NotifyActivity  extends AbstractActivity {
 
        // Toast.makeText(mContext, "Update Job Called", Toast.LENGTH_SHORT).show();
 
+      //  Log.e("Token : ", App.authToken);
+
         Call<JobRes> call = RestClient.COACH().getApiService().UpdateJobStatus(
                 jobNo,
                 App.fullAddress,
@@ -396,44 +425,26 @@ public class NotifyActivity  extends AbstractActivity {
         call.enqueue(new Callback<JobRes>() {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
+               if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
+                        EventBus.getDefault().postSticky("UPDATE_JOB_COUNT");
+                        playAcceptBeep();
+                        Toast.makeText(mContext, "Update Job Successful", Toast.LENGTH_SHORT).show();
 
-                Log.e("Update Call Back", response.body().getResponsemessage().toString());
+                        Util.addLog("NotifiyActivity : " + "updateJobStatus successful");
+                    }
 
-                if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
-                    EventBus.getDefault().postSticky("UPDATE_JOB_COUNT");
+                    if (response.body().getResponsemessage().equalsIgnoreCase("BAD TOKEN")) {
+                        refreshToken(driverName, status);
+                        Util.addLog("NotifiyActivity : " + "updateJobStatus bad token");
+                    }
+               }else{
+                   Util.addLog("NotifiyActivity : " + "updateJobStatus response failed");
+               }
 
-                    playAcceptBeep();
+               RequestMobileLog req = new RequestMobileLog(App.StackTraceLog, "updateJobStatus call on NotifyActivity");
+               App.callUpdateMobileLog(req);
 
-                  Toast.makeText(mContext, "Update Job Successful", Toast.LENGTH_SHORT).show();
-//                    Log.e("Update Job Successful", response.toString());
-
-        //            Toast.makeText(mContext, "Accept On Click", Toast.LENGTH_SHORT).show();
-
-//                    // check app state
-//                    ActivityManager.RunningAppProcessInfo myProcess = new ActivityManager.RunningAppProcessInfo();
-//                    ActivityManager.getMyMemoryState(myProcess);
-//                    Boolean isInBackground = (myProcess.importance != ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND);
-
-//                    Toast.makeText(mContext, "Intents Size : "+ App.intents.size() + "", Toast.LENGTH_SHORT).show();
-//                    Toast.makeText(mContext, "Importance ForeGround" + ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND + "", Toast.LENGTH_SHORT).show();
-
-//                    if(ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND == 100) {
-//                        Toast.makeText(mContext, "Noti OnClick : Background ", Toast.LENGTH_SHORT).show();
-//                        startActivity(new Intent(NotifyActivity.this, JobOverviewActivity.class));
-//                    }else{
-//                        Intent intent = new Intent(NotifyActivity.this, LoginActivity.class);
-//                        //  intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK  | Intent.FLAG_ACTIVITY_NEW_TASK);
-//                        startActivity(intent);
-//                        Toast.makeText(mContext, "Noti OnClick : Killed ", Toast.LENGTH_SHORT).show();
-//                    }
-
-
-                }
-
-                if (response.body().getResponsemessage().equalsIgnoreCase("BAD TOKEN")) {
-                    refreshToken(driverName, status);
-                }
             }
 
             @Override
@@ -472,17 +483,22 @@ public class NotifyActivity  extends AbstractActivity {
                     App.deviceID = Util.getDeviceID(getApplicationContext());
                     App.authToken = response.body().getToken();
 
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            startActivity(new Intent(NotifyActivity.this, JobOverviewActivity.class));
+                            updateJobStatus(jobNo, "Confirm");
+                            callUpdateDriverLocation();
+                        }
+                    }).start();
                     finish();
-
-                    startActivity(new Intent(NotifyActivity.this, JobOverviewActivity.class));
-                    updateJobStatus(jobNo, "Confirm");
-                    callUpdateDriverLocation();
                 }
 
             }
 
             @Override
             public void onFailure(Call<ObjectRes> call, Throwable t) {
+                Log.e("callValidateDriver Error : ", t.getMessage());
             }
         });
     }
@@ -502,6 +518,8 @@ public class NotifyActivity  extends AbstractActivity {
                         App.intents.remove(App.intents.get(i));
                 }
             }
+
+        startActivity(new Intent(NotifyActivity.this, JobOverviewActivity.class));
     }
 
 

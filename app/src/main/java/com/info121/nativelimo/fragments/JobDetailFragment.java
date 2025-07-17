@@ -65,6 +65,7 @@ import com.info121.nativelimo.models.Job;
 import com.info121.nativelimo.models.JobRes;
 import com.info121.nativelimo.models.ObjectRes;
 
+import com.info121.nativelimo.models.RequestMobileLog;
 import com.info121.nativelimo.models.RequestUpdateJob;
 import com.info121.nativelimo.utils.FtpHelper;
 import com.info121.nativelimo.utils.GeocodingLocation;
@@ -1190,11 +1191,6 @@ public class JobDetailFragment extends AbstractFragment {
 
 
 
-
-
-
-
-
     // ftp Related Functions
     @SuppressLint("MissingPermission")
     public void uploadSignature(Bitmap photo){
@@ -1794,26 +1790,6 @@ public class JobDetailFragment extends AbstractFragment {
     private void updateJobStatus(final String status) {
         App.fullAddress = (App.fullAddress.isEmpty()) ? " " : App.fullAddress;
 
-
-//        Util.copyToClipboard(getActivity().getBaseContext(), App.fullAddress);
-//        Toast.makeText(getActivity().getBaseContext(), "Address Copied", Toast.LENGTH_SHORT).show();
-
-//        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
-//        alertDialog.setTitle("Your Full Address #33");
-//        alertDialog.setMessage(App.fullAddress);
-//        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-//                new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        dialog.dismiss();
-//                    }
-//                });
-//        alertDialog.show();
-
-
-        //  App.fullAddress = "FullAddress";
-
-        //  Log.e("Address Update", App.fullAddress);
-
         Call<JobRes> call = RestClient.COACH().getApiService().UpdateJobStatus(
                 job.getJobNo(),
                 App.fullAddress,
@@ -1823,24 +1799,32 @@ public class JobDetailFragment extends AbstractFragment {
         call.enqueue(new Callback<JobRes>() {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
+                        Log.e("Update Job Successful", response.toString());
 
-                if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
-                    Log.e("Update Job Successful", response.toString());
+                        Toast.makeText(getContext(), "Update Successful", Toast.LENGTH_SHORT).show();
+                        Util.addLog("JobDetailFragment : " + "updateJobStatus successful");
 
-                    Toast.makeText(getContext(), "Update Successful", Toast.LENGTH_SHORT).show();
+                        callJobDetail();
 
-                    callJobDetail();
+                        EventBus.getDefault().postSticky("UPDATE_JOB_COUNT");
 
-                    EventBus.getDefault().postSticky("UPDATE_JOB_COUNT");
+                        if (status.equalsIgnoreCase("REJECTED"))
+                            getActivity().finish();
 
-                    if (status.equalsIgnoreCase("REJECTED"))
-                        getActivity().finish();
+                    }
 
+                    if (response.body().getResponsemessage().equalsIgnoreCase("BAD TOKEN")) {
+                        RestClient.refreshToken("ACTION_" + status);
+                        Util.addLog("JobDetailFragment : " + "updateJobStatus bad token");
+                    }
+                }else{
+                    Util.addLog("JobDetailFragment : " + "updateJobStatus response failed : ");
                 }
 
-                if (response.body().getResponsemessage().equalsIgnoreCase("BAD TOKEN")) {
-                    RestClient.refreshToken("ACTION_" + status);
-                }
+                RequestMobileLog req = new RequestMobileLog(App.StackTraceLog, "updateJobStatus call on JobDetailFragment");
+                App.callUpdateMobileLog(req);
             }
 
             @Override
@@ -1850,9 +1834,6 @@ public class JobDetailFragment extends AbstractFragment {
         });
     }
 
-    public void onButtonPressed(Uri uri) {
-
-    }
 
     @Override
     public void onAttach(Context context) {
