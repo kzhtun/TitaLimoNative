@@ -72,7 +72,8 @@ public class SplashActivity extends AppCompatActivity {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.CAMERA,
             Manifest.permission.READ_MEDIA_IMAGES,
-            Manifest.permission.CALL_PHONE
+            Manifest.permission.CALL_PHONE,
+            Manifest.permission.FOREGROUND_SERVICE_DATA_SYNC
     };
 
 
@@ -84,7 +85,8 @@ public class SplashActivity extends AppCompatActivity {
             Manifest.permission.CAMERA,
             Manifest.permission.CALL_PHONE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.FOREGROUND_SERVICE_DATA_SYNC
     };
 
     String[] permission;

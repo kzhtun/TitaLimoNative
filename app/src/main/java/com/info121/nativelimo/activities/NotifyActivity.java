@@ -129,6 +129,17 @@ public class NotifyActivity  extends AbstractActivity {
         setContentView(R.layout.activity_notify);
         this.setFinishOnTouchOutside(false);
 
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(true);
+            setTurnScreenOn(true);
+        } else {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
+                    WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
+                    WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+        }
+
+
         ButterKnife.bind(this);
 
         // Display Message
@@ -140,16 +151,15 @@ public class NotifyActivity  extends AbstractActivity {
 //        bundle.putString("PICKUP", pickup);
 //        bundle.putString("DROPOFF", dropoff);
 //        bundle.putString("CUST_NAME", clientName);
-
-        jobNo = intent.getExtras().getString("JOB_NO");
-        //    final String jobType = intent.getExtras().getString("JOB_TYPE");
-        final String jobDate = intent.getExtras().getString("JOB_DATE");
-        final String jobTime = intent.getExtras().getString("JOB_TIME");
-        final String pickup = intent.getExtras().getString("PICKUP");
-        final String dropoff = intent.getExtras().getString("DROPOFF");
-        final String vehicleType = intent.getExtras().getString("VEHICLE_TYPE");
-        final String custName = intent.getExtras().getString("CUST_NAME");
-        driverName = intent.getExtras().getString("DRIVER");
+        Bundle extras = intent.getExtras();
+         jobNo = extras != null ? extras.getString("JOB_NO", "N/A") : "N/A";
+        String jobDate = extras != null ? extras.getString("JOB_DATE", "N/A") : "N/A";
+        String jobTime = extras != null ? extras.getString("JOB_TIME", "N/A") : "N/A";
+        String pickup = extras != null ? extras.getString("PICKUP", "N/A") : "N/A";
+        String dropoff = extras != null ? extras.getString("DROPOFF", "N/A") : "N/A";
+        String vehicleType = extras != null ? extras.getString("VEHICLE_TYPE", "N/A") : "N/A";
+        String custName = extras != null ? extras.getString("CUST_NAME", "N/A") : "N/A";
+         driverName = extras != null ? extras.getString("DRIVER", "N/A") : "N/A";
 
 
 //        mJobType.setText(jobType);

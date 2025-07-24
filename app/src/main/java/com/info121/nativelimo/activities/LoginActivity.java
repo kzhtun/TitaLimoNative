@@ -25,8 +25,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import androidx.appcompat.app.AlertDialog;
-
-
+import androidx.core.content.ContextCompat;
 
 
 import com.info121.nativelimo.AbstractActivity;
@@ -39,6 +38,7 @@ import com.info121.nativelimo.models.ObjectRes;
 import com.info121.nativelimo.models.RequestValidateDriver;
 import com.info121.nativelimo.models.SearchParams;
 
+import com.info121.nativelimo.services.NotificationOverlayService;
 import com.info121.nativelimo.services.SmartLocationService;
 import com.info121.nativelimo.utils.PrefDB;
 import com.info121.nativelimo.utils.Util;
@@ -472,9 +472,55 @@ public class LoginActivity extends AbstractActivity {
 //                    }
 //                });
 
+
+        // start notification service
+  //      startOverlayService();
+
+        Intent serviceIntent = new Intent(this, NotificationOverlayService.class);
+        // add more extras as needed
+        ContextCompat.startForegroundService(this, serviceIntent);
+
         // login successful
         startActivity(new Intent(LoginActivity.this, JobOverviewActivity.class));
     }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_OVERLAY_PERMISSION) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (Settings.canDrawOverlays(this)) {
+                    // Permission granted, start service
+                    Intent serviceIntent = new Intent(this, NotificationOverlayService.class);
+                    startService(serviceIntent);
+                } else {
+                    Toast.makeText(this, "Overlay permission denied", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
+    private void startOverlayService() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                // Request overlay permission
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, REQUEST_OVERLAY_PERMISSION);
+            } else {
+                // Permission already granted, start service
+                Intent serviceIntent = new Intent(this, NotificationOverlayService.class);
+                startService(serviceIntent);
+            }
+        } else {
+            // No permission needed for API < 23
+            Intent serviceIntent = new Intent(this, NotificationOverlayService.class);
+            startService(serviceIntent);
+        }
+    }
+
 
     private void startLocationService() {
         if (isGPSEnabled()) {

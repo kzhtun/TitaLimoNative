@@ -7,6 +7,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.media.AudioAttributes;
 import android.media.RingtoneManager;
@@ -44,6 +45,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 public class App extends Application {
     public static String P_CHANNEL = "10088";
     public static String N_CHANNEL = "10099";
+    public static String N_CHANNEL_NAME = "Titalimo Notifications";
     public static String DEVICE_TYPE = "ANDROID";
 
     String TAG = "Application";
@@ -100,7 +102,7 @@ public class App extends Application {
     public static String CONST_REMEMBER_ME = "REMEMBER_ME";
     public static String CONST_DONT_ASK_AB = "DONT_ASK_AB";
 
-
+public static NotificationManager appNotificationManager = null;
     public static String CONST_PHOTO_NO_SHOW_FILE_NAME = "_no_show.jpg";
     public static String CONST_PHOTO_SHOW_FILE_NAME = "_show.jpg";
     public static String CONST_SIGNATURE_FILE_NAME = "_signature.jpg";
@@ -267,7 +269,55 @@ public class App extends Application {
         mHandler.removeCallbacks(App.mRunnable);
         mRunnable = null;
     }
+    public static void createNotificationChannels(@NonNull Context context, String CHANNEL, Uri soundUri) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Channel for regular/heads-up job notifications
+            NotificationChannel jobChannel = new NotificationChannel(
+                    CHANNEL,
+                    N_CHANNEL_NAME,
+                    NotificationManager.IMPORTANCE_HIGH // CRITICAL FOR HEADS-UP
+            );
+            jobChannel.setDescription("Important job updates and alerts.");
+            jobChannel.enableLights(true); // Optional
+            jobChannel.setLightColor(Color.RED); // Optional
+            jobChannel.enableVibration(true);
+            jobChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400}); // Optional custom pattern
 
+            // If you have a custom sound URI, set it on the channel
+             soundUri = getNotificationSoundUri(); // Assuming this method exists in App
+            if (soundUri != null) {
+                AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .setUsage(AudioAttributes.USAGE_NOTIFICATION_COMMUNICATION_INSTANT) // Or USAGE_ALARM for very critical alerts
+                        .build();
+                jobChannel.setSound(soundUri, audioAttributes);
+            }
+            // else, default sound will be used based on IMPORTANCE_HIGH
+
+            NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+            if (manager != null) {
+                manager.createNotificationChannel(jobChannel);
+            }
+
+
+            appNotificationManager =manager;
+
+            // You might have other channels for different types of notifications
+            // For example, a lower importance channel for non-urgent updates:
+            /*
+            NotificationChannel lowImportanceChannel = new NotificationChannel(
+                    "low_priority_channel",
+                    "General Updates",
+                    NotificationManager.IMPORTANCE_DEFAULT // Or IMPORTANCE_LOW
+            );
+            lowImportanceChannel.setDescription("General app information and non-urgent updates.");
+            if (manager != null) {
+                manager.createNotificationChannel(lowImportanceChannel);
+            }
+            */
+        }
+    }
     public static void setupNotificationChannels(@NonNull Context context, String CHANNEL, Uri soundUri) {
         long[] pattern = {0, 500, 200, 500, 200};
         // This sample assumes that your sounds are named "sound_win"/"sound_defeat"
@@ -282,7 +332,7 @@ public class App extends Application {
             NotificationChannel channel = new NotificationChannel(
                     CHANNEL,
                     "Custom Notification",
-                    NotificationManager.IMPORTANCE_DEFAULT);
+                    NotificationManager.IMPORTANCE_HIGH);
 
 
             if(soundUri == null)

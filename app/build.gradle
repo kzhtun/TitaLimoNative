@@ -88,6 +88,7 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.0'
 
     implementation 'com.jakewharton:butterknife:10.2.1'
+    implementation 'androidx.activity:activity:1.8.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
 
     implementation 'androidx.browser:browser:1.8.0'

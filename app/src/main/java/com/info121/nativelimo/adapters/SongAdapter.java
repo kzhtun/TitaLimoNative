@@ -184,6 +184,10 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
         call.enqueue(new Callback<ObjectRes>() {
             @Override
             public void onResponse(Call<ObjectRes> call, Response<ObjectRes> response) {
+                App.createNotificationChannels(mContext,
+                        App.N_CHANNEL,
+                        mSongs.get(lastIndex).getSongUri());
+
                 App.setupNotificationChannels(mContext,
                         App.N_CHANNEL,
                         mSongs.get(lastIndex).getSongUri()
