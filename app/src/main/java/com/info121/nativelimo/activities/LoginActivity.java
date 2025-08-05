@@ -38,7 +38,7 @@ import com.info121.nativelimo.models.ObjectRes;
 import com.info121.nativelimo.models.RequestValidateDriver;
 import com.info121.nativelimo.models.SearchParams;
 
-import com.info121.nativelimo.services.NotificationOverlayService;
+import com.info121.nativelimo.services.ForegroundService;
 import com.info121.nativelimo.services.SmartLocationService;
 import com.info121.nativelimo.utils.PrefDB;
 import com.info121.nativelimo.utils.Util;
@@ -476,10 +476,8 @@ public class LoginActivity extends AbstractActivity {
         // start notification service
   //      startOverlayService();
 
-        Intent serviceIntent = new Intent(this, NotificationOverlayService.class);
-        // add more extras as needed
-        ContextCompat.startForegroundService(this, serviceIntent);
 
+        startOverlayService();
         // login successful
         startActivity(new Intent(LoginActivity.this, JobOverviewActivity.class));
     }
@@ -493,13 +491,27 @@ public class LoginActivity extends AbstractActivity {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (Settings.canDrawOverlays(this)) {
                     // Permission granted, start service
-                    Intent serviceIntent = new Intent(this, NotificationOverlayService.class);
-                    startService(serviceIntent);
+                    startForegroundService();
                 } else {
                     Toast.makeText(this, "Overlay permission denied", Toast.LENGTH_SHORT).show();
                 }
             }
         }
+    }
+
+    private void startForegroundService() {
+        try{
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                Intent serviceIntent = new Intent(this, ForegroundService.class);
+                ContextCompat.startForegroundService(this, serviceIntent);
+            } else {
+                Intent serviceIntent = new Intent(this, ForegroundService.class);
+                startService(serviceIntent);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     private void startOverlayService() {
@@ -510,14 +522,10 @@ public class LoginActivity extends AbstractActivity {
                         Uri.parse("package:" + getPackageName()));
                 startActivityForResult(intent, REQUEST_OVERLAY_PERMISSION);
             } else {
-                // Permission already granted, start service
-                Intent serviceIntent = new Intent(this, NotificationOverlayService.class);
-                startService(serviceIntent);
+                startForegroundService();
             }
         } else {
-            // No permission needed for API < 23
-            Intent serviceIntent = new Intent(this, NotificationOverlayService.class);
-            startService(serviceIntent);
+            startForegroundService();
         }
     }
 

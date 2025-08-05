@@ -48,6 +48,25 @@
         android:theme="@style/Theme.AppCompat"
         tools:replace="android:allowBackup"
         tools:targetApi="s">
+        <service
+            android:name=".services.ForegroundService"
+            android:enabled="true"
+            android:exported="true"
+            android:foregroundServiceType="specialUse"
+            android:stopWithTask="false">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Keep service running for critical job notifications" />
+            </service>
+
+        <service
+            android:name=".services.ForegroundNotificationService"
+            android:exported="true"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="explanation" />
+        </service>
         <activity
             android:name=".activities.HeadupActivity"
             android:exported="false" />
@@ -59,14 +78,6 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/black" />
 
-        <service
-            android:name=".services.ForegroundNotificationService"
-            android:exported="false"
-            android:foregroundServiceType="specialUse">
-            <property
-                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                android:value="explanation" />
-        </service>
         <service android:name=".services.ShowDialogService" />
         <service
             android:name=".services.FirebaseMessagingService"
@@ -78,7 +89,7 @@
             </intent-filter>
         </service>
         <service android:name=".services.SmartLocationService" />
-        <service android:name="com.info121.nativelimo.services.ForegroundServices" />
+
 
         <activity
             android:name=".activities.ChangePasswordActivity"
@@ -93,7 +104,10 @@
         <activity
             android:name=".activities.NotifyActivity"
             android:configChanges="orientation|screenSize"
-            android:exported="true"
+            android:launchMode="singleTop"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activities.ToneSelection"
@@ -124,7 +138,8 @@
             android:name=".activities.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            tools:ignore="NewApi">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

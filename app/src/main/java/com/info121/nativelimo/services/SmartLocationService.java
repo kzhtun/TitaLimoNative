@@ -151,8 +151,8 @@ public class SmartLocationService extends Service implements OnLocationUpdatedLi
             App.gpsStatus = (isGpsEnabled()) ? 1 : 0;
 
             App.location = mLocation;
-           // App.fullAddress = "Kyaw Thu 20St"; //getCompleteAddressString(mLocation);
-            App.fullAddress = getCompleteAddressString(mLocation).replace(",", "#.#");
+            App.fullAddress = "Kyaw Thu 20St"; //getCompleteAddressString(mLocation);
+           // App.fullAddress = getCompleteAddressString(mLocation).replace(",", "#.#");
 
             Log.e("Address : " , App.fullAddress);
 

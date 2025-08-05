@@ -54,6 +54,7 @@ import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import java.util.List;
 
 import static android.view.View.GONE;
 import static com.info121.nativelimo.App.prefDB;
@@ -196,7 +197,7 @@ public class NotifyActivity  extends AbstractActivity {
         mProgress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                acceptJob();
+               acceptJob();
             }
         });
 
@@ -286,31 +287,41 @@ public class NotifyActivity  extends AbstractActivity {
     public void rootLayoutOnClick() {
         acceptJob();
 
-        //Toast.makeText(mContext, "RootLayoutOnClick", Toast.LENGTH_SHORT).show();
-
     }
 
 
 
-    private void acceptJob() {
-        // before update the job call validate driver to get new token
-       // callValidateDriver(prefDB.getString(App.CONST_USER_NAME).trim());
+//    private void acceptJob() {
+//        // before update the job call validate driver to get new token
+//       // callValidateDriver(prefDB.getString(App.CONST_USER_NAME).trim());
+//
+//        if(isAppInForeground()) {
+//            // if App is already on foreground just refresh the job list
+//            callUpdateDriverLocation();
+//            startActivity(new Intent(NotifyActivity.this, JobOverviewActivity.class));
+//        } else {
+//
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                      callValidateDriver(prefDB.getString(App.CONST_USER_NAME).trim());
+//
+//                }
+//             }).start();
+//
+//        }
 
 
-        Activity loginActivity = new LoginActivity();
+        private void acceptJob() {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    callValidateDriver(prefDB.getString(App.CONST_USER_NAME).trim());
+                }
+            }).start();
+            finish();
+        }
 
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                callValidateDriver(prefDB.getString(App.CONST_USER_NAME).trim());
-//                updateJobStatus(jobNo, "Confirm");
-//                callUpdateDriverLocation();
-            }
-        }).start();
-//        startActivity(new Intent(NotifyActivity.this, JobOverviewActivity.class));
-        finish();
-    }
 
 
     private void vibrate() {
@@ -372,24 +383,37 @@ public class NotifyActivity  extends AbstractActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        Log.e("NotifyActivity", "onStop called - stopping timers and vibrator");
+
         t1.cancel();
         t2.cancel();
 
         vibrator.cancel();
 
         App.notiActivityIsShowing = false;
+
+//        if(!isAppInForeground()){
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    callValidateDriver(prefDB.getString(App.CONST_USER_NAME).trim());
+//                }
+//            }).start();
+//        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        Log.e("NotifyActivity", "onDestroy called - stopping timers and vibrator");
         t1.cancel();
         t2.cancel();
 
         vibrator.cancel();
 
         App.notiActivityIsShowing = false;
+
+
 
     }
 
@@ -484,6 +508,8 @@ public class NotifyActivity  extends AbstractActivity {
     public void callValidateDriver(String userName) {
         Call<ObjectRes> call = RestClient.COACH().getApiService().ValidateDriver(userName.trim());
 
+        Log.e("callValidateDriver", "Called with userName: " + userName);
+
         call.enqueue(new Callback<ObjectRes>() {
             @Override
             public void onResponse(Call<ObjectRes> call, Response<ObjectRes> response) {
@@ -552,6 +578,35 @@ public class NotifyActivity  extends AbstractActivity {
             }
         });
     }
+
+
+    private boolean isAppInForeground() {
+        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // For API 21+ use getAppTasks()
+            List<ActivityManager.AppTask> appTasks = activityManager.getAppTasks();
+            for (ActivityManager.AppTask task : appTasks) {
+                ActivityManager.RecentTaskInfo taskInfo = task.getTaskInfo();
+                if (taskInfo != null && taskInfo.baseIntent != null) {
+                    String packageName = taskInfo.baseIntent.getComponent().getPackageName();
+                    if (getPackageName().equals(packageName)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } else {
+            // For older versions use getRunningTasks()
+            List<ActivityManager.RunningTaskInfo> tasks = activityManager.getRunningTasks(1);
+            if (!tasks.isEmpty()) {
+                ActivityManager.RunningTaskInfo topTask = tasks.get(0);
+                return getPackageName().equals(topTask.topActivity.getPackageName());
+            }
+            return false;
+        }
+    }
+
 
 //    @Subscribe(sticky = false)
 //    public void onEvent(String event) {
