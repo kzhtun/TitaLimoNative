@@ -18,7 +18,10 @@ import androidx.core.content.ContextCompat;
 
 import com.info121.nativelimo.App;
 import com.info121.nativelimo.R;
+import com.info121.nativelimo.activities.JobOverviewActivity;
+import com.info121.nativelimo.activities.LoginActivity;
 import com.info121.nativelimo.activities.NotifyActivity;
+import com.info121.nativelimo.activities.SplashActivity;
 
 import java.util.Random;
 
@@ -56,17 +59,16 @@ public class ForegroundNotificationService extends Service {
             String vehicleType = intent.getStringExtra("VEHICLE_TYPE");
             String driver = intent.getStringExtra("DRIVER");
 
-
-
             if(isUrgent != null &&
                 isUrgent.equalsIgnoreCase("Y") &&
                 (action.equalsIgnoreCase("Assign") || action.equalsIgnoreCase("Reassign") || action.equalsIgnoreCase("Refresh"))
                     ){
                 Intent serviceIntent = new Intent(this, NotifyActivity.class);
-                //serviceIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+               // serviceIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 serviceIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+                        Intent.FLAG_ACTIVITY_CLEAR_TASK |
                         Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS |
-                        Intent.FLAG_ACTIVITY_NO_HISTORY );
+                        Intent.FLAG_ACTIVITY_NO_HISTORY);
 
                 serviceIntent.putExtra("JOB_NO", jobNo);
                 serviceIntent.putExtra("CLIENT_NAME", clientName);
@@ -87,10 +89,12 @@ public class ForegroundNotificationService extends Service {
         }
 
 
-        Intent contentIntent = new Intent(this, ForegroundNotificationService.class);
+        Intent contentIntent = new Intent(this,  JobOverviewActivity.class);
         contentIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
                 Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS |
                 Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        contentIntent.putExtra("NOTIFICATION_ON_TOUCH", true);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 new Random().nextInt(), // Use a unique request code for each PendingIntent if they differ
@@ -114,7 +118,6 @@ public class ForegroundNotificationService extends Service {
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setSound(soundUri)
-                .setFullScreenIntent(pendingIntent, isUrgent != null && isUrgent.equalsIgnoreCase("Y"))
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .build();
 

@@ -12,12 +12,14 @@ import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -39,6 +41,7 @@ import com.info121.nativelimo.models.Action;
 import com.info121.nativelimo.models.JobRes;
 import com.info121.nativelimo.models.ObjectRes;
 import com.info121.nativelimo.models.RequestMobileLog;
+import com.info121.nativelimo.services.ForegroundService;
 import com.info121.nativelimo.utils.Util;
 
 import org.greenrobot.eventbus.EventBus;
@@ -54,14 +57,18 @@ import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 import java.util.List;
 
 import static android.view.View.GONE;
 import static com.info121.nativelimo.App.prefDB;
 
-import androidx.appcompat.app.AppCompatActivity;
 
-public class NotifyActivity  extends AbstractActivity {
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
+public class NotifyActivity extends AbstractActivity {
+    private static final int REQUEST_OVERLAY_PERMISSION = 9007;
     int i = 0;
 
     @BindView(R.id.pgb_progress)
@@ -120,7 +127,6 @@ public class NotifyActivity  extends AbstractActivity {
     Boolean getHeightAlready = false;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -153,14 +159,16 @@ public class NotifyActivity  extends AbstractActivity {
 //        bundle.putString("DROPOFF", dropoff);
 //        bundle.putString("CUST_NAME", clientName);
         Bundle extras = intent.getExtras();
-         jobNo = extras != null ? extras.getString("JOB_NO", "N/A") : "N/A";
+
+
+        jobNo = extras != null ? extras.getString("JOB_NO", "N/A") : "N/A";
+        driverName = extras != null ? extras.getString("DRIVER", "N/A") : "N/A";
         String jobDate = extras != null ? extras.getString("JOB_DATE", "N/A") : "N/A";
         String jobTime = extras != null ? extras.getString("JOB_TIME", "N/A") : "N/A";
         String pickup = extras != null ? extras.getString("PICKUP", "N/A") : "N/A";
         String dropoff = extras != null ? extras.getString("DROPOFF", "N/A") : "N/A";
         String vehicleType = extras != null ? extras.getString("VEHICLE_TYPE", "N/A") : "N/A";
         String custName = extras != null ? extras.getString("CUST_NAME", "N/A") : "N/A";
-         driverName = extras != null ? extras.getString("DRIVER", "N/A") : "N/A";
 
 
 //        mJobType.setText(jobType);
@@ -197,7 +205,7 @@ public class NotifyActivity  extends AbstractActivity {
         mProgress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               acceptJob();
+                acceptJob();
             }
         });
 
@@ -286,9 +294,7 @@ public class NotifyActivity  extends AbstractActivity {
     @OnClick(R.id.root_layout)
     public void rootLayoutOnClick() {
         acceptJob();
-
     }
-
 
 
 //    private void acceptJob() {
@@ -312,16 +318,24 @@ public class NotifyActivity  extends AbstractActivity {
 //        }
 
 
-        private void acceptJob() {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    callValidateDriver(prefDB.getString(App.CONST_USER_NAME).trim());
-                }
-            }).start();
-            finish();
-        }
+//        private void acceptJob() {
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    callValidateDriver(prefDB.getString(App.CONST_USER_NAME).trim());
+//                }
+//            }).start();
+//            finish();
+//        }
 
+    private void acceptJob() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                callValidateDriver(prefDB.getString(App.CONST_USER_NAME).trim());
+            }
+        }).start();
+    }
 
 
     private void vibrate() {
@@ -414,7 +428,6 @@ public class NotifyActivity  extends AbstractActivity {
         App.notiActivityIsShowing = false;
 
 
-
     }
 
     private void callUpdateDriverLocation() {
@@ -446,9 +459,9 @@ public class NotifyActivity  extends AbstractActivity {
     private void updateJobStatus(final String jobNo, final String status) {
         App.fullAddress = (App.fullAddress.isEmpty()) ? " " : App.fullAddress;
 
-       // Toast.makeText(mContext, "Update Job Called", Toast.LENGTH_SHORT).show();
+        // Toast.makeText(mContext, "Update Job Called", Toast.LENGTH_SHORT).show();
 
-      //  Log.e("Token : ", App.authToken);
+        //  Log.e("Token : ", App.authToken);
 
         Call<JobRes> call = RestClient.COACH().getApiService().UpdateJobStatus(
                 jobNo,
@@ -459,7 +472,7 @@ public class NotifyActivity  extends AbstractActivity {
         call.enqueue(new Callback<JobRes>() {
             @Override
             public void onResponse(Call<JobRes> call, Response<JobRes> response) {
-               if (response.isSuccessful() && response.body() != null) {
+                if (response.isSuccessful() && response.body() != null) {
                     if (response.body().getResponsemessage().equalsIgnoreCase("Success")) {
                         EventBus.getDefault().postSticky("UPDATE_JOB_COUNT");
                         playAcceptBeep();
@@ -472,12 +485,12 @@ public class NotifyActivity  extends AbstractActivity {
                         refreshToken(driverName, status);
                         Util.addLog("NotifiyActivity : " + "updateJobStatus bad token");
                     }
-               }else{
-                   Util.addLog("NotifiyActivity : " + "updateJobStatus response failed");
-               }
+                } else {
+                    Util.addLog("NotifiyActivity : " + "updateJobStatus response failed");
+                }
 
-               RequestMobileLog req = new RequestMobileLog(App.StackTraceLog, "updateJobStatus call on NotifyActivity");
-               App.callUpdateMobileLog(req);
+                RequestMobileLog req = new RequestMobileLog(App.StackTraceLog, "updateJobStatus call on NotifyActivity");
+                App.callUpdateMobileLog(req);
 
             }
 
@@ -522,12 +535,31 @@ public class NotifyActivity  extends AbstractActivity {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            startActivity(new Intent(NotifyActivity.this, JobOverviewActivity.class));
+                            // startActivity(new Intent(NotifyActivity.this, JobOverviewActivity.class));
+
                             updateJobStatus(jobNo, "Confirm");
-                            callUpdateDriverLocation();
+
+                            //callUpdateDriverLocation();
+
+                            if(!App.isForegroundServiceRunning)
+                                startOverlayService();
+
+                            // login successful
+                           // startActivity(new Intent(NotifyActivity.this, JobOverviewActivity.class));
+
+                            // Launch activity on UI thread
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    startActivity(new Intent(NotifyActivity.this, JobOverviewActivity.class));
+                                    finish(); // Always finish notification activity
+                                }
+                            });
                         }
+
+
                     }).start();
-                    finish();
+                    //finish();
                 }
 
             }
@@ -539,11 +571,39 @@ public class NotifyActivity  extends AbstractActivity {
         });
     }
 
+
+    private void startOverlayService() {
+        if (!Settings.canDrawOverlays(this)) {
+            // Request overlay permission
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + getPackageName()));
+            startActivityForResult(intent, REQUEST_OVERLAY_PERMISSION);
+        } else {
+            startForegroundService();
+        }
+    }
+
+    private void startForegroundService() {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                Intent serviceIntent = new Intent(this, ForegroundService.class);
+                ContextCompat.startForegroundService(this, serviceIntent);
+            } else {
+                Intent serviceIntent = new Intent(this, ForegroundService.class);
+                startService(serviceIntent);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
     @Subscribe(sticky = false)
     public void onEvent(Action action) {
         //  Toast.makeText(getContext(), "Action Done", Toast.LENGTH_SHORT).show();
 
-       // if (action.getAction().equalsIgnoreCase("Cancel Full Notification"))
+        // if (action.getAction().equalsIgnoreCase("Cancel Full Notification"))
         if (action.getAction().equalsIgnoreCase("Unassign"))
             if (action.getJobNo().equalsIgnoreCase(jobNo)) {
                 finish();
@@ -555,17 +615,17 @@ public class NotifyActivity  extends AbstractActivity {
                 }
             }
 
-        startActivity(new Intent(NotifyActivity.this, JobOverviewActivity.class));
+       // startActivity(new Intent(NotifyActivity.this, JobOverviewActivity.class));
     }
 
 
-    public void refreshToken(final String driver, final String action){
+    public void refreshToken(final String driver, final String action) {
         App.userName = driver;
 
         RestClient.COACH().getApiService().ValidateDriver(driver).enqueue(new Callback<ObjectRes>() {
             @Override
             public void onResponse(Call<ObjectRes> call, retrofit2.Response<ObjectRes> response) {
-                if(response.body().getResponsemessage().equalsIgnoreCase("VALID")) {
+                if (response.body().getResponsemessage().equalsIgnoreCase("VALID")) {
                     App.authToken = response.body().getToken();
 
                     updateJobStatus(jobNo, action);

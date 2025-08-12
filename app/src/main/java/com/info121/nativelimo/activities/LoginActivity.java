@@ -1,6 +1,8 @@
 package com.info121.nativelimo.activities;
 
 
+import static com.info121.nativelimo.App.prefDB;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -119,6 +121,15 @@ public class LoginActivity extends AbstractActivity {
         // Release
         callCheckVersion();
 
+        // Display Message
+//        Intent intent = getIntent();
+//        Bundle extras = intent.getExtras();
+//        Boolean notificationOnTouch = extras !=null ? extras.getBoolean("NOTIFICATION_ON_TOUCH", false) : false;
+//
+//        if(notificationOnTouch){
+//            loginSuccessful();
+//        }
+
 
 //        // Debug
 //        if (prefDB.getBoolean(App.CONST_REMEMBER_ME)) {
@@ -132,7 +143,7 @@ public class LoginActivity extends AbstractActivity {
         mApiVersion.setText("Api " + Util.getVersionCode(mContext));
         mUiVersion.setText("Ver " + Util.getVersionName(mContext));
 
-        App.setupNotificationChannels(mContext, App.N_CHANNEL, null);
+           App.setupNotificationChannels(mContext, App.N_CHANNEL, null);
 
 //        try {
 //            App.setupNotificationChannels(mContext, App.N_CHANNEL, Settings.System.DEFAULT_NOTIFICATION_URI);
@@ -500,6 +511,8 @@ public class LoginActivity extends AbstractActivity {
     }
 
     private void startForegroundService() {
+        if(App.isForegroundServiceRunning) return;
+
         try{
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 Intent serviceIntent = new Intent(this, ForegroundService.class);

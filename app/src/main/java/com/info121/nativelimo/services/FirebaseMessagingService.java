@@ -77,40 +77,46 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
         remoteMessage.getData();
 
-        if (remoteMessage.getNotification() != null) {
-            showNotificationForeground(  remoteMessage.getData().get("title"),
-                    remoteMessage.getData().get("message"));
-        }
+        Log.e(TAG, "onMessageReceived: " + new Date().toString() + " - " + remoteMessage.getData().toString());
+//        if (remoteMessage.getNotification() != null) {
+//            showNotificationForeground(  remoteMessage.getData().get("title"),
+//                    remoteMessage.getData().get("message"));
+//        }
 
         App.BadgeCount = (remoteMessage.getData().get("action").equalsIgnoreCase("Unassign")) ? App.BadgeCount - 1 : App.BadgeCount;
         App.BadgeCount = (remoteMessage.getData().get("action").equalsIgnoreCase("Assign")) ? App.BadgeCount +1 : App.BadgeCount;
         wakelock(300);
 
-        showFullScreenNotificationForeground(
-                remoteMessage.getData().get("IsUrgent"),
-                remoteMessage.getData().get("title"),
-                remoteMessage.getData().get("message"),
-                remoteMessage.getData().get("action"),
-                remoteMessage.getData().get("jobno"),
-                remoteMessage.getData().get("jobtype"),
-                remoteMessage.getData().get("jobdate"),
-                remoteMessage.getData().get("pickuptime"),
-                remoteMessage.getData().get("pickuppoint"),
-                remoteMessage.getData().get("alightpoint"),
-                remoteMessage.getData().get("clientname"),
-                remoteMessage.getData().get("vehicletype"),
-                remoteMessage.getData().get("driver"));
-
-
-
-        if(!remoteMessage.getData().get("action").equalsIgnoreCase("Assign")){
-            EventBus.getDefault().post(new Action(remoteMessage.getData().get("action"),
-                    remoteMessage.getData().get("jobno")
-            ));
+        if (remoteMessage.getNotification() == null) {
+            showFullScreenNotificationForeground(
+                    remoteMessage.getData().get("IsUrgent"),
+                    remoteMessage.getData().get("title"),
+                    remoteMessage.getData().get("message"),
+                    remoteMessage.getData().get("action"),
+                    remoteMessage.getData().get("jobno"),
+                    remoteMessage.getData().get("jobtype"),
+                    remoteMessage.getData().get("jobdate"),
+                    remoteMessage.getData().get("pickuptime"),
+                    remoteMessage.getData().get("pickuppoint"),
+                    remoteMessage.getData().get("alightpoint"),
+                    remoteMessage.getData().get("clientname"),
+                    remoteMessage.getData().get("vehicletype"),
+                    remoteMessage.getData().get("driver"));
 
         }
 
-       // EventBus.getDefault().postSticky("UPDATE_JOB_COUNT");
+//        if(!remoteMessage.getData().get("action").equalsIgnoreCase("Assign")){
+//            EventBus.getDefault().post(new Action(remoteMessage.getData().get("action"),
+//                    remoteMessage.getData().get("jobno")
+//            ));
+//
+//        }
+
+        EventBus.getDefault().post(new Action(remoteMessage.getData().get("action"),
+                remoteMessage.getData().get("jobno")
+        ));
+
+        EventBus.getDefault().postSticky("UPDATE_JOB_COUNT");
 
         super.onMessageReceived(remoteMessage);
 

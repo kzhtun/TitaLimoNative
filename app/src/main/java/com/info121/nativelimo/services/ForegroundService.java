@@ -25,7 +25,14 @@ public class ForegroundService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        App.isForegroundServiceRunning = true;
         // createNotificationChannel();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        App.isForegroundServiceRunning = false;
     }
 
     @Override

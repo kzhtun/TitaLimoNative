@@ -69,6 +69,8 @@ public class App extends Application {
     public static final String FTP_PASSWORD = "6b604358f1a34a88a8506205f2d0e501";
     public static String FTP_DIR = "limopics";
 
+    public static Boolean isForegroundServiceRunning = false;
+
     //---------------------------------------------------------------------//
 
     // TitaLimo Live
@@ -343,17 +345,20 @@ public static NotificationManager appNotificationManager = null;
             channel.setVibrationPattern(pattern);
             channel.setImportance(NotificationManager.IMPORTANCE_HIGH);
 
-
-
             NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
 
-            if (notificationManager.getNotificationChannel(CHANNEL) != null) {
-                notificationManager.getNotificationChannel(CHANNEL).setImportance(NotificationManager.IMPORTANCE_NONE);
-                notificationManager.deleteNotificationChannel(CHANNEL);
+            try{
+                if (notificationManager.getNotificationChannel(CHANNEL) != null) {
+                    notificationManager.getNotificationChannel(CHANNEL).setImportance(NotificationManager.IMPORTANCE_NONE);
+                    notificationManager.deleteNotificationChannel(CHANNEL);
+                }
 
+                notificationManager.createNotificationChannel(channel);
+            }catch(Exception e){
+                Log.e("Notification Channel", "Error creating notification channel: " + e.getMessage());
             }
 
-            notificationManager.createNotificationChannel(channel);
+
         }
     }
 

@@ -129,6 +129,14 @@ public class JobOverviewActivity extends AbstractActivity {
             }
         });
 
+//        Intent intent = getIntent();
+//        Bundle extras = intent.getExtras();
+//
+//
+//        if(extras != null && extras.getString("JOB_NO") != null){
+//            // it's launch from notification
+//            finish();
+//        }
 
     }
 

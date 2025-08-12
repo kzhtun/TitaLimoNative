@@ -104,7 +104,7 @@
         <activity
             android:name=".activities.NotifyActivity"
             android:configChanges="orientation|screenSize"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:excludeFromRecents="true"
             android:taskAffinity=""
             android:exported="false"
@@ -127,6 +127,7 @@
         <activity
             android:name=".activities.LoginActivity"
             android:configChanges="orientation|screenSize"
+
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
